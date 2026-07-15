@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "@tailwindcss/forms";
+@plugin "@tailwindcss/container-queries";
+
+@theme {
+  --color-outline-variant: #bbcabf;
+  --color-primary: #006c49;
+  --color-on-primary: #ffffff;
+  --color-surface-dim: #d4dcd5;
+  --color-surface: #f4fbf4;
+  --color-surface-container-low: #eef6ee;
+  --color-surface-variant: #dde4dd;
+  --color-on-surface: #161d19;
+  --color-on-tertiary-container: #523200;
+  --color-on-secondary: #ffffff;
+  --color-secondary: #4648d4;
+  --color-on-tertiary-fixed-variant: #653e00;
+  --color-on-primary-fixed: #002113;
+  --color-primary-fixed: #6ffbbe;
+  --color-on-primary-fixed-variant: #005236;
+  --color-secondary-fixed-dim: #c0c1ff;
+  --color-surface-container: #e8f0e9;
+  --color-surface-tint: #006c49;
+  --color-on-background: #161d19;
+  --color-surface-container-high: #e3eae3;
+  --color-tertiary-fixed: #ffddb8;
+  --color-surface-bright: #f4fbf4;
+  --color-on-tertiary: #ffffff;
+  --color-on-surface-variant: #3c4a42;
+  --color-on-primary-container: #00422b;
+  --color-inverse-surface: #2b322d;
+  --color-outline: #6c7a71;
+  --color-error: #ba1a1a;
+  --color-on-error-container: #93000a;
+  --color-tertiary-fixed-dim: #ffb95f;
+  --color-inverse-primary: #4edea3;
+  --color-on-secondary-fixed-variant: #2f2ebe;
+  --color-surface-container-lowest: #ffffff;
+  --color-inverse-on-surface: #ebf3eb;
+  --color-secondary-fixed: #e1e0ff;
+  --color-background: #f4fbf4;
+  --color-on-error: #ffffff;
+  --color-on-secondary-fixed: #07006c;
+  --color-tertiary: #855300;
+  --color-on-tertiary-fixed: #2a1700;
+  --color-on-secondary-container: #fffbff;
+  --color-primary-container: #10b981;
+  --color-primary-fixed-dim: #4edea3;
+  --color-secondary-container: #6063ee;
+  --color-surface-container-highest: #dde4dd;
+  --color-tertiary-container: #e29100;
+  --color-error-container: #ffdad6;
+
+  --spacing-container-max: 1280px;
+  --spacing-touch-target: 48px;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-margin-desktop: 2.5rem;
+  --spacing-gutter: 1rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@utility text-display-word {
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  line-height: 56px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@utility text-display-word-mobile {
+  font-family: 'Inter', sans-serif;
+  font-size: 36px;
+  line-height: 44px;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+@utility text-headline-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+}
+
+@utility text-headline-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+}
+
+@utility text-headline-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+}
+
+@utility text-body-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
+@utility text-body-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+@utility text-label-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.05em;
+  font-weight: 600;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
 }
