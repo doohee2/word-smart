@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Word Master - Study Mode</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#bbcabf",
+                        "primary": "#006c49",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d4dcd5",
+                        "surface": "#f4fbf4",
+                        "surface-container-low": "#eef6ee",
+                        "surface-variant": "#dde4dd",
+                        "on-surface": "#161d19",
+                        "on-tertiary-container": "#523200",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4648d4",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "on-primary-fixed": "#002113",
+                        "primary-fixed": "#6ffbbe",
+                        "on-primary-fixed-variant": "#005236",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "surface-container": "#e8f0e9",
+                        "surface-tint": "#006c49",
+                        "on-background": "#161d19",
+                        "surface-container-high": "#e3eae3",
+                        "tertiary-fixed": "#ffddb8",
+                        "surface-bright": "#f4fbf4",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#3c4a42",
+                        "on-primary-container": "#00422b",
+                        "inverse-surface": "#2b322d",
+                        "outline": "#6c7a71",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb95f",
+                        "inverse-primary": "#4edea3",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#ebf3eb",
+                        "secondary-fixed": "#e1e0ff",
+                        "background": "#f4fbf4",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed": "#07006c",
+                        "tertiary": "#855300",
+                        "on-tertiary-fixed": "#2a1700",
+                        "on-secondary-container": "#fffbff",
+                        "primary-container": "#10b981",
+                        "primary-fixed-dim": "#4edea3",
+                        "secondary-container": "#6063ee",
+                        "surface-container-highest": "#dde4dd",
+                        "tertiary-container": "#e29100",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-max": "1280px",
+                        "touch-target": "48px",
+                        "margin-mobile": "1.25rem",
+                        "margin-desktop": "2.5rem",
+                        "gutter": "1rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "display-word": ["Inter"],
+                        "display-word-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "display-word": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "display-word-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .flashcard-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .flashcard-lift:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .progress-bar-fill { transition: width 0.3s ease-in-out; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4fbf4; color: #161d19; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row antialiased">
+<!-- Desktop SideNavBar -->
+<nav class="fixed h-full left-0 top-0 w-64 hidden md:flex bg-surface-container-low dark:bg-inverse-surface shadow-md dark:shadow-none flex-col p-4 gap-2 z-50">
+<div class="mb-8 mt-4 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary font-bold text-xl">W</div>
+<div>
+<h1 class="text-headline-md font-headline-md font-black text-primary">Word Master</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-80">스마트 학습</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-xl font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-label-sm font-label-sm">학습</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-label-sm font-label-sm">테스트</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-label-sm font-label-sm">PDF 출력</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm">설정</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 flex flex-col md:ml-64 relative min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar (Desktop/Mobile Header) -->
+<header class="bg-surface dark:bg-on-surface docked full-width top-0 shadow-sm dark:shadow-none z-40 sticky">
+<div class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<button aria-label="정보" class="md:hidden p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">info</span>
+</button>
+<h1 class="text-headline-lg font-headline-lg font-bold text-primary dark:text-primary-fixed md:hidden">Word Master</h1>
+</div>
+<div class="flex items-center gap-2">
+<button aria-label="설정" class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button aria-label="폴더 열기" class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">folder_open</span>
+</button>
+<button aria-label="계정" class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Study Canvas -->
+<main class="flex-1 flex flex-col items-center justify-center p-margin-mobile md:p-margin-desktop max-w-3xl mx-auto w-full">
+<!-- Study Deck Info -->
+<div class="w-full flex justify-between items-center mb-6">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">folder</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider">Unit 4: 고급 어휘</span>
+</div>
+<div class="text-label-sm font-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">
+                    12 / 50 단어
+                </div>
+</div>
+<!-- Flashcard Container (Glassmorphism inspired, elevated) -->
+<div class="w-full bg-surface-container-lowest rounded-[32px] shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-8 md:p-12 flex flex-col items-center text-center relative overflow-hidden flashcard-lift min-h-[400px] justify-center">
+<!-- Pronunciation Audio Button -->
+<button aria-label="발음 듣기" class="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none">
+<span class="material-symbols-outlined text-[24px]">volume_up</span>
+</button>
+<div class="mb-2">
+<span class="text-label-sm font-label-sm text-outline tracking-widest uppercase">명사</span>
+</div>
+<h2 class="text-display-word-mobile md:text-display-word font-display-word-mobile md:font-display-word text-on-surface mb-2">Perseverance</h2>
+<p class="text-body-lg font-body-lg text-outline mb-8">/ˌpɜːrsəˈvɪrəns/</p>
+<div class="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
+<div class="text-headline-lg font-headline-lg text-primary mb-8">
+                    인내, 끈기
+                </div>
+<!-- Example Sentence Toggle Section -->
+<div class="w-full mt-4 p-6 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors text-left group" id="example-sentence-box" onclick="toggleSentenceTranslation()">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-outline mt-1">format_quote</span>
+<div>
+<p class="text-body-md font-body-md text-on-surface mb-2" id="eng-sentence">His <strong>perseverance</strong> was finally rewarded when he won the competition after years of trying.</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant opacity-0 h-0 transition-all duration-300 overflow-hidden" id="kor-sentence">수년간의 노력 끝에 대회에서 우승했을 때 그의 인내는 마침내 보상을 받았습니다.</p>
+</div>
+</div>
+<div class="text-center mt-2 opacity-50 group-hover:opacity-100 transition-opacity">
+<span class="text-[10px] text-outline font-bold uppercase tracking-widest">터치하여 번역 보기</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="w-full flex gap-4 mt-8">
+<button class="flex-1 h-touch-target md:h-14 bg-surface-container hover:bg-surface-variant text-on-surface rounded-xl flex items-center justify-center gap-2 font-headline-md text-headline-md transition-colors border border-outline-variant focus:ring-2 focus:ring-primary outline-none">
+<span class="material-symbols-outlined">replay</span>
+                    학습 중
+                </button>
+<button class="flex-1 h-touch-target md:h-14 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 font-headline-md text-headline-md shadow-md transition-all active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary outline-none">
+<span class="material-symbols-outlined">check_circle</span>
+                    학습 완료
+                </button>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full mt-10">
+<div class="flex justify-between text-label-sm font-label-sm text-outline mb-2">
+<span>학습 진행도</span>
+<span>24%</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full progress-bar-fill" style="width: 24%;"></div>
+</div>
+</div>
+</main>
+</div>
+<!-- Mobile BottomNavBar -->
+<nav class="bg-surface dark:bg-inverse-surface border-t border-outline-variant fixed bottom-0 w-full md:hidden z-50 shadow-lg pb-safe h-[80px] flex justify-around items-center px-2">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl px-4 py-2 w-16 h-14 scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-label-sm font-label-sm mt-1">학습</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-2xl transition-colors" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-label-sm font-label-sm mt-1">테스트</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-2xl transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="text-label-sm font-label-sm mt-1">PDF 출력</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant rounded-2xl transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm mt-1">설정</span>
+</a>
+</nav>
+<script>
+        function toggleSentenceTranslation() {
+            const korSentence = document.getElementById('kor-sentence');
+            if (korSentence.classList.contains('opacity-0')) {
+                korSentence.classList.remove('opacity-0', 'h-0');
+                korSentence.classList.add('opacity-100', 'h-auto', 'mt-2');
+            } else {
+                korSentence.classList.add('opacity-0', 'h-0');
+                korSentence.classList.remove('opacity-100', 'h-auto', 'mt-2');
+            }
+        }
+    </script>
+</body></html>

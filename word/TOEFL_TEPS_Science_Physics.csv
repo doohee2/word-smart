@@ -1,0 +1,81 @@
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
+mechanics,n.,"역학, 기계학",Classical mechanics describes the motion of macroscopic objects.,고전 역학은 거시적인 물체들의 운동을 설명한다.
+velocity,n.,속도,The rocket must reach escape velocity to leave the Earth's atmosphere.,로켓은 지구 대기권을 벗어나기 위해 탈출 속도에 도달해야 한다.
+acceleration,n.,가속(도),The car's rapid acceleration pushed the passengers back into their seats.,자동차의 빠른 가속은 승객들을 좌석 뒤로 밀착시켰다.
+inertia,n.,관성,"According to the law of inertia, an object at rest stays at rest.","관성의 법칙에 따르면, 정지해 있는 물체는 계속 정지해 있으려 한다."
+momentum,n.,"운동량, 추진력",A heavy truck moving fast has a large amount of momentum.,빠르게 움직이는 무거운 트럭은 큰 운동량을 가진다.
+friction,n.,마찰(력),Ice skating works well because there is very little friction on the ice.,아이스스케이팅은 얼음 위에서 마찰력이 거의 없기 때문에 잘 미끄러진다.
+gravity,n.,중력,Gravity is the force that attracts two bodies toward each other.,중력은 두 물체를 서로 끌어당기는 힘이다.
+mass,n.,질량,Mass is a measure of the amount of matter in an object.,질량은 물체에 있는 물질의 양을 나타내는 척도이다.
+weight,n.,"무게, 중량",An astronaut's weight on the moon is about one-sixth of that on Earth.,달에서의 우주비행사의 무게는 지구에서의 약 6분의 1이다.
+force,n.,"힘, 물리력",Applying an external force is necessary to change the object's direction.,물체의 방향을 바꾸려면 외부의 힘을 가하는 것이 필요하다.
+equilibrium,n.,평형 (상태),The bridge is designed to remain in a state of structural equilibrium.,그 다리는 구조적 평형 상태를 유지하도록 설계되었다.
+torque,n.,"회전력, 토크",You need a wrench with a longer handle to apply more torque.,더 많은 회전력을 가하려면 손잡이가 더 긴 렌치가 필요하다.
+pivot,n.,"회전축, 중심점",The door turns on a metal pivot.,그 문은 금속 회전축을 중심으로 돌아간다.
+kinematics,n.,운동학,Kinematics focuses on describing motion without considering the forces that cause it.,운동학은 운동을 일으키는 힘을 고려하지 않고 운동을 설명하는 데 초점을 맞춘다.
+dynamics,n.,"동역학, 역학 관계",Fluid dynamics studies the flow of liquids and gases.,유체 동역학은 액체와 기체의 흐름을 연구한다.
+static,adj.,"정적인, 정지 상태의",Static electricity can build up when you rub a balloon against your hair.,풍선을 머리카락에 문지르면 정전기가 발생할 수 있다.
+kinetic,adj.,"운동의, 운동에 의해 생기는",Kinetic energy is the energy an object possesses due to its motion.,운동 에너지는 물체가 운동으로 인해 가지는 에너지이다.
+oscillate,v.,"진동하다, 흔들리다",The pendulum continues to oscillate back and forth.,진자는 계속해서 앞뒤로 진동한다.
+vacuum,n.,진공,Sound waves cannot travel through a vacuum because they need a medium.,음파는 매질이 필요하기 때문에 진공을 통과할 수 없다.
+centrifugal,adj.,원심(성)의,Centrifugal force pulls objects away from the center of rotation.,원심력은 물체를 회전 중심에서 바깥쪽으로 끌어당긴다.
+thermodynamics,n.,열역학,The laws of thermodynamics govern the transfer of heat and energy.,열역학 법칙은 열과 에너지의 전달을 지배한다.
+entropy,n.,"엔트로피, 무질서도","In a closed system, entropy always tends to increase over time.",닫힌 계에서 엔트로피는 시간이 지남에 따라 항상 증가하는 경향이 있다.
+enthalpy,n.,"엔탈피, 열함량",The reaction causes a change in the system's total enthalpy.,그 반응은 계의 전체 엔탈피에 변화를 일으킨다.
+thermal,adj.,"열의, 보온의",Thermal imaging cameras can detect heat emitted by living bodies.,열화상 카메라는 생명체가 방출하는 열을 감지할 수 있다.
+conduction,n.,전도,Metals are generally good at heat conduction.,금속은 일반적으로 열전도에 뛰어나다.
+convection,n.,대류,Convection currents in the atmosphere are responsible for wind patterns.,대기 중의 대류 흐름은 바람 패턴의 원인이 된다.
+radiation,n.,"방사, 복사",The sun transfers heat to the Earth through electromagnetic radiation.,태양은 전자기 복사를 통해 지구로 열을 전달한다.
+conserve,v.,보존하다,The law of conservation of energy states that energy cannot be created or destroyed.,에너지 보존 법칙은 에너지가 생성되거나 소멸될 수 없다고 명시한다.
+dissipate,v.,"소멸되다, 흩어지다",The excess heat must dissipate quickly to prevent the engine from overheating.,엔진 과열을 막기 위해 잉여 열이 빠르게 분산되어야 한다.
+latent,adj.,"잠재하는, 숨어 있는","Latent heat is absorbed or released during a phase change, like melting.",잠열은 녹는 것과 같은 상태 변화 중에 흡수되거나 방출된다.
+insulate,v.,"절연하다, 단열하다",Materials like rubber and glass are used to insulate electrical wires.,고무와 유리 같은 재료는 전선을 절연하는 데 사용된다.
+kinetic,adj.,운동의,"When the ball falls, its potential energy is converted into kinetic energy.",공이 떨어질 때 그 위치 에너지는 운동 에너지로 변환된다.
+potential,adj.,"위치의, 잠재적인",Water stored behind a dam holds a massive amount of potential energy.,댐 뒤에 저장된 물은 막대한 양의 위치 에너지를 지니고 있다.
+elastic,adj.,"탄성의, 신축성 있는",An elastic collision is one where there is no net loss in kinetic energy.,탄성 충돌은 운동 에너지의 순손실이 없는 충돌이다.
+rigid,adj.,"단단한, 뻣뻣한",A rigid body does not deform when external forces are applied.,강체(단단한 물체)는 외부의 힘이 가해질 때 변형되지 않는다.
+calibrate,v.,"눈금을 매기다, 조정하다",The thermometer must be calibrated to ensure accurate temperature readings.,정확한 온도 측정을 보장하기 위해 온도계를 조정해야 한다.
+Celsius,n.,섭씨,Water freezes at zero degrees Celsius.,물은 섭씨 0도에서 언다.
+Fahrenheit,n.,화씨,"In the United States, temperature is usually measured in Fahrenheit.",미국에서는 온도를 보통 화씨로 측정한다.
+absolute,adj.,절대의,Absolute zero is the lowest possible temperature where molecular motion stops.,절대영도는 분자 운동이 멈추는 가장 낮은 가능한 온도이다.
+ambient,adj.,"주위의, 잔잔한",The sensor adjusts the screen brightness based on the ambient light.,센서는 주위 빛에 따라 화면 밝기를 조절한다.
+wavelength,n.,파장,Red light has a longer wavelength than blue light.,빨간빛은 파란빛보다 긴 파장을 가진다.
+frequency,n.,"주파수, 진동수",The pitch of a sound is determined by the frequency of its sound waves.,소리의 높낮이는 음파의 진동수에 의해 결정된다.
+amplitude,n.,진폭,The amplitude of a wave determines the loudness of a sound.,파동의 진폭은 소리의 크기를 결정한다.
+spectrum,n.,"스펙트럼, 범위",A prism can split white light into a spectrum of colors.,프리즘은 백색광을 색상의 스펙트럼으로 나눌 수 있다.
+reflection,n.,반사,You can see your face in the mirror because of light reflection.,당신은 빛의 반사 때문에 거울 속 자신의 얼굴을 볼 수 있다.
+refraction,n.,굴절,Refraction causes a straw in a glass of water to appear bent.,굴절은 물이 담긴 유리잔 속의 빨대가 휘어 보이게 만든다.
+diffraction,n.,회절,Diffraction occurs when waves bend around the edges of an obstacle.,회절은 파동이 장애물의 가장자리를 휘어 돌아갈 때 발생한다.
+dispersion,n.,분산,The dispersion of light creates the beautiful colors of a rainbow.,빛의 분산이 무지개의 아름다운 색깔들을 만들어낸다.
+convex,adj.,볼록한,A convex lens is thicker in the middle and magnifies objects.,볼록 렌즈는 가운데가 더 두껍고 물체를 확대한다.
+concave,adj.,오목한,Concave mirrors are often used in telescopes to gather light.,오목 거울은 빛을 모으기 위해 망원경에 종종 사용된다.
+photon,n.,"광자, 빛의 입자",A photon is a fundamental particle of visible light.,광자는 가시광선의 기본 입자이다.
+laser,n.,레이저,Laser technology is widely used in eye surgery.,레이저 기술은 안과 수술에서 널리 사용된다.
+emit,v.,"방출하다, 내뿜다",The sun emits enormous amounts of ultraviolet radiation.,태양은 엄청난 양의 자외선을 방출한다.
+absorb,v.,흡수하다,Dark surfaces tend to absorb more heat than light-colored ones.,어두운 표면은 밝은색 표면보다 열을 더 많이 흡수하는 경향이 있다.
+translucent,adj.,반투명한,"The frosted glass is translucent, allowing some light to pass through.",불투명 유리는 반투명하여 약간의 빛이 통과하게 해준다.
+transparent,adj.,투명한,The crystal-clear water in the lake is completely transparent.,호수의 수정처럼 맑은 물은 완전히 투명하다.
+opaque,adj.,불투명한,A brick wall is opaque and blocks all light.,벽돌 벽은 불투명해서 모든 빛을 차단한다.
+acoustics,n.,"음향학, 음향 상태",The concert hall was designed with careful attention to its acoustics.,그 콘서트홀은 음향 상태에 세심한 주의를 기울여 설계되었다.
+resonance,n.,"공명, 울림",The singer's voice was powerful enough to shatter the glass through resonance.,그 가수의 목소리는 공명을 통해 유리를 깰 만큼 강력했다.
+Doppler,n.,도플러 (효과),The Doppler effect explains why an ambulance siren changes pitch as it drives past you.,도플러 효과는 구급차 사이렌이 당신을 지나갈 때 음조가 변하는 이유를 설명한다.
+electron,n.,전자,Electrons carry a negative electrical charge.,전자는 음의 전하를 띤다.
+proton,n.,양성자,The number of protons in an atom determines its chemical element.,원자 내 양성자의 수가 그 화학 원소를 결정한다.
+neutron,n.,중성자,Neutrons are found in the nucleus of an atom and have no charge.,중성자는 원자의 핵에서 발견되며 전하를 띠지 않는다.
+nucleus,n.,"원자핵, 중심",Almost all of an atom's mass is concentrated in its tiny nucleus.,원자 질량의 거의 전부는 그 작은 원자핵에 집중되어 있다.
+atom,n.,원자,An atom is the smallest unit of ordinary matter.,원자는 일반 물질의 가장 작은 단위이다.
+molecule,n.,분자,A water molecule consists of two hydrogen atoms and one oxygen atom.,물 분자는 두 개의 수소 원자와 한 개의 산소 원자로 구성된다.
+particle,n.,입자,Quantum mechanics studies the behavior of subatomic particles.,양자 역학은 아원자 입자들의 행동을 연구한다.
+charge,n.,"전하, 충전",Opposite electrical charges attract each other.,반대되는 전하들은 서로 끌어당긴다.
+voltage,n.,전압,High voltage power lines can be very dangerous.,고전압 전력선은 매우 위험할 수 있다.
+current,n.,전류,An electric current is a flow of electric charge through a conductor.,전류는 도체를 통과하는 전하의 흐름이다.
+resistance,n.,저항,Materials with high electrical resistance are used as insulators.,전기 저항이 높은 물질은 절연체로 사용된다.
+circuit,n.,회로,"The battery, wires, and lightbulb form a simple electrical circuit.","배터리, 전선, 전구가 간단한 전기 회로를 구성한다."
+conductor,n.,도체,Copper is an excellent conductor of electricity.,구리는 전기를 매우 잘 통하게 하는 도체이다.
+insulator,n.,"절연체, 부도체",Plastic serves as an effective insulator for electrical cables.,플라스틱은 전기 케이블을 위한 효과적인 절연체 역할을 한다.
+magnetic,adj.,"자성의, 자석의",The Earth's magnetic field protects us from harmful solar radiation.,지구의 자기장은 유해한 태양 복사선으로부터 우리를 보호한다.
+pole,n.,극,A magnet always has a north pole and a south pole.,자석은 항상 북극과 남극을 가진다.
+quantum,n.,양자,Quantum computing represents a major leap forward in processing power.,양자 컴퓨팅은 처리 능력에서 주요한 도약을 의미한다.
+relativity,n.,상대성,Einstein's theory of relativity revolutionized our understanding of space and time.,아인슈타인의 상대성 이론은 시공간에 대한 우리의 이해에 혁명을 일으켰다.
+radioactive,adj.,방사능의,Uranium is a radioactive element used as fuel in nuclear reactors.,우라늄은 원자로의 연료로 사용되는 방사성 원소이다.
+isotope,n.,동위 원소,Carbon-14 is an isotope used to determine the age of ancient organic materials.,탄소-14는 고대 유기물의 연대를 측정하는 데 사용되는 동위 원소이다.

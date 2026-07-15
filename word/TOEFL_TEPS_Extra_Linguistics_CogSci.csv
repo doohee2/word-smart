@@ -1,0 +1,81 @@
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
+phonology,n.,음운론,Phonology studies the sound systems of individual languages.,음운론은 개별 언어의 음 체계를 연구한다.
+morphology,n.,형태론,Morphology is the study of how words are formed from morphemes.,형태론은 단어가 형태소로부터 어떻게 형성되는지를 연구하는 학문이다.
+syntax,n.,통사론,Syntax examines the rules governing sentence structure in a language.,통사론은 언어의 문장 구조를 지배하는 규칙을 검토한다.
+semantics,n.,의미론,Semantics explores how meaning is encoded in language.,의미론은 의미가 언어에 어떻게 암호화되는지 탐구한다.
+pragmatics,n.,화용론,Pragmatics studies how context affects the interpretation of meaning.,화용론은 맥락이 의미 해석에 어떻게 영향을 미치는지 연구한다.
+lexicon,n.,어휘 목록,The speaker's mental lexicon contains all the words they know.,화자의 정신적 어휘 목록은 그들이 아는 모든 단어를 포함한다.
+morpheme,n.,형태소,A morpheme is the smallest unit of meaning in a language.,형태소는 언어에서 의미를 가진 가장 작은 단위이다.
+phoneme,n.,음소,A phoneme is the smallest unit of sound that distinguishes meaning.,음소는 의미를 구별하는 가장 작은 소리 단위이다.
+dialect,n.,방언,A dialect is a variety of a language peculiar to a specific region.,방언은 특정 지역에 고유한 언어의 변종이다.
+bilingualism,n.,이중 언어 사용,Bilingualism can enhance cognitive flexibility in children.,이중 언어 사용은 아동의 인지적 유연성을 향상시킬 수 있다.
+acquisition,n.,습득,First language acquisition happens naturally in early childhood.,제1언어 습득은 유아기에 자연스럽게 일어난다.
+competence,n.,언어 능력,Linguistic competence refers to the underlying knowledge of language rules.,언어 능력은 언어 규칙에 대한 내재적 지식을 의미한다.
+performance,n.,언어 수행,Performance is how people actually use language in everyday speech.,언어 수행은 사람들이 일상 대화에서 언어를 실제로 사용하는 방식이다.
+sociolinguistics,n.,사회언어학,Sociolinguistics examines the relationship between language and society.,사회언어학은 언어와 사회 사이의 관계를 검토한다.
+discourse,n.,담화,Discourse analysis looks at language use beyond the sentence level.,담화 분석은 문장 단위를 넘어서는 언어 사용을 살펴본다.
+etymology,n.,어원학,Etymology traces the history and evolution of words over time.,어원학은 시간에 따른 단어의 역사와 진화를 추적한다.
+innateness,n.,"생득성, 선천성",Chomsky argued for the innateness of a universal grammar.,촘스키는 보편 문법의 생득성을 주장했다.
+universal grammar,n.,보편 문법,Universal grammar is the theory that humans are born with a mental structure for language.,보편 문법은 인간이 언어를 위한 정신적 구조를 가지고 태어난다는 이론이다.
+generative,adj.,생성적인,Generative grammar explains how people create infinite sentences.,생성 문법은 사람들이 어떻게 무한한 문장을 만드는지 설명한다.
+cognitive,adj.,인지적인,Cognitive linguistics relates language structure to human cognition.,인지 언어학은 언어 구조를 인간 인지와 연관 짓는다.
+corpus,n.,말뭉치,A corpus is a large collection of written or spoken texts used for analysis.,말뭉치는 분석을 위해 사용되는 방대한 문어 또는 구어 텍스트 모음이다.
+inference,n.,추론,Listeners make inferences based on the context of the conversation.,청자들은 대화의 맥락에 근거하여 추론을 한다.
+ambiguity,n.,모호성,Lexical ambiguity occurs when a word has more than one meaning.,어휘적 모호성은 단어가 하나 이상의 의미를 가질 때 발생한다.
+prescriptive,adj.,규범적인,Prescriptive grammar sets rules for how language 'should' be used.,규범 문법은 언어가 '어떻게' 사용되어야 하는지에 대한 규칙을 설정한다.
+descriptive,adj.,기술적인,Descriptive linguistics analyzes how language is 'actually' used.,기술 언어학은 언어가 '실제로' 어떻게 사용되는지를 분석한다.
+code-switching,n.,코드 전환,Bilingual speakers often engage in code-switching during casual conversations.,이중 언어 화자들은 종종 일상 대화 중 코드 전환을 한다.
+anaphora,n.,지시어(조응),Anaphora refers to the use of a word that refers back to a previous noun.,지시어는 앞선 명사를 다시 가리키는 단어의 사용을 의미한다.
+ellipsis,n.,생략,Ellipsis involves omitting words that are understood from context.,생략은 맥락상 이해되는 단어들을 빠뜨리는 것을 포함한다.
+collocation,n.,연어 (관용적 결합),Collocation is the tendency of words to appear together frequently.,연어는 단어들이 자주 함께 나타나는 경향이다.
+discourse markers,n.,담화 표지어,Discourse markers like 'well' or 'anyway' organize speech.,'글쎄'나 '어쨌든'과 같은 담화 표지어는 대화를 정리한다.
+register,n.,"말투, 어조",One's register depends on the social situation and the listener.,말투는 사회적 상황과 청자에 따라 달라진다.
+typology,n.,유형론,Linguistic typology classifies languages based on their structural features.,언어 유형론은 언어들을 구조적 특징에 기반하여 분류한다.
+inflection,n.,굴절,Inflection marks grammatical relationships like tense or number.,굴절은 시제나 수와 같은 문법적 관계를 표시한다.
+derivation,n.,파생,Derivation creates new words by adding affixes to root words.,파생은 어근에 접사를 더해 새로운 단어를 만든다.
+borrowing,n.,차용,English includes a lot of vocabulary through historical borrowing.,영어는 역사적인 차용을 통해 많은 어휘를 포함한다.
+slang,n.,속어,"Slang evolves rapidly, especially among younger generations.",속어는 특히 젊은 세대 사이에서 빠르게 진화한다.
+jargon,n.,전문 용어,Jargon helps professionals communicate efficiently within their field.,전문 용어는 전문가들이 자신의 분야 내에서 효율적으로 소통하도록 돕는다.
+dialectology,n.,방언학,Dialectology studies the regional variations of a language.,방언학은 언어의 지역적 변이를 연구한다.
+glottal,adj.,성문의,A glottal stop is a sound produced by obstructing airflow in the glottis.,성문 파열음은 성문에서 공기의 흐름을 막아 만들어지는 소리이다.
+accent,n.,"억양, 강세",Her accent reveals her regional origin immediately.,그녀의 억양은 그녀의 지역적 출신을 즉시 드러낸다.
+neuroscience,n.,신경과학,Neuroscience bridges biology and psychology to understand the brain.,신경과학은 뇌를 이해하기 위해 생물학과 심리학을 연결한다.
+neuroplasticity,n.,신경가소성,Neuroplasticity enables the brain to reorganize itself after injury.,신경가소성은 뇌가 부상 후 스스로를 재구성할 수 있게 한다.
+perception,n.,지각,Visual perception involves processing information from the eyes.,시각적 지각은 눈으로부터 오는 정보를 처리하는 것을 포함한다.
+attention,n.,주의력,Selective attention allows us to focus on relevant information.,선택적 주의력은 우리가 관련 정보에 집중하도록 한다.
+memory,n.,기억,Working memory holds information temporarily for current tasks.,작업 기억은 현재 과업을 위해 정보를 일시적으로 유지한다.
+learning,n.,학습,Neural pathways are strengthened through repeated learning.,신경 경로는 반복된 학습을 통해 강화된다.
+consciousness,n.,의식,The nature of consciousness remains one of science's greatest mysteries.,의식의 본질은 여전히 과학의 가장 큰 미스터리 중 하나이다.
+neural,adj.,신경의,Neural networks in the brain facilitate rapid communication.,뇌의 신경망은 빠른 소통을 촉진한다.
+synapse,n.,시냅스,A synapse is the junction between two nerve cells.,시냅스는 두 신경 세포 사이의 연결 지점이다.
+neurotransmitter,n.,신경전달물질,Dopamine is a key neurotransmitter for pleasure and motivation.,도파민은 즐거움과 동기에 핵심적인 신경전달물질이다.
+hebbian,adj.,헤브의 (학습),"Hebbian theory suggests that 'cells that fire together, wire together'.",헤브 이론은 '함께 발화하는 세포들은 함께 연결된다'고 제안한다.
+executive function,n.,집행 기능,Executive function helps control impulses and manage planning.,집행 기능은 충동을 조절하고 계획을 관리하도록 돕는다.
+metacognition,n.,메타인지,Metacognition is 'thinking about one's own thinking'.,메타인지는 '자신의 사고에 대해 생각하는 것'이다.
+schema,n.,스키마,A schema is a mental framework that helps organize information.,스키마는 정보를 조직하도록 돕는 정신적 뼈대이다.
+dual-coding,n.,이중 부호화,Dual-coding theory emphasizes using both verbal and visual information.,이중 부호화 이론은 언어 정보와 시각 정보를 모두 사용하는 것을 강조한다.
+priming,n.,점화 (효과),Priming is a technique where exposure to one stimulus influences another.,점화는 하나의 자극에 노출되는 것이 다른 것에 영향을 주는 기법이다.
+heuristic,n.,휴리스틱,Heuristics are mental shortcuts that simplify decision-making.,휴리스틱은 의사결정을 단순화하는 정신적 지름길이다.
+bias,n.,편향,Confirmation bias affects how we seek and interpret information.,확증 편향은 우리가 정보를 찾고 해석하는 방식에 영향을 준다.
+reasoning,n.,추론,Deductive reasoning moves from general rules to specific conclusions.,연역적 추론은 일반적 규칙에서 구체적 결론으로 나아간다.
+problem-solving,n.,문제 해결,Problem-solving requires both logic and creativity.,문제 해결은 논리와 창의성을 모두 요구한다.
+intelligence,n.,지능,Intelligence is often measured by abstract reasoning abilities.,지능은 종종 추상적 추론 능력에 의해 측정된다.
+creativity,n.,창의성,Divergent thinking is a key component of creative problem-solving.,확산적 사고는 창의적 문제 해결의 핵심 요소이다.
+emotion,n.,감정,The limbic system is primarily responsible for processing emotions.,변연계는 일차적으로 감정을 처리하는 책임을 진다.
+limbic,adj.,변연계의,The limbic system includes structures important for survival.,변연계는 생존에 중요한 구조들을 포함한다.
+hippocampus,n.,해마,The hippocampus plays a crucial role in forming new memories.,해마는 새로운 기억을 형성하는 데 결정적인 역할을 한다.
+amygdala,n.,편도체,The amygdala processes fear and emotional responses.,편도체는 공포와 감정적 반응을 처리한다.
+prefrontal,adj.,전두엽의,The prefrontal cortex manages complex decision-making.,전두엽 피질은 복잡한 의사결정을 관리한다.
+plasticity,n.,가소성,Experience-dependent plasticity is the brain's ability to adapt.,경험 의존적 가소성은 변화에 적응하는 뇌의 능력이다.
+lateralization,n.,측면화,Brain lateralization refers to the specialization of the two hemispheres.,뇌 측면화는 두 반구의 특수화를 의미한다.
+embodied,adj.,구체화된,Embodied cognition suggests that the body shapes the mind.,구체화된 인지는 신체가 마음을 형성한다고 제안한다.
+perception,n.,지각,The sensory systems provide the input for our perception of reality.,감각 체계는 현실 지각을 위한 입력을 제공한다.
+sensation,n.,감각,Sensation is the initial processing of environmental stimuli.,감각은 환경적 자극의 초기 처리 과정이다.
+pattern recognition,n.,패턴 인식,Pattern recognition is a fundamental aspect of human perception.,패턴 인식은 인간 지각의 근본적인 측면이다.
+cognitive load,n.,인지 부하,High cognitive load can hinder deep learning and focus.,높은 인지 부하는 깊은 학습과 집중을 방해할 수 있다.
+working memory,n.,작업 기억,Working memory capacity limits the information we can handle at once.,작업 기억 용량은 우리가 한 번에 처리할 수 있는 정보의 양을 제한한다.
+declarative,adj.,선언적인,Declarative memory involves facts and knowledge we can consciously recall.,선언적 기억은 우리가 의식적으로 회상할 수 있는 사실과 지식을 포함한다.
+procedural,adj.,절차적인,Procedural memory is responsible for skills like riding a bike.,절차적 기억은 자전거 타기와 같은 기술을 담당한다.
+implicit,adj.,암묵적인,Implicit memory affects behavior without conscious awareness.,암묵적 기억은 의식적 인지 없이 행동에 영향을 미친다.
+attention span,n.,주의 집중 시간,Digital habits may be shortening the average human attention span.,디지털 습관은 인간의 평균 주의 집중 시간을 단축시키고 있을지 모른다.
+metacognition,n.,메타인지,Developing metacognition improves students' ability to learn effectively.,메타인지를 기르는 것은 학생들이 효과적으로 배우는 능력을 향상시킨다.

@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Word Master - PDF Export</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#bbcabf",
+                    "primary": "#006c49",
+                    "on-primary": "#ffffff",
+                    "surface-dim": "#d4dcd5",
+                    "surface": "#f4fbf4",
+                    "surface-container-low": "#eef6ee",
+                    "surface-variant": "#dde4dd",
+                    "on-surface": "#161d19",
+                    "on-tertiary-container": "#523200",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#4648d4",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "on-primary-fixed": "#002113",
+                    "primary-fixed": "#6ffbbe",
+                    "on-primary-fixed-variant": "#005236",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "surface-container": "#e8f0e9",
+                    "surface-tint": "#006c49",
+                    "on-background": "#161d19",
+                    "surface-container-high": "#e3eae3",
+                    "tertiary-fixed": "#ffddb8",
+                    "surface-bright": "#f4fbf4",
+                    "on-tertiary": "#ffffff",
+                    "on-surface-variant": "#3c4a42",
+                    "on-primary-container": "#00422b",
+                    "inverse-surface": "#2b322d",
+                    "outline": "#6c7a71",
+                    "error": "#ba1a1a",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "inverse-primary": "#4edea3",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#ebf3eb",
+                    "secondary-fixed": "#e1e0ff",
+                    "background": "#f4fbf4",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed": "#07006c",
+                    "tertiary": "#855300",
+                    "on-tertiary-fixed": "#2a1700",
+                    "on-secondary-container": "#fffbff",
+                    "primary-container": "#10b981",
+                    "primary-fixed-dim": "#4edea3",
+                    "secondary-container": "#6063ee",
+                    "surface-container-highest": "#dde4dd",
+                    "tertiary-container": "#e29100",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-max": "1280px",
+                    "touch-target": "48px",
+                    "margin-mobile": "1.25rem",
+                    "margin-desktop": "2.5rem",
+                    "gutter": "1rem",
+                    "safe": "env(safe-area-inset-bottom)"
+            },
+            "fontFamily": {
+                    "headline-md": [
+                            "Inter"
+                    ],
+                    "display-word": [
+                            "Inter"
+                    ],
+                    "display-word-mobile": [
+                            "Inter"
+                    ],
+                    "headline-lg": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "headline-md": [
+                            "20px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-word": [
+                            "48px",
+                            {
+                                    "lineHeight": "56px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "display-word-mobile": [
+                            "36px",
+                            {
+                                    "lineHeight": "44px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "headline-lg": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "fontWeight": "400"
+                            }
+                    ]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 400,
+          'GRAD' 0,
+          'opsz' 24
+        }
+        .material-symbols-outlined.filled {
+          font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Ambient shadows for lifted elements */
+        .ambient-shadow-sm {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .ambient-shadow-md {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .ambient-shadow-lg {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        /* Custom scrollbar for preview */
+        .pdf-preview-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .pdf-preview-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .pdf-preview-scroll::-webkit-scrollbar-thumb {
+            background-color: #dde4dd;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col md:flex-row antialiased">
+<!-- TopAppBar (Web) -->
+<header class="hidden md:flex justify-between items-center w-full px-margin-desktop py-4 max-w-container-max mx-auto bg-surface shadow-sm docked full-width top-0 z-40 fixed">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary text-2xl">info</span>
+<span class="text-headline-lg font-headline-lg font-bold text-primary">Word Master</span>
+</div>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="hover:bg-surface-variant p-2 rounded-full transition-colors"><span class="material-symbols-outlined">settings</span></button>
+<button class="hover:bg-surface-variant p-2 rounded-full transition-colors"><span class="material-symbols-outlined">folder_open</span></button>
+<button class="hover:bg-surface-variant p-2 rounded-full transition-colors"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+</header>
+<!-- SideNavBar (Web) -->
+<nav class="hidden md:flex flex-col h-full left-0 top-0 w-64 bg-surface-container-low shadow-md fixed z-30 pt-24 p-4 gap-2">
+<div class="mb-8 px-4">
+<h2 class="text-headline-md font-headline-md font-black text-primary">Word Master</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Study Smart</p>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-label-sm font-label-sm">학습</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-label-sm font-label-sm">테스트</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container rounded-xl font-bold transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined filled">description</span>
+<span class="text-label-sm font-label-sm">PDF 출력</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all duration-200 ease-in-out mt-auto" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm">설정</span>
+</a>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col pt-4 md:pt-28 pb-24 md:pl-64 w-full max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop min-h-screen">
+<!-- Header -->
+<div class="mb-8 mt-4 md:mt-0">
+<h1 class="text-display-word-mobile md:text-display-word font-display-word-mobile md:font-display-word text-on-background mb-2">자료 출력</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant">학습 자료를 설정하고 미리보기 한 뒤 PDF로 저장하세요.</p>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 mb-8">
+<!-- Configuration Panel (Left/Top) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Deck Selection -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow-md border border-surface-variant">
+<h3 class="text-headline-md font-headline-md text-on-background mb-4">단어장 선택</h3>
+<button class="w-full flex items-center justify-between p-4 rounded-xl border border-outline-variant bg-surface hover:bg-surface-variant transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">folder</span>
+<span class="text-body-md font-body-md font-semibold text-on-surface">TOEFL Essential Vocab 1</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</button>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-3 ml-1">50 words selected</p>
+</div>
+<!-- Export Settings -->
+<div class="bg-surface-container-lowest rounded-2xl p-6 ambient-shadow-md border border-surface-variant flex-1 flex flex-col">
+<h3 class="text-headline-md font-headline-md text-on-background mb-4">설정</h3>
+<!-- Tabs for Config -->
+<div class="flex rounded-lg bg-surface-container-low p-1 mb-6">
+<button class="flex-1 py-2 text-center rounded-md bg-surface shadow-sm text-label-sm font-label-sm font-bold text-primary transition-all">
+                            학습지
+                        </button>
+<button class="flex-1 py-2 text-center rounded-md text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface transition-all">
+                            시험지
+                        </button>
+</div>
+<!-- Config Options (Dynamic based on tab) -->
+<div class="flex-1 flex flex-col gap-4">
+<!-- Toggle: Meaning -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex flex-col">
+<span class="text-body-md font-body-md font-medium text-on-surface">뜻 포함</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">한국어 뜻</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer focus:outline-none focus:ring-0 focus:ring-offset-0 transition-transform duration-200 ease-in-out translate-x-5 border-primary bg-primary" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary cursor-pointer transition-colors duration-200 ease-in-out" for="toggle1"></label>
+</div>
+</label>
+<!-- Toggle: Example Sentences -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex flex-col">
+<span class="text-body-md font-body-md font-medium text-on-surface">예문 포함</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">단어당 1개 예문</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer focus:outline-none focus:ring-0 focus:ring-offset-0 transition-transform duration-200 ease-in-out translate-x-5 border-primary bg-primary" id="toggle2" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-primary cursor-pointer transition-colors duration-200 ease-in-out" for="toggle2"></label>
+</div>
+</label>
+<!-- Toggle: Phonetics -->
+<label class="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+<div class="flex flex-col">
+<span class="text-body-md font-body-md font-medium text-on-surface">발음기호 포함</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">IPA 발음기호</span>
+</div>
+<div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 border-surface-variant appearance-none cursor-pointer focus:outline-none focus:ring-0 focus:ring-offset-0 transition-transform duration-200 ease-in-out" id="toggle3" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-5 rounded-full bg-surface-variant cursor-pointer transition-colors duration-200 ease-in-out" for="toggle3"></label>
+</div>
+</label>
+<!-- Layout Selection -->
+<div class="mt-4 pt-4 border-t border-surface-variant">
+<span class="text-body-md font-body-md font-medium text-on-surface block mb-3">단 수</span>
+<div class="flex gap-3">
+<button class="flex-1 py-2 rounded-lg border-2 border-primary bg-surface text-primary font-medium text-center">1단</button>
+<button class="flex-1 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-medium text-center hover:bg-surface-container-low transition-colors">2단</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Export Action Button (Desktop Only) -->
+<button class="hidden lg:flex w-full min-h-[48px] bg-primary text-on-primary rounded-xl items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors ambient-shadow-md py-4">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span class="text-headline-md font-headline-md font-bold">PDF로 저장</span>
+</button>
+</div>
+<!-- Preview Panel (Right/Bottom) -->
+<div class="lg:col-span-8 flex flex-col bg-surface-container-highest rounded-2xl p-2 md:p-6 ambient-shadow-md overflow-hidden relative min-h-[500px]">
+<!-- Preview Header Controls -->
+<div class="flex justify-between items-center mb-4 px-2">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined">visibility</span>
+<span class="text-label-sm font-label-sm font-bold">실시간 미리보기</span>
+</div>
+<div class="flex gap-2">
+<button class="p-1.5 rounded-lg bg-surface text-on-surface shadow-sm hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-sm">zoom_out</span></button>
+<button class="p-1.5 rounded-lg bg-surface text-on-surface shadow-sm hover:bg-surface-variant transition-colors"><span class="material-symbols-outlined text-sm">zoom_in</span></button>
+</div>
+</div>
+<!-- PDF Paper Mockup -->
+<div class="flex-1 bg-white mx-auto w-full max-w-2xl rounded-sm shadow-lg overflow-y-auto pdf-preview-scroll p-8 md:p-12 relative flex flex-col gap-6">
+<!-- Paper Header -->
+<div class="text-center border-b-2 border-on-surface pb-6 mb-2">
+<h2 class="text-headline-lg font-headline-lg font-bold text-on-surface">TOEFL Essential Vocab 1</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">학습지 - 1일차</p>
+</div>
+<!-- List Items (Simulated) -->
+<div class="flex flex-col gap-4">
+<!-- Word 1 -->
+<div class="flex flex-col gap-1 pb-4 border-b border-surface-variant border-dashed">
+<div class="flex items-baseline gap-3">
+<span class="text-body-lg font-body-lg font-bold text-on-surface">1. ubiquitous</span>
+<span class="text-body-md font-body-md text-on-surface-variant">[juːˈbɪkwɪtəs]</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">어디에나 있는, 아주 흔한</p>
+<p class="text-body-md font-body-md text-on-surface-variant italic mt-1 text-sm">Smartphones have become ubiquitous in modern society.</p>
+</div>
+<!-- Word 2 -->
+<div class="flex flex-col gap-1 pb-4 border-b border-surface-variant border-dashed">
+<div class="flex items-baseline gap-3">
+<span class="text-body-lg font-body-lg font-bold text-on-surface">2. ephemeral</span>
+<span class="text-body-md font-body-md text-on-surface-variant">[ɪˈfemərəl]</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">수명이 짧은, 단명하는</p>
+<p class="text-body-md font-body-md text-on-surface-variant italic mt-1 text-sm">Fashion is by nature ephemeral.</p>
+</div>
+<!-- Word 3 -->
+<div class="flex flex-col gap-1 pb-4 border-b border-surface-variant border-dashed">
+<div class="flex items-baseline gap-3">
+<span class="text-body-lg font-body-lg font-bold text-on-surface">3. paradigm</span>
+<span class="text-body-md font-body-md text-on-surface-variant">[ˈpærədaɪm]</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">전형적인 예, 방법론</p>
+<p class="text-body-md font-body-md text-on-surface-variant italic mt-1 text-sm">The war brought a shift in the political paradigm.</p>
+</div>
+<!-- Word 4 -->
+<div class="flex flex-col gap-1 pb-4 border-b border-surface-variant border-dashed opacity-70">
+<div class="flex items-baseline gap-3">
+<span class="text-body-lg font-body-lg font-bold text-on-surface">4. meticulous</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">꼼꼼한, 세심한</p>
+<p class="text-body-md font-body-md text-on-surface-variant italic mt-1 text-sm">He was meticulous in his preparation.</p>
+</div>
+<!-- Word 5 -->
+<div class="flex flex-col gap-1 pb-4 border-b border-surface-variant border-dashed opacity-50">
+<div class="flex items-baseline gap-3">
+<span class="text-body-lg font-body-lg font-bold text-on-surface">5. pragmatic</span>
+</div>
+<p class="text-body-md font-body-md text-primary font-medium">실용적인</p>
+</div>
+</div>
+<!-- Paper Footer -->
+<div class="mt-auto pt-6 text-center text-label-sm font-label-sm text-outline">
+                        Generated by Word Master
+                    </div>
+</div>
+</div>
+<!-- Mobile Export Button Fixed at bottom (above nav) -->
+<div class="lg:hidden fixed bottom-[calc(env(safe-area-inset-bottom)+70px)] left-0 w-full px-margin-mobile z-40">
+<button class="w-full min-h-[48px] bg-primary text-on-primary rounded-xl flex items-center justify-center gap-2 shadow-lg py-4">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+<span class="text-headline-md font-headline-md font-bold">PDF로 저장</span>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe h-touch-target bg-surface border-t border-outline-variant shadow-lg md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined">school</span>
+<span class="text-label-sm font-label-sm">학습</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="text-label-sm font-label-sm">테스트</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl px-4 py-2 scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined filled">description</span>
+<span class="text-label-sm font-label-sm font-bold">PDF 출력</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-2 hover:bg-surface-variant" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-sm font-label-sm">설정</span>
+</a>
+</nav>
+<script>
+        // Simple toggle logic for custom checkbox aesthetics (optional enhancement)
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const label = e.target.nextElementSibling;
+                if(e.target.checked) {
+                    e.target.classList.add('translate-x-5', 'border-primary', 'bg-primary');
+                    e.target.classList.remove('border-surface-variant');
+                    label.classList.add('bg-primary');
+                    label.classList.remove('bg-surface-variant');
+                } else {
+                    e.target.classList.remove('translate-x-5', 'border-primary', 'bg-primary');
+                    e.target.classList.add('border-surface-variant');
+                    label.classList.remove('bg-primary');
+                    label.classList.add('bg-surface-variant');
+                }
+            });
+        });
+    </script>
+</body></html>
