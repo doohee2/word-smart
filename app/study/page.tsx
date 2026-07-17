@@ -4,7 +4,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect } from "react";
-import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw } from "lucide-react";
+import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -135,6 +135,7 @@ export default function StudyPage() {
   };
 
   const currentWord = studyQueue[currentIndex];
+  const progressPercent = Math.round(((currentIndex + 1) / studyQueue.length) * 100) || 0;
 
   const variants = {
     enter: (direction: number) => ({
