@@ -3,7 +3,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, WordList } from "@/lib/db";
 import { useState } from "react";
-import { Check, Edit, Trash2, X, Download, CloudUpload, CloudDownload } from "lucide-react";
+import { Check, Edit, Trash2, X, Download, CloudUpload, CloudDownload, ChevronDown, ChevronUp } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import Papa from "papaparse";
 import { useSession } from "next-auth/react";
@@ -21,6 +21,7 @@ function WordListItem({
   const { status } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(list.title);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const stats = useLiveQuery(async () => {
     if (!list.id) return { total: 0, testCount: 0, rate: 0 };
@@ -80,82 +81,107 @@ function WordListItem({
   if (!stats) return null; // loading
 
   return (
-    <div className="bg-surface-container-lowest border border-surface-variant rounded-2xl p-5 flex flex-col md:flex-row gap-6 items-start md:items-center shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
+    <div className="bg-surface-container-lowest border border-surface-variant rounded-2xl p-3 md:p-4 flex flex-col shadow-sm hover:shadow-md transition-shadow group relative overflow-hidden">
       <div className="absolute top-0 left-0 w-1 h-full bg-primary rounded-l-2xl"></div>
-      <div className="flex items-start gap-4 flex-1 w-full">
-        {/* Checkbox (placeholder for active list selection in future) */}
-        <div className="mt-1" title="학습/테스트 범위에 포함하기">
-          <label className="flex items-center justify-center w-6 h-6 rounded border border-outline-variant cursor-pointer hover:bg-surface-variant has-[:checked]:bg-primary has-[:checked]:border-primary transition-colors">
-            <input className="sr-only" type="checkbox" checked={list.isActive || false} onChange={handleToggleActive} />
-            <Check size={16} className="text-white opacity-0 group-has-[:checked]:opacity-100" />
-          </label>
+      
+      {/* Header Row */}
+      <div className="flex items-center justify-between gap-2 w-full min-w-0">
+        <div className="flex items-start gap-4 flex-1 w-full min-w-0 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
+          {/* Checkbox */}
+          <div className="mt-1 shrink-0" title="학습/테스트 범위에 포함하기" onClick={(e) => e.stopPropagation()}>
+            <label className="flex items-center justify-center w-6 h-6 rounded border border-outline-variant cursor-pointer hover:bg-surface-variant has-[:checked]:bg-primary has-[:checked]:border-primary transition-colors">
+              <input className="sr-only" type="checkbox" checked={list.isActive || false} onChange={handleToggleActive} />
+              <Check size={16} className="text-white opacity-0 group-has-[:checked]:opacity-100" />
+            </label>
+          </div>
+          
+          <div className="flex-1 min-w-0 w-full">
+            {isEditing ? (
+              <div className="flex items-center gap-2 mb-1 w-full" onClick={(e) => e.stopPropagation()}>
+                <input 
+                  type="text" 
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  className="border-b border-primary bg-transparent outline-none text-headline-md font-bold text-on-surface flex-1 min-w-0"
+                  autoFocus
+                />
+                <button onClick={handleRename} className="text-primary hover:bg-surface-variant rounded-full p-1 shrink-0">
+                  <Check size={18} />
+                </button>
+                <button onClick={() => setIsEditing(false)} className="text-error hover:bg-error-container rounded-full p-1 shrink-0">
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 mb-1 w-full min-w-0">
+                <h3 className="text-title-md font-bold text-on-surface truncate flex-1 group-hover:text-primary transition-colors" title={list.title}>
+                  {list.title}
+                </h3>
+                <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }} className="text-outline shrink-0 hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-variant opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100">
+                  <Edit size={18} />
+                </button>
+              </div>
+            )}
+            <p className="text-label-sm text-on-surface-variant truncate">생성일: {Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(list.createdAt)}</p>
+          </div>
         </div>
-        
-        <div className="flex-1">
-          {isEditing ? (
-            <div className="flex items-center gap-2 mb-1">
-              <input 
-                type="text" 
-                value={editTitle}
-                onChange={(e) => setEditTitle(e.target.value)}
-                className="border-b border-primary bg-transparent outline-none text-headline-md font-bold text-on-surface w-full max-w-[200px]"
-                autoFocus
-              />
-              <button onClick={handleRename} className="text-primary hover:bg-surface-variant rounded-full p-1">
-                <Check size={18} />
-              </button>
-              <button onClick={() => setIsEditing(false)} className="text-error hover:bg-error-container rounded-full p-1">
-                <X size={18} />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-headline-md font-bold text-on-surface truncate group-hover:text-primary transition-colors">
-                {list.title}
-              </h3>
-              <button onClick={() => setIsEditing(true)} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-variant opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100">
-                <Edit size={18} />
-              </button>
-            </div>
-          )}
-          <p className="text-label-sm text-on-surface-variant">생성일: {list.createdAt.toLocaleDateString()}</p>
-        </div>
+
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)} 
+          className="shrink-0 text-outline hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant"
+        >
+          {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+        </button>
       </div>
 
-      <div className="flex flex-row items-center gap-6 w-full md:w-auto pl-10 md:pl-0 border-t border-surface-variant md:border-none pt-4 md:pt-0">
-        <div className="flex flex-col items-center min-w-[60px]">
-          <span className="text-headline-sm font-bold text-on-surface">{stats.total}</span>
-          <span className="text-[10px] uppercase tracking-wider text-outline font-semibold">단어 수</span>
-        </div>
-        <div className="w-px h-8 bg-surface-variant hidden md:block"></div>
-        <div className="flex flex-col items-center min-w-[60px]">
-          <span className="text-headline-sm font-bold text-on-surface">{stats.testCount}</span>
-          <span className="text-[10px] uppercase tracking-wider text-outline font-semibold">테스트 횟수</span>
-        </div>
-        <div className="w-px h-8 bg-surface-variant hidden md:block"></div>
-        <div className="flex-1 md:w-40 flex flex-col gap-1.5">
-          <div className="flex justify-between items-end">
-            <span className="text-[10px] uppercase tracking-wider text-outline font-semibold">학습 완료율</span>
-            <span className="text-label-sm font-bold text-primary">{stats.rate}%</span>
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className="flex flex-row items-center justify-between gap-2 w-full mt-3 pt-3 border-t border-surface-variant animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex flex-row items-center gap-1 md:gap-4 flex-1 min-w-0">
+            <div className="flex flex-col items-center min-w-[32px] md:min-w-[60px]">
+              <span className="text-[13px] md:text-headline-sm font-bold text-on-surface">{stats.total}</span>
+              <span className="text-[9px] md:text-[10px] text-outline font-semibold">단어</span>
+            </div>
+            <div className="w-px h-6 bg-surface-variant"></div>
+            <div className="flex flex-col items-center min-w-[32px] md:min-w-[60px]">
+              <span className="text-[13px] md:text-headline-sm font-bold text-on-surface">{stats.testCount}</span>
+              <span className="text-[9px] md:text-[10px] text-outline font-semibold">테스트</span>
+            </div>
+            <div className="w-px h-6 bg-surface-variant"></div>
+            
+            {/* Mobile Rate (No Bar) */}
+            <div className="flex md:hidden flex-col items-center min-w-[32px]">
+              <span className="text-[13px] font-bold text-primary">{stats.rate}%</span>
+              <span className="text-[9px] text-outline font-semibold">완료율</span>
+            </div>
+            
+            {/* PC Rate (With Bar) */}
+            <div className="hidden md:flex flex-1 md:w-32 flex-col gap-1 justify-center">
+              <div className="flex justify-between items-end">
+                <span className="text-[10px] text-outline font-semibold">완료율</span>
+                <span className="text-label-sm font-bold text-primary">{stats.rate}%</span>
+              </div>
+              <div className="w-full bg-surface-variant rounded-full h-2 overflow-hidden">
+                <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${stats.rate}%` }}></div>
+              </div>
+            </div>
           </div>
-          <div className="w-full bg-surface-variant rounded-full h-2 overflow-hidden">
-            <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${stats.rate}%` }}></div>
-          </div>
-        </div>
-        <div className="flex items-center ml-auto md:ml-4 gap-1">
-          <button onClick={handleExportCSV} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant min-h-touch-target min-w-touch-target" title="CSV로 내보내기">
-            <Download size={20} />
-          </button>
-          {status === "authenticated" && (
-            <button onClick={handleUploadDB} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant min-h-touch-target min-w-touch-target" title="DB로 업로드">
-              <CloudUpload size={20} />
+          
+          <div className="flex items-center justify-end gap-1 shrink-0">
+            <button onClick={handleExportCSV} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full hover:bg-surface-variant" title="CSV로 내보내기">
+              <Download className="w-4 h-4 md:w-5 md:h-5" />
             </button>
-          )}
-          <button onClick={handleDelete} className="text-outline hover:text-error transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-error-container min-h-touch-target min-w-touch-target" title="삭제">
-            <Trash2 size={20} />
-          </button>
+            {status === "authenticated" && (
+              <button onClick={handleUploadDB} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full hover:bg-surface-variant" title="DB로 업로드">
+                <CloudUpload className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            )}
+            <button onClick={handleDelete} className="text-outline hover:text-error transition-colors flex items-center justify-center w-8 h-8 md:w-10 md:h-10 rounded-full hover:bg-error-container" title="삭제">
+              <Trash2 className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -166,6 +192,20 @@ export default function SettingsPage() {
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, listToDelete: WordList | null}>({isOpen: false, listToDelete: null});
   const [uploadStatus, setUploadStatus] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', isUploading: boolean}>({isOpen: false, message: '', type: 'info', isUploading: false});
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+
+  const isAllActive = lists && lists.length > 0 && lists.every(l => l.isActive);
+
+  const handleToggleAll = async () => {
+    if (!lists) return;
+    const newValue = !isAllActive;
+    await Promise.all(
+      lists.map(list => {
+        if (list.id) {
+          return db.wordLists.update(list.id, { isActive: newValue });
+        }
+      })
+    );
+  };
 
   const confirmDelete = async () => {
     const list = modalConfig.listToDelete;
@@ -197,24 +237,30 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col pt-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="w-full h-full flex flex-col pt-4">
+      <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-headline-lg font-bold text-on-surface mb-2">단어장 관리</h1>
+          <div className="flex items-center gap-3 mb-1">
+            <label className="group flex items-center justify-center w-7 h-7 rounded border-2 border-outline-variant cursor-pointer hover:bg-surface-variant has-[:checked]:bg-primary has-[:checked]:border-primary transition-colors shrink-0" title="전체 선택 / 해제">
+              <input className="sr-only" type="checkbox" checked={isAllActive || false} onChange={handleToggleAll} />
+              <Check size={18} className="text-white opacity-0 group-has-[:checked]:opacity-100 transition-opacity" />
+            </label>
+            <h1 className="text-headline-lg font-bold text-on-surface">단어장 관리</h1>
+          </div>
           <p className="text-body-md text-on-surface-variant">저장된 단어장을 관리하고 학습 현황을 확인하세요.</p>
         </div>
         {status === "authenticated" && (
           <button 
             onClick={() => setIsDownloadModalOpen(true)} 
-            className="flex items-center gap-2 px-5 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-colors shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-colors shadow-sm"
           >
-            <CloudDownload size={20} />
+            <CloudDownload size={18} />
             DB에서 다운로드
           </button>
         )}
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-2">
         {lists === undefined ? (
           <p className="text-on-surface-variant">로딩 중...</p>
         ) : lists.length === 0 ? (

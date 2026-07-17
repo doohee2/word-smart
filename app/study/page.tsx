@@ -196,11 +196,7 @@ export default function StudyPage() {
 
   return (
     <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4 relative">
-      <div className="mb-4">
-        <div className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface">
-          학습 대상: {activeLists.map(l => l.title).join(', ')}
-        </div>
-      </div>
+
 
       {!isStarted ? (
         // --- Pre-start Screen ---
@@ -215,11 +211,15 @@ export default function StudyPage() {
           
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="w-full h-14 mt-auto bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+            className="w-full h-14 mt-auto mb-4 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
           >
             <Play size={20} />
             학습 시작
           </button>
+          
+          <div className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-4 text-xs text-on-surface break-words whitespace-pre-wrap leading-relaxed">
+            선택된 단어장: {activeLists.map(l => l.title).join(', ')}
+          </div>
         </div>
       ) : (
         // --- Study Screen ---
