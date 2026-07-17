@@ -14,6 +14,7 @@ declare module "next-auth" {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function refreshAccessToken(token: any) {
   try {
     const url =

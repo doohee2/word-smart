@@ -9,7 +9,7 @@ import { db } from "@/lib/db";
 import { useRouter } from "next/navigation";
 
 export function FileOpenButton() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
   const router = useRouter();
@@ -22,6 +22,7 @@ export function FileOpenButton() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const saveToDb = async (fileName: string, data: any[]) => {
     try {
       const listId = await db.wordLists.add({
@@ -60,9 +61,11 @@ export function FileOpenButton() {
     Papa.parse(csvText, {
       header: true,
       skipEmptyLines: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       complete: (results: Papa.ParseResult<any>) => {
         saveToDb(fileName, results.data);
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       error: (error: any) => {
         console.error("CSV Parse Error:", error);
         alert("CSV 파일을 파싱하는 데 실패했습니다.");

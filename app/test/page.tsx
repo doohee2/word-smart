@@ -1,10 +1,17 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef } from "react";
-import { Lightbulb, Send } from "lucide-react";
+import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder } from "lucide-react";
 import clsx from "clsx";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface TestWord {
+  wordData: Word;
+  testMode: 'mcq' | 'spelling';
+}
 
 export default function TestPage() {
   const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
@@ -15,11 +22,16 @@ export default function TestPage() {
     [selectedListId]
   );
 
-  const [mode, setMode] = useState<'mcq' | 'spelling'>('mcq');
-  const [testWords, setTestWords] = useState<Word[]>([]);
+  // Pre-start Configuration
+  const [isStarted, setIsStarted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [testCount, setTestCount] = useState<number | string>(30);
+  const [onlyUnlearned, setOnlyUnlearned] = useState(false);
+  const [questionType, setQuestionType] = useState<'english' | 'korean' | 'random'>('random');
+
+  // Runtime State
+  const [testQueue, setTestQueue] = useState<TestWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  
-  // Stats
   const [score, setScore] = useState(0);
   const [totalTested, setTotalTested] = useState(0);
 
@@ -35,31 +47,68 @@ export default function TestPage() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState("");
 
-  // Auto select list
   useEffect(() => {
     if (lists && lists.length > 0 && selectedListId === null) {
       setSelectedListId(lists[0].id!);
     }
   }, [lists, selectedListId]);
 
-  // Shuffle words for test
   useEffect(() => {
-    if (rawWords && rawWords.length > 0) {
-      const shuffled = [...rawWords].sort(() => 0.5 - Math.random());
-      setTestWords(shuffled);
-      setCurrentIndex(0);
-      setScore(0);
-      setTotalTested(0);
-    } else {
-      setTestWords([]);
-    }
-  }, [rawWords, selectedListId, mode]);
+    setIsStarted(false);
+    setIsModalOpen(false);
+    setTestQueue([]);
+    setCurrentIndex(0);
+  }, [selectedListId]);
 
-  const currentWord = testWords[currentIndex];
+  const handleStartTest = () => {
+    if (!rawWords) return;
+    
+    let pool = [...rawWords];
+    if (onlyUnlearned) pool = pool.filter(w => !w.isLearned);
+    
+    if (pool.length === 0) {
+      alert("조건에 맞는 단어가 없습니다.");
+      return;
+    }
+    
+    pool.sort(() => 0.5 - Math.random());
+    const count = typeof testCount === 'number' ? testCount : parseInt(testCount) || 30;
+    
+    let selectedWords: Word[] = [];
+    if (count <= pool.length) {
+      selectedWords = pool.slice(0, count);
+    } else {
+      selectedWords = [...pool];
+      let remaining = count - pool.length;
+      while (remaining > 0) {
+        selectedWords.push(pool[Math.floor(Math.random() * pool.length)]);
+        remaining--;
+      }
+    }
+    
+    const queue: TestWord[] = selectedWords.map(w => {
+      let m: 'mcq' | 'spelling' = 'mcq';
+      if (questionType === 'english') m = 'mcq';
+      else if (questionType === 'korean') m = 'spelling';
+      else m = Math.random() > 0.5 ? 'mcq' : 'spelling';
+      return { wordData: w, testMode: m };
+    });
+    
+    setTestQueue(queue);
+    setCurrentIndex(0);
+    setScore(0);
+    setTotalTested(0);
+    setIsStarted(true);
+    setIsModalOpen(false);
+  };
+
+  const currentItem = testQueue[currentIndex];
+  const currentWord = currentItem?.wordData;
+  const currentMode = currentItem?.testMode;
 
   // Prepare options for MCQ
   useEffect(() => {
-    if (mode === 'mcq' && currentWord && rawWords && rawWords.length > 0) {
+    if (currentMode === 'mcq' && currentWord && rawWords && rawWords.length > 0) {
       const meanings = new Set<string>();
       meanings.add(currentWord.meaningKo);
       
@@ -71,24 +120,23 @@ export default function TestPage() {
         meanings.add(m);
       }
       
-      // If pool is too small, fallback
       while (meanings.size < 8 && meanings.size < rawWords.length) {
         meanings.add(`오답 ${meanings.size}`);
       }
       
       setOptions(Array.from(meanings).sort(() => 0.5 - Math.random()));
     }
-  }, [currentWord, mode, rawWords]);
+  }, [currentWord, currentMode, rawWords]);
 
   // Reset spelling state on new word
   useEffect(() => {
-    if (mode === 'spelling') {
+    if (currentMode === 'spelling') {
       setSpellingInput("");
       setRevealedIndices([]);
       setFeedback(null);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [currentWord, mode]);
+  }, [currentWord, currentMode]);
 
   const handleNextWord = async (isCorrect: boolean) => {
     if (!currentWord) return;
@@ -104,19 +152,17 @@ export default function TestPage() {
 
     setTimeout(() => {
       setFeedback(null);
-      if (currentIndex < testWords.length - 1) {
+      if (currentIndex < testQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
       } else {
-        // Reshuffle or end
-        const shuffled = [...testWords].sort(() => 0.5 - Math.random());
-        setTestWords(shuffled);
-        setCurrentIndex(0);
+        alert(`테스트 완료! 최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`);
+        setIsStarted(false);
       }
     }, 1500);
   };
 
   const handleMCQSelect = (selectedMeaning: string) => {
-    if (feedback) return; // Prevent multiple clicks
+    if (feedback) return;
     
     const isCorrect = selectedMeaning === currentWord.meaningKo;
     setFeedback(isCorrect ? 'correct' : 'incorrect');
@@ -134,7 +180,6 @@ export default function TestPage() {
       setFeedback('correct');
       handleNextWord(true);
     } else {
-      // Reveal a hint
       const wordLen = currentWord.word.length;
       if (revealedIndices.length < wordLen - 1) {
         const available = Array.from({length: wordLen}, (_, i) => i).filter(i => !revealedIndices.includes(i) && currentWord.word[i] !== ' ');
@@ -142,9 +187,8 @@ export default function TestPage() {
           const toReveal = available[Math.floor(Math.random() * available.length)];
           setRevealedIndices(prev => [...prev, toReveal]);
         }
-        setSpellingInput(""); // Clear input to try again
+        setSpellingInput("");
       } else {
-        // Failed completely
         setFeedback('incorrect');
         setCorrectAnswer(currentWord.word);
         handleNextWord(false);
@@ -152,7 +196,6 @@ export default function TestPage() {
     }
   };
 
-  // Helper to render spelling hint
   const renderSpellingHint = () => {
     if (!currentWord) return null;
     return currentWord.word.split('').map((char, idx) => {
@@ -160,6 +203,14 @@ export default function TestPage() {
         return <span key={idx} className="mx-1 font-bold text-primary">{char}</span>;
       }
       return <span key={idx} className="mx-1 text-outline">_</span>;
+    });
+  };
+
+  const adjustCount = (delta: number) => {
+    setTestCount(prev => {
+      const current = typeof prev === 'number' ? prev : parseInt(prev) || 0;
+      const next = current + delta;
+      return next > 0 ? next : 1;
     });
   };
 
@@ -180,60 +231,66 @@ export default function TestPage() {
     );
   }
 
-  return (
-    <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4">
-      {/* Header & Stats */}
-      <section className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div className="w-full md:w-auto">
-          <h2 className="text-headline-lg font-bold text-on-surface mb-2">단어 테스트</h2>
-          <select 
-            value={selectedListId || ""}
-            onChange={(e) => setSelectedListId(Number(e.target.value))}
-            className="w-full md:w-auto bg-surface-container border border-outline-variant rounded-xl px-4 py-2 text-label-sm font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
-          >
-            {lists.map(l => (
-              <option key={l.id} value={l.id}>{l.title}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div className="flex gap-4 w-full md:w-auto">
-          <div className="bg-surface-container-lowest shadow-sm rounded-xl p-4 flex-1 md:w-32 text-center border border-surface-variant">
-            <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">점수</p>
-            <p className="text-headline-md font-bold text-primary mt-1">{score} / {totalTested}</p>
-          </div>
-          <div className="bg-surface-container-lowest shadow-sm rounded-xl p-4 flex-1 md:w-32 text-center border border-surface-variant">
-            <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">정확도</p>
-            <p className="text-headline-md font-bold text-secondary mt-1">{accuracy}%</p>
-          </div>
-        </div>
-      </section>
+  const selectedList = lists.find(l => l.id === selectedListId);
 
-      {/* Mode Toggle */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-surface-container shadow-sm rounded-full p-1 inline-flex">
-          <button 
-            onClick={() => setMode('mcq')}
-            className={clsx("px-6 py-2 rounded-full text-label-sm font-bold transition-all", mode === 'mcq' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
-          >
-            객관식
-          </button>
-          <button 
-            onClick={() => setMode('spelling')}
-            className={clsx("px-6 py-2 rounded-full text-label-sm font-bold transition-all", mode === 'spelling' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
-          >
-            주관식
-          </button>
-        </div>
+  return (
+    <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4 relative">
+      <div className="mb-4">
+        <select 
+          value={selectedListId || ""}
+          onChange={(e) => setSelectedListId(Number(e.target.value))}
+          disabled={isStarted}
+          className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer disabled:opacity-50"
+        >
+          {lists.map(l => (
+            <option key={l.id} value={l.id}>{l.title}</option>
+          ))}
+        </select>
       </div>
 
-      {testWords.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-on-surface-variant">
-          이 단어장에는 테스트할 단어가 없습니다.
+      {!isStarted ? (
+        // --- Pre-start Screen ---
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
+              <Folder size={40} className="text-primary" />
+            </div>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2">{selectedList?.title}</h2>
+            <p className="text-body-md text-on-surface-variant">테스트를 통해 실력을 점검하세요.</p>
+          </div>
+          
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-full h-14 mt-auto bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+          >
+            <Play size={20} />
+            테스트 시작
+          </button>
         </div>
       ) : (
-        <div className="w-full max-w-3xl mx-auto flex-1 flex flex-col">
-          {mode === 'mcq' && currentWord && (
+        // --- Test Screen ---
+        <div className="flex-1 flex flex-col w-full max-w-3xl mx-auto">
+          <section className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="w-full md:w-auto flex items-center gap-2 text-on-surface-variant">
+              <Folder size={20} />
+              <span className="text-label-sm uppercase tracking-wider font-bold truncate max-w-[200px]">
+                {selectedList?.title}
+              </span>
+            </div>
+            
+            <div className="flex gap-4 w-full md:w-auto">
+              <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
+                <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">점수</p>
+                <p className="text-headline-md font-bold text-primary mt-1">{score} / {totalTested}</p>
+              </div>
+              <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
+                <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">정확도</p>
+                <p className="text-headline-md font-bold text-secondary mt-1">{accuracy}%</p>
+              </div>
+            </div>
+          </section>
+
+          {currentMode === 'mcq' && currentWord && (
             <div className="flex-1">
               <div className={clsx(
                 "bg-surface-container-lowest shadow-sm rounded-2xl p-8 mb-6 border text-center transition-all",
@@ -291,7 +348,7 @@ export default function TestPage() {
             </div>
           )}
 
-          {mode === 'spelling' && currentWord && (
+          {currentMode === 'spelling' && currentWord && (
             <div className="flex-1 flex flex-col">
               <div className={clsx(
                 "bg-surface-container-lowest shadow-sm rounded-2xl p-8 mb-6 border text-center transition-all",
@@ -307,7 +364,7 @@ export default function TestPage() {
                 
                 {currentWord.exampleKo && (
                   <div className="mt-4 text-on-surface-variant text-body-lg">
-                    "{currentWord.exampleKo}"
+                    &quot;{currentWord.exampleKo}&quot;
                   </div>
                 )}
 
@@ -347,6 +404,102 @@ export default function TestPage() {
           )}
         </div>
       )}
+
+      {/* Configuration Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 p-4">
+            <motion.div 
+              initial={{ y: 300, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 300, opacity: 0 }}
+              className="bg-surface w-full max-w-md rounded-t-[32px] md:rounded-[32px] p-6 shadow-xl flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-headline-md font-bold text-on-surface flex items-center gap-2">
+                  <Settings2 size={24} className="text-primary" />
+                  테스트 설정
+                </h3>
+                <button onClick={() => setIsModalOpen(false)} className="p-2 bg-surface-container rounded-full text-on-surface-variant hover:bg-surface-variant">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-6 mb-8">
+                {/* 단어 수 조절 */}
+                <div>
+                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">테스트 단어 수</label>
+                  <div className="flex items-center gap-4 bg-surface-container p-2 rounded-2xl">
+                    <button onClick={() => adjustCount(-10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                      <Minus size={20} />
+                    </button>
+                    <input 
+                      type="number" 
+                      value={testCount}
+                      onChange={(e) => setTestCount(e.target.value)}
+                      className="flex-1 bg-transparent text-center text-headline-lg font-bold text-on-surface outline-none"
+                    />
+                    <button onClick={() => adjustCount(10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                      <Plus size={20} />
+                    </button>
+                  </div>
+                  <p className="text-body-sm text-on-surface-variant mt-2 px-1">
+                    단어장에 있는 수({rawWords.length}개)보다 많은 수를 입력하면 랜덤하게 반복 출제됩니다.
+                  </p>
+                </div>
+
+                {/* 미완료 필터 */}
+                <label className="flex items-center justify-between p-4 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors">
+                  <span className="text-body-lg font-bold text-on-surface">미완료 단어만 출제하기</span>
+                  <div className="relative">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only" 
+                      checked={onlyUnlearned} 
+                      onChange={(e) => setOnlyUnlearned(e.target.checked)} 
+                    />
+                    <div className={clsx("w-12 h-6 rounded-full transition-colors", onlyUnlearned ? "bg-primary" : "bg-outline-variant")}>
+                      <div className={clsx("w-4 h-4 rounded-full bg-white absolute top-1 transition-transform", onlyUnlearned ? "translate-x-7" : "translate-x-1")}></div>
+                    </div>
+                  </div>
+                </label>
+
+                {/* 출제 유형 */}
+                <div>
+                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
+                  <div className="flex bg-surface-container rounded-xl p-1">
+                    <button 
+                      onClick={() => setQuestionType('english')}
+                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'english' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                    >
+                      영어만 (객관식)
+                    </button>
+                    <button 
+                      onClick={() => setQuestionType('korean')}
+                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'korean' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                    >
+                      한글만 (주관식)
+                    </button>
+                    <button 
+                      onClick={() => setQuestionType('random')}
+                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'random' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                    >
+                      무작위 섞어서
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleStartTest}
+                className="w-full h-14 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+              >
+                설정 완료 및 시작
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

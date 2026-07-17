@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, HelpCircle, FileText, Settings, PlaySquare } from "lucide-react";
+import { BookOpen, FileText, Settings, PlaySquare } from "lucide-react";
 import clsx from "clsx";
 
 export function Navigation() {

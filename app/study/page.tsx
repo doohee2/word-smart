@@ -1,9 +1,9 @@
 "use client";
 
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/lib/db";
+import { db, Word } from "@/lib/db";
 import { useState, useEffect } from "react";
-import { Folder, Volume2, Quote, RotateCcw, CheckCircle } from "lucide-react";
+import { Folder, Volume2, Quote, RotateCcw, CheckCircle, Play, Settings2, X, Plus, Minus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 
@@ -11,70 +11,105 @@ export default function StudyPage() {
   const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
 
-  // Once lists are loaded, auto-select the first one if none selected
+  const rawWords = useLiveQuery(
+    () => selectedListId ? db.words.where('listId').equals(selectedListId).toArray() : [],
+    [selectedListId]
+  );
+
+  // Pre-start Configuration
+  const [isStarted, setIsStarted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [studyCount, setStudyCount] = useState<number | string>(30);
+  const [onlyUnlearned, setOnlyUnlearned] = useState(false);
+  
+  // Runtime State
+  const [studyQueue, setStudyQueue] = useState<Word[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [showKoSentence, setShowKoSentence] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const [sessionLearnedCount, setSessionLearnedCount] = useState(0);
+
   useEffect(() => {
     if (lists && lists.length > 0 && selectedListId === null) {
       setSelectedListId(lists[0].id!);
     }
   }, [lists, selectedListId]);
 
-  const words = useLiveQuery(
-    () => selectedListId ? db.words.where('listId').equals(selectedListId).toArray() : [],
-    [selectedListId]
-  );
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showKoSentence, setShowKoSentence] = useState(false);
-  const [direction, setDirection] = useState(1); // 1 for right (next)
-
-  // Reset index when changing list
   useEffect(() => {
+    // Reset state when list changes
+    setIsStarted(false);
+    setIsModalOpen(false);
+    setStudyQueue([]);
     setCurrentIndex(0);
-    setShowKoSentence(false);
+    setSessionLearnedCount(0);
   }, [selectedListId]);
 
-  if (lists === undefined || words === undefined) {
-    return <div className="flex-1 flex items-center justify-center">로딩 중...</div>;
-  }
-
-  if (lists.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">단어장이 없습니다.</h2>
-        <p className="text-body-md text-on-surface-variant">
-          우측 상단의 폴더 버튼을 눌러 CSV 단어장을 추가해주세요.
-        </p>
-      </div>
-    );
-  }
-
-  const selectedList = lists.find(l => l.id === selectedListId);
-  const totalWords = words.length;
-  const learnedCount = words.filter(w => w.isLearned).length;
-  const progressPercent = totalWords === 0 ? 0 : Math.round((learnedCount / totalWords) * 100);
-
-  const currentWord = words[currentIndex];
+  const handleStartStudy = () => {
+    if (!rawWords) return;
+    
+    let pool = [...rawWords];
+    if (onlyUnlearned) {
+      pool = pool.filter(w => !w.isLearned);
+    }
+    
+    if (pool.length === 0) {
+      alert("조건에 맞는 단어가 없습니다.");
+      return;
+    }
+    
+    // Shuffle pool
+    pool.sort(() => 0.5 - Math.random());
+    
+    const count = typeof studyCount === 'number' ? studyCount : parseInt(studyCount) || 30;
+    
+    let queue: Word[] = [];
+    if (count <= pool.length) {
+      queue = pool.slice(0, count);
+    } else {
+      // Need more than pool size
+      queue = [...pool]; // Ensure all appear once
+      let remaining = count - pool.length;
+      while (remaining > 0) {
+        queue.push(pool[Math.floor(Math.random() * pool.length)]);
+        remaining--;
+      }
+    }
+    
+    setStudyQueue(queue);
+    setCurrentIndex(0);
+    setSessionLearnedCount(0);
+    setIsStarted(true);
+    setIsModalOpen(false);
+  };
 
   const handleNext = async (learned: boolean) => {
+    const currentWord = studyQueue[currentIndex];
     if (!currentWord) return;
 
-    // Update DB if state changed
-    if (learned !== currentWord.isLearned) {
-      await db.words.update(currentWord.id!, { isLearned: learned });
+    if (learned && !currentWord.isLearned) {
+      await db.words.update(currentWord.id!, { isLearned: true });
+      // Update local object to reflect for duplicate instances in queue
+      currentWord.isLearned = true;
+    } else if (!learned && currentWord.isLearned) {
+      await db.words.update(currentWord.id!, { isLearned: false });
+      currentWord.isLearned = false;
     }
+
+    if (learned) setSessionLearnedCount(prev => prev + 1);
 
     setShowKoSentence(false);
     setDirection(1);
     
-    // Find next word (cycle)
-    if (currentIndex < totalWords - 1) {
+    if (currentIndex < studyQueue.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      // Reached the end
-      alert("단어장의 마지막 단어입니다. 처음부터 다시 시작합니다.");
-      setCurrentIndex(0);
+      alert(`학습이 완료되었습니다! (세션 완료 단어: ${learned ? sessionLearnedCount + 1 : sessionLearnedCount} / ${studyQueue.length})`);
+      setIsStarted(false);
     }
   };
+
+  const currentWord = studyQueue[currentIndex];
+  const progressPercent = studyQueue.length === 0 ? 0 : Math.round((currentIndex / studyQueue.length) * 100);
 
   const variants = {
     enter: (direction: number) => ({
@@ -83,13 +118,7 @@ export default function StudyPage() {
       rotate: direction > 0 ? 10 : -10,
       scale: 0.9,
     }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      rotate: 0,
-      scale: 1,
-    },
+    center: { zIndex: 1, x: 0, opacity: 1, rotate: 0, scale: 1 },
     exit: (direction: number) => ({
       zIndex: 0,
       x: direction < 0 ? 300 : -300,
@@ -107,43 +136,81 @@ export default function StudyPage() {
     }
   };
 
-  return (
-    <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4">
-      {/* Deck Selector */}
-      {lists.length > 1 && (
-        <div className="mb-4">
-          <select 
-            value={selectedListId || ""}
-            onChange={(e) => setSelectedListId(Number(e.target.value))}
-            className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
-          >
-            {lists.map(l => (
-              <option key={l.id} value={l.id}>{l.title}</option>
-            ))}
-          </select>
-        </div>
-      )}
+  const adjustCount = (delta: number) => {
+    setStudyCount(prev => {
+      const current = typeof prev === 'number' ? prev : parseInt(prev) || 0;
+      const next = current + delta;
+      return next > 0 ? next : 1;
+    });
+  };
 
-      {/* Study Deck Info */}
-      <div className="w-full flex justify-between items-center mb-6 px-1">
-        <div className="flex items-center gap-2 text-on-surface-variant">
-          <Folder size={20} />
-          <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
-            {selectedList?.title}
-          </span>
-        </div>
-        <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">
-          {totalWords > 0 ? `${currentIndex + 1} / ${totalWords} 단어` : "0 단어"}
-        </div>
+  if (lists === undefined || rawWords === undefined) {
+    return <div className="flex-1 flex items-center justify-center">로딩 중...</div>;
+  }
+
+  if (lists.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
+        <h2 className="text-headline-lg font-bold text-on-surface mb-4">단어장이 없습니다.</h2>
+        <p className="text-body-md text-on-surface-variant">
+          우측 상단의 폴더 버튼을 눌러 CSV 단어장을 추가해주세요.
+        </p>
+      </div>
+    );
+  }
+
+  const selectedList = lists.find(l => l.id === selectedListId);
+
+  return (
+    <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4 relative">
+      {/* Deck Selector (Always visible) */}
+      <div className="mb-4">
+        <select 
+          value={selectedListId || ""}
+          onChange={(e) => setSelectedListId(Number(e.target.value))}
+          disabled={isStarted}
+          className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer disabled:opacity-50"
+        >
+          {lists.map(l => (
+            <option key={l.id} value={l.id}>{l.title}</option>
+          ))}
+        </select>
       </div>
 
-      {totalWords === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-on-surface-variant">
-          이 단어장에는 단어가 없습니다.
+      {!isStarted ? (
+        // --- Pre-start Screen ---
+        <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
+              <Folder size={40} className="text-primary" />
+            </div>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2">{selectedList?.title}</h2>
+            <p className="text-body-md text-on-surface-variant">총 {rawWords.length}개의 단어가 있습니다.</p>
+          </div>
+          
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="w-full h-14 mt-auto bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+          >
+            <Play size={20} />
+            학습 시작
+          </button>
         </div>
       ) : (
-        <>
-          {/* Flashcard Container */}
+        // --- Study Screen ---
+        <div className="flex-1 flex flex-col">
+          <div className="w-full flex justify-between items-center mb-6 px-1">
+            <div className="flex items-center gap-2 text-on-surface-variant">
+              <Folder size={20} />
+              <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
+                {selectedList?.title}
+              </span>
+            </div>
+            <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">
+              {currentIndex + 1} / {studyQueue.length} 단어
+            </div>
+          </div>
+
           <div className="relative w-full flex-1 flex flex-col min-h-[420px] mb-8">
             <AnimatePresence initial={false} custom={direction} mode="wait">
               <motion.div
@@ -180,7 +247,6 @@ export default function StudyPage() {
                   {currentWord?.meaningKo}
                 </div>
 
-                {/* Example Sentence Toggle Section */}
                 {(currentWord?.exampleEn || currentWord?.exampleKo) && (
                   <div 
                     className="w-full mt-auto p-4 md:p-6 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors text-left group"
@@ -219,7 +285,6 @@ export default function StudyPage() {
             </AnimatePresence>
           </div>
 
-          {/* Action Buttons */}
           <div className="w-full flex gap-4 mt-auto">
             <button 
               onClick={() => handleNext(false)}
@@ -237,7 +302,6 @@ export default function StudyPage() {
             </button>
           </div>
 
-          {/* Progress Indicator */}
           <div className="w-full mt-8">
             <div className="flex justify-between text-label-sm text-outline mb-2">
               <span className="font-bold">학습 진행도</span>
@@ -247,8 +311,79 @@ export default function StudyPage() {
               <div className="h-full bg-primary rounded-full transition-all duration-300 ease-in-out" style={{ width: `${progressPercent}%` }}></div>
             </div>
           </div>
-        </>
+        </div>
       )}
+
+      {/* Configuration Modal */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 p-4">
+            <motion.div 
+              initial={{ y: 300, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 300, opacity: 0 }}
+              className="bg-surface w-full max-w-md rounded-t-[32px] md:rounded-[32px] p-6 shadow-xl flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-headline-md font-bold text-on-surface flex items-center gap-2">
+                  <Settings2 size={24} className="text-primary" />
+                  학습 설정
+                </h3>
+                <button onClick={() => setIsModalOpen(false)} className="p-2 bg-surface-container rounded-full text-on-surface-variant hover:bg-surface-variant">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-6 mb-8">
+                {/* 단어 수 조절 */}
+                <div>
+                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">학습할 단어 수</label>
+                  <div className="flex items-center gap-4 bg-surface-container p-2 rounded-2xl">
+                    <button onClick={() => adjustCount(-10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                      <Minus size={20} />
+                    </button>
+                    <input 
+                      type="number" 
+                      value={studyCount}
+                      onChange={(e) => setStudyCount(e.target.value)}
+                      className="flex-1 bg-transparent text-center text-headline-lg font-bold text-on-surface outline-none"
+                    />
+                    <button onClick={() => adjustCount(10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                      <Plus size={20} />
+                    </button>
+                  </div>
+                  <p className="text-body-sm text-on-surface-variant mt-2 px-1">
+                    단어장에 있는 수({rawWords.length}개)보다 많은 수를 입력하면 랜덤하게 반복 학습합니다.
+                  </p>
+                </div>
+
+                {/* 미완료 필터 */}
+                <label className="flex items-center justify-between p-4 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors">
+                  <span className="text-body-lg font-bold text-on-surface">미완료 단어만 학습하기</span>
+                  <div className="relative">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only" 
+                      checked={onlyUnlearned} 
+                      onChange={(e) => setOnlyUnlearned(e.target.checked)} 
+                    />
+                    <div className={clsx("w-12 h-6 rounded-full transition-colors", onlyUnlearned ? "bg-primary" : "bg-outline-variant")}>
+                      <div className={clsx("w-4 h-4 rounded-full bg-white absolute top-1 transition-transform", onlyUnlearned ? "translate-x-7" : "translate-x-1")}></div>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <button 
+                onClick={handleStartStudy}
+                className="w-full h-14 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+              >
+                설정 완료 및 시작
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
