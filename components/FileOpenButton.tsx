@@ -7,11 +7,13 @@ import Papa from "papaparse";
 import DrivePickerModal from "./DrivePickerModal";
 import { db } from "@/lib/db";
 import { useRouter } from "next/navigation";
+import { ConfirmModal } from "./ConfirmModal";
 
 export function FileOpenButton() {
   const { status } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{isOpen: boolean, title: string, message: string, type: 'success'|'error'|'info', onConfirm?: () => void}>({isOpen: false, title: '', message: '', type: 'info'});
   const router = useRouter();
 
   const handleOpenClick = () => {
@@ -44,16 +46,30 @@ export function FileOpenButton() {
 
       if (words.length > 0) {
         await db.words.bulkAdd(words);
-        alert(`단어장 '${fileName}'에 ${words.length}개의 단어가 추가되었습니다.`);
-        router.push("/settings");
+        setModalConfig({
+          isOpen: true,
+          title: '추가 완료',
+          message: `단어장 '${fileName}'에 ${words.length}개의 단어가 추가되었습니다.`,
+          type: 'success',
+          onConfirm: () => {
+            setModalConfig(prev => ({...prev, isOpen: false}));
+            router.push("/settings");
+          }
+        });
       } else {
-        alert("유효한 단어 데이터가 없습니다.");
+        setModalConfig({
+          isOpen: true, title: '오류', message: "유효한 단어 데이터가 없습니다.", type: 'error',
+          onConfirm: () => setModalConfig(prev => ({...prev, isOpen: false}))
+        });
         // If empty, rollback list
         await db.wordLists.delete(listId);
       }
     } catch (error) {
       console.error("DB Save Error:", error);
-      alert("단어장을 저장하는 데 실패했습니다.");
+      setModalConfig({
+        isOpen: true, title: '저장 실패', message: "단어장을 저장하는 데 실패했습니다.", type: 'error',
+        onConfirm: () => setModalConfig(prev => ({...prev, isOpen: false}))
+      });
     }
   };
 
@@ -68,7 +84,10 @@ export function FileOpenButton() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       error: (error: any) => {
         console.error("CSV Parse Error:", error);
-        alert("CSV 파일을 파싱하는 데 실패했습니다.");
+        setModalConfig({
+          isOpen: true, title: '파싱 실패', message: "CSV 파일을 파싱하는 데 실패했습니다.", type: 'error',
+          onConfirm: () => setModalConfig(prev => ({...prev, isOpen: false}))
+        });
       }
     });
   };
@@ -99,7 +118,10 @@ export function FileOpenButton() {
       processCSVData(fileName, text);
     } catch (error) {
       console.error(error);
-      alert("파일을 불러오지 못했습니다.");
+      setModalConfig({
+        isOpen: true, title: '오류', message: "파일을 불러오지 못했습니다.", type: 'error',
+        onConfirm: () => setModalConfig(prev => ({...prev, isOpen: false}))
+      });
     }
   };
 
@@ -108,7 +130,7 @@ export function FileOpenButton() {
       <button 
         aria-label="폴더 열기" 
         onClick={handleOpenClick}
-        className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
+        className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
       >
         <FolderOpen size={24} />
       </button>
@@ -128,6 +150,11 @@ export function FileOpenButton() {
           onSelectFile={handleDriveFileSelect} 
         />
       )}
+
+      <ConfirmModal
+        {...modalConfig}
+        onClose={() => setModalConfig(prev => ({...prev, isOpen: false}))}
+      />
     </>
   );
 }

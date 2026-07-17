@@ -4,6 +4,7 @@ export interface WordList {
   id?: number;
   title: string;
   createdAt: Date;
+  isActive?: boolean;
 }
 
 export interface Word {
@@ -26,8 +27,8 @@ export class WordSmartDB extends Dexie {
   constructor() {
     super('WordSmartDB');
     this.version(1).stores({
-      wordLists: '++id, title, createdAt',
-      words: '++id, listId, word, isLearned' // listId is indexed for fast lookups
+      wordLists: '++id, title, createdAt, isActive',
+      words: '++id, listId, word, isLearned, testCount, correctCount'
     });
   }
 }

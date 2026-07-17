@@ -4,8 +4,9 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, WordList } from "@/lib/db";
 import { useState } from "react";
 import { Check, Edit, Trash2, X } from "lucide-react";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
-function WordListItem({ list }: { list: WordList }) {
+function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteRequest: (list: WordList) => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(list.title);
 
@@ -22,12 +23,13 @@ function WordListItem({ list }: { list: WordList }) {
     };
   }, [list.id]);
 
-  const handleDelete = async () => {
-    if (confirm(`정말 '${list.title}' 단어장을 삭제하시겠습니까?`)) {
-      if (list.id) {
-        await db.words.where('listId').equals(list.id).delete();
-        await db.wordLists.delete(list.id);
-      }
+  const handleDelete = () => {
+    onDeleteRequest(list);
+  };
+
+  const handleToggleActive = async () => {
+    if (list.id) {
+      await db.wordLists.update(list.id, { isActive: !list.isActive });
     }
   };
 
@@ -45,9 +47,9 @@ function WordListItem({ list }: { list: WordList }) {
       <div className="absolute top-0 left-0 w-1 h-full bg-primary rounded-l-2xl"></div>
       <div className="flex items-start gap-4 flex-1 w-full">
         {/* Checkbox (placeholder for active list selection in future) */}
-        <div className="mt-1">
+        <div className="mt-1" title="학습/테스트 범위에 포함하기">
           <label className="flex items-center justify-center w-6 h-6 rounded border border-outline-variant cursor-pointer hover:bg-surface-variant has-[:checked]:bg-primary has-[:checked]:border-primary transition-colors">
-            <input className="sr-only" type="checkbox" />
+            <input className="sr-only" type="checkbox" checked={list.isActive || false} onChange={handleToggleActive} />
             <Check size={16} className="text-white opacity-0 group-has-[:checked]:opacity-100" />
           </label>
         </div>
@@ -115,6 +117,16 @@ function WordListItem({ list }: { list: WordList }) {
 
 export default function SettingsPage() {
   const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
+  const [modalConfig, setModalConfig] = useState<{isOpen: boolean, listToDelete: WordList | null}>({isOpen: false, listToDelete: null});
+
+  const confirmDelete = async () => {
+    const list = modalConfig.listToDelete;
+    if (list?.id) {
+      await db.words.where('listId').equals(list.id).delete();
+      await db.wordLists.delete(list.id);
+    }
+    setModalConfig({isOpen: false, listToDelete: null});
+  };
 
   return (
     <div className="w-full h-full flex flex-col pt-8">
@@ -135,10 +147,20 @@ export default function SettingsPage() {
           </div>
         ) : (
           lists.map(list => (
-            <WordListItem key={list.id} list={list} />
+            <WordListItem key={list.id} list={list} onDeleteRequest={(l) => setModalConfig({isOpen: true, listToDelete: l})} />
           ))
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig({isOpen: false, listToDelete: null})}
+        title="단어장 삭제"
+        message={`정말 '${modalConfig.listToDelete?.title}' 단어장을 삭제하시겠습니까?`}
+        type="error"
+        onConfirm={confirmDelete}
+        confirmText="삭제"
+      />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
-import { Info, Settings, User, LogOut, Moon, Sun } from "lucide-react";
+import { Settings, User, LogOut, Moon, Sun } from "lucide-react";
 import { FileOpenButton } from "./FileOpenButton";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -21,36 +22,33 @@ export function Header() {
   return (
     <header className="bg-surface docked full-width top-0 shadow-sm z-40 sticky">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div className="flex items-center gap-4">
-          <button aria-label="정보" className="md:hidden p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
-            <Info size={24} />
-          </button>
+        <div className="flex items-center">
           <div className="md:hidden pt-1">
             <Logo className="h-[24px]" />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-0.5">
           {mounted && (
             <button 
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               aria-label="테마 변경" 
-              className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
+              className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
             >
               {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
             </button>
           )}
 
-          <Link href="/settings" aria-label="설정" className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+          <Link href="/settings" aria-label="설정" className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
             <Settings size={24} />
           </Link>
           <FileOpenButton />
           
           {session?.user ? (
-            <div className="flex items-center gap-2 ml-2">
+            <div className="flex items-center gap-1 ml-1">
               <button 
                 onClick={() => signOut()}
                 aria-label="로그아웃" 
-                className="p-2 text-on-surface-variant hover:bg-error-container hover:text-error rounded-full transition-colors"
+                className="p-1.5 text-on-surface-variant hover:bg-error-container hover:text-error rounded-full transition-colors"
                 title="로그아웃"
               >
                 <LogOut size={20} />
@@ -73,7 +71,7 @@ export function Header() {
             <button 
               onClick={() => signIn('google')}
               aria-label="로그인" 
-              className="p-2 text-on-surface-variant hover:bg-primary-container hover:text-primary rounded-full transition-colors ml-2"
+              className="p-1.5 text-on-surface-variant hover:bg-primary-container hover:text-primary rounded-full transition-colors ml-1"
               title="구글 로그인"
             >
               <User size={24} />

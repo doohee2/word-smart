@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import Image from 'next/image';
+import { InfoModal } from './InfoModal';
 
 export function Logo({ className }: { className?: string }) {
+  const [isInfoOpen, setIsInfoOpen] = useState(false);
+
   return (
-    <div className={clsx("flex items-center gap-2", className)}>
-      <div className="relative h-[80%] aspect-square shrink-0 rounded-lg overflow-hidden shadow-sm">
+    <>
+      <div 
+        className={clsx("flex items-center gap-2 cursor-pointer", className)}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsInfoOpen(true);
+        }}
+      >
+        <div className="relative h-[80%] aspect-square shrink-0 rounded-lg overflow-hidden shadow-sm">
         <div className="absolute inset-0 block dark:hidden">
           <Image
             src="/icons/icon-light-192x192.png"
@@ -31,5 +41,7 @@ export function Logo({ className }: { className?: string }) {
         <text x="116" y="45" fontWeight="700" fontSize="42" letterSpacing="-0.02em" className="fill-current text-on-surface transition-colors duration-300">Smart</text>
       </svg>
     </div>
+    <InfoModal isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
+    </>
   );
 }

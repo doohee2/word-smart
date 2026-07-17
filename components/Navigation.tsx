@@ -1,13 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { BookOpen, FileText, Settings, PlaySquare } from "lucide-react";
 import clsx from "clsx";
 import { Logo } from "./Logo";
+import { useStudySession } from "@/providers/StudySessionProvider";
+import { ConfirmModal } from "./ConfirmModal";
 
 export function Navigation() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { isActiveSession, setIsActiveSession } = useStudySession();
+  const [modalConfig, setModalConfig] = useState<{isOpen: boolean, targetHref: string}>({isOpen: false, targetHref: ''});
+
+  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+    if (isActiveSession && pathname !== href) {
+      e.preventDefault();
+      setModalConfig({isOpen: true, targetHref: href});
+    }
+  };
+
+  const confirmNavigation = () => {
+    setIsActiveSession(false);
+    setModalConfig(prev => ({...prev, isOpen: false}));
+    router.push(modalConfig.targetHref);
+  };
 
   const links = [
     { href: "/study", label: "학습", icon: BookOpen },
@@ -21,7 +40,7 @@ export function Navigation() {
       {/* Desktop SideNavBar */}
       <nav className="fixed h-full left-0 top-0 w-64 hidden md:flex bg-surface-container-low shadow-md flex-col p-4 gap-2 z-50">
         <div className="mb-8 mt-4 px-4 flex items-center gap-3">
-          <Link href="/" className="block">
+          <Link href="/" className="block" onClick={(e) => handleLinkClick(e, '/')}>
             <Logo className="h-[28px]" />
           </Link>
         </div>
@@ -33,6 +52,7 @@ export function Navigation() {
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={(e) => handleLinkClick(e, link.href)}
                 className={clsx(
                   "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ease-in-out",
                   isActive
@@ -57,6 +77,7 @@ export function Navigation() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={(e) => handleLinkClick(e, link.href)}
               className="flex flex-col items-center justify-center w-full max-w-[80px] h-full gap-1"
             >
               <div className={clsx(
@@ -77,6 +98,17 @@ export function Navigation() {
           );
         })}
       </nav>
+
+      <ConfirmModal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({...prev, isOpen: false}))}
+        title="학습/테스트 중지"
+        message="현재 진행 중인 학습 또는 테스트가 있습니다. 정말 중지하시겠습니까?"
+        type="warning"
+        onConfirm={confirmNavigation}
+        confirmText="이동하기"
+        cancelText="계속하기"
+      />
     </>
   );
 }

@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from "react";
 import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { useStudySession } from "@/providers/StudySessionProvider";
 
 interface TestWord {
   wordData: Word;
@@ -14,13 +15,13 @@ interface TestWord {
 }
 
 export default function TestPage() {
-  const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
-  const [selectedListId, setSelectedListId] = useState<number | null>(null);
-
-  const rawWords = useLiveQuery(
-    () => selectedListId ? db.words.where('listId').equals(selectedListId).toArray() : [],
-    [selectedListId]
-  );
+  const lists = useLiveQuery(() => db.wordLists.toArray());
+  const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const rawWords = useLiveQuery(async () => {
+    const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
+    if (activeListIds.length === 0) return [];
+    return db.words.where('listId').anyOf(activeListIds).toArray();
+  }, []);
 
   // Pre-start Configuration
   const [isStarted, setIsStarted] = useState(false);
@@ -45,20 +46,33 @@ export default function TestPage() {
 
   // Feedback state
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [wrongAnswers, setWrongAnswers] = useState<Word[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState("");
+  const { setIsActiveSession } = useStudySession();
 
   useEffect(() => {
-    if (lists && lists.length > 0 && selectedListId === null) {
-      setSelectedListId(lists[0].id!);
-    }
-  }, [lists, selectedListId]);
+    setIsActiveSession(isStarted);
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isStarted) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isStarted, setIsActiveSession]);
 
   useEffect(() => {
+    // Reset state when lists change
     setIsStarted(false);
     setIsModalOpen(false);
     setTestQueue([]);
     setCurrentIndex(0);
-  }, [selectedListId]);
+  }, [activeLists?.map(l => l.id).join(',')]);
 
   const handleStartTest = () => {
     if (!rawWords) return;
@@ -216,8 +230,8 @@ export default function TestPage() {
 
   const accuracy = totalTested === 0 ? 0 : Math.round((score / totalTested) * 100);
 
-  if (lists === undefined || rawWords === undefined) {
-    return <div className="flex-1 flex items-center justify-center">로딩 중...</div>;
+  if (lists === undefined || activeLists === undefined || rawWords === undefined) {
+    return <div className="p-6 text-center text-on-surface-variant">로딩 중...</div>;
   }
 
   if (lists.length === 0) {
@@ -231,21 +245,23 @@ export default function TestPage() {
     );
   }
 
-  const selectedList = lists.find(l => l.id === selectedListId);
+  if (activeLists.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
+        <h2 className="text-headline-lg font-bold text-on-surface mb-4">선택된 단어장이 없습니다.</h2>
+        <p className="text-body-md text-on-surface-variant">
+          설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col w-full h-full pb-8 pt-8 md:pt-4 relative">
       <div className="mb-4">
-        <select 
-          value={selectedListId || ""}
-          onChange={(e) => setSelectedListId(Number(e.target.value))}
-          disabled={isStarted}
-          className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer disabled:opacity-50"
-        >
-          {lists.map(l => (
-            <option key={l.id} value={l.id}>{l.title}</option>
-          ))}
-        </select>
+        <div className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-label-sm font-bold text-on-surface">
+          학습 대상: {activeLists.map(l => l.title).join(', ')}
+        </div>
       </div>
 
       {!isStarted ? (
@@ -255,8 +271,8 @@ export default function TestPage() {
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
               <Folder size={40} className="text-primary" />
             </div>
-            <h2 className="text-headline-lg font-bold text-on-surface mb-2">{selectedList?.title}</h2>
-            <p className="text-body-md text-on-surface-variant">테스트를 통해 실력을 점검하세요.</p>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 단어장 {activeLists.length}개</h2>
+            <p className="text-body-md text-on-surface-variant">총 {rawWords.length}개의 단어가 있습니다.</p>
           </div>
           
           <button 
@@ -430,16 +446,16 @@ export default function TestPage() {
                 <div>
                   <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">테스트 단어 수</label>
                   <div className="flex items-center gap-4 bg-surface-container p-2 rounded-2xl">
-                    <button onClick={() => adjustCount(-10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                    <button onClick={() => adjustCount(-10)} className="w-12 h-12 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
                       <Minus size={20} />
                     </button>
                     <input 
                       type="number" 
                       value={testCount}
                       onChange={(e) => setTestCount(e.target.value)}
-                      className="flex-1 bg-transparent text-center text-headline-lg font-bold text-on-surface outline-none"
+                      className="flex-1 min-w-0 bg-transparent text-center text-headline-lg font-bold text-on-surface outline-none"
                     />
-                    <button onClick={() => adjustCount(10)} className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
+                    <button onClick={() => adjustCount(10)} className="w-12 h-12 shrink-0 flex items-center justify-center rounded-xl bg-surface-container-lowest hover:bg-surface-variant transition-colors shadow-sm text-primary">
                       <Plus size={20} />
                     </button>
                   </div>
