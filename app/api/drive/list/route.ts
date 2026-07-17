@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 export async function GET(request: NextRequest) {
   try {
     const session = await auth();
-    // @ts-ignore
+    // @ts-expect-error Session typing mismatch
     const accessToken = session?.accessToken;
 
     if (!session || !accessToken) {

@@ -7,7 +7,7 @@ export async function GET(
   try {
     const session = await auth();
     
-    // @ts-ignore
+    // @ts-expect-error Session typing mismatch
     const accessToken = session?.accessToken;
 
     if (!session || !accessToken) {
@@ -54,6 +54,7 @@ export async function GET(
         "Content-Disposition": `attachment; filename="document.pdf"`,
       },
     });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Error downloading file:", error);
     return NextResponse.json(

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/immutability */
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";

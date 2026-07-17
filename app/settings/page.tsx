@@ -4,7 +4,6 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, WordList } from "@/lib/db";
 import { useState } from "react";
 import { Check, Edit, Trash2, X } from "lucide-react";
-import clsx from "clsx";
 
 function WordListItem({ list }: { list: WordList }) {
   const [isEditing, setIsEditing] = useState(false);
