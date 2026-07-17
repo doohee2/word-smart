@@ -8,7 +8,7 @@ import { Header } from "@/components/Header";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Word Smart",
+  title: "워드 스마트",
   description: "오프라인 동작 PWA 영단어 학습 앱",
   manifest: "/manifest.json",
   icons: {
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#006c49",
+  themeColor: "#10b981",
 };
 
 export default function RootLayout({

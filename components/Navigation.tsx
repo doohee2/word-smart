@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpen, FileText, Settings, PlaySquare } from "lucide-react";
 import clsx from "clsx";
+import { Logo } from "./Logo";
 
 export function Navigation() {
   const pathname = usePathname();
@@ -20,11 +21,9 @@ export function Navigation() {
       {/* Desktop SideNavBar */}
       <nav className="fixed h-full left-0 top-0 w-64 hidden md:flex bg-surface-container-low shadow-md flex-col p-4 gap-2 z-50">
         <div className="mb-8 mt-4 px-4 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-on-primary font-bold text-xl">W</div>
-          <div>
-            <h1 className="text-headline-md font-black text-primary">Word Smart</h1>
-            <p className="text-label-sm text-on-surface-variant opacity-80">스마트 학습</p>
-          </div>
+          <Link href="/" className="block">
+            <Logo className="h-[28px]" />
+          </Link>
         </div>
         <div className="flex-1 flex flex-col gap-2">
           {links.map((link) => {

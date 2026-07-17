@@ -1,9 +1,23 @@
 "use client";
 
-import { Info, Settings, User } from "lucide-react";
+import { Info, Settings, User, LogOut, Moon, Sun } from "lucide-react";
 import { FileOpenButton } from "./FileOpenButton";
+import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
+import { Logo } from "./Logo";
 
 export function Header() {
+  const { data: session } = useSession();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <header className="bg-surface docked full-width top-0 shadow-sm z-40 sticky">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
@@ -11,16 +25,60 @@ export function Header() {
           <button aria-label="정보" className="md:hidden p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
             <Info size={24} />
           </button>
-          <h1 className="text-headline-lg font-bold text-primary md:hidden">Word Smart</h1>
+          <div className="md:hidden pt-1">
+            <Logo className="h-[24px]" />
+          </div>
         </div>
         <div className="flex items-center gap-2">
-          <button aria-label="설정" className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+          {mounted && (
+            <button 
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label="테마 변경" 
+              className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
+            >
+              {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+          )}
+
+          <Link href="/settings" aria-label="설정" className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
             <Settings size={24} />
-          </button>
+          </Link>
           <FileOpenButton />
-          <button aria-label="계정" className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
-            <User size={24} />
-          </button>
+          
+          {session?.user ? (
+            <div className="flex items-center gap-2 ml-2">
+              <button 
+                onClick={() => signOut()}
+                aria-label="로그아웃" 
+                className="p-2 text-on-surface-variant hover:bg-error-container hover:text-error rounded-full transition-colors"
+                title="로그아웃"
+              >
+                <LogOut size={20} />
+              </button>
+              {session.user.image ? (
+                <Image 
+                  src={session.user.image} 
+                  alt="Profile" 
+                  width={32} 
+                  height={32} 
+                  className="rounded-full border-2 border-primary-container"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
+                  {session.user.name?.[0] || 'U'}
+                </div>
+              )}
+            </div>
+          ) : (
+            <button 
+              onClick={() => signIn('google')}
+              aria-label="로그인" 
+              className="p-2 text-on-surface-variant hover:bg-primary-container hover:text-primary rounded-full transition-colors ml-2"
+              title="구글 로그인"
+            >
+              <User size={24} />
+            </button>
+          )}
         </div>
       </div>
     </header>

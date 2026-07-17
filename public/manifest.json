@@ -1,11 +1,11 @@
 {
-  "name": "Word Smart",
-  "short_name": "WordSmart",
+  "name": "워드 스마트",
+  "short_name": "워드 스마트",
   "description": "오프라인 동작 PWA 영단어 학습 앱",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#006c49",
+  "theme_color": "#10b981",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
