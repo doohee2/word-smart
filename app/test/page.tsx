@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { maskExampleHtml } from "@/lib/textUtils";
 
 interface TestWord {
   wordData: Word;
@@ -337,10 +338,7 @@ export default function TestPage() {
                       <p 
                         className="text-body-md text-on-surface-variant italic"
                         dangerouslySetInnerHTML={{ 
-                          __html: currentWord.exampleEn.replace(
-                            new RegExp(`(${currentWord.word})`, 'gi'), 
-                            `<span class="font-semibold text-on-surface">______</span>`
-                          ) 
+                          __html: maskExampleHtml(currentWord.word, currentWord.exampleEn)
                         }} 
                       />
                     </div>

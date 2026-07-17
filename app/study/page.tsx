@@ -9,6 +9,7 @@ import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { highlightExampleSentence } from "@/lib/textUtils";
 
 export default function StudyPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -299,10 +300,7 @@ export default function StudyPage() {
                           <p 
                             className="text-body-md text-on-surface mb-2" 
                             dangerouslySetInnerHTML={{ 
-                              __html: currentWord.exampleEn.replace(
-                                new RegExp(`(${currentWord.word})`, 'gi'), 
-                                match => `<strong>${match}</strong>`
-                              ) 
+                              __html: highlightExampleSentence(currentWord.word, currentWord.exampleEn)
                             }} 
                           />
                         )}

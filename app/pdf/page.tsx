@@ -10,6 +10,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion, AnimatePresence } from "framer-motion";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import { maskExampleSentence } from "@/lib/textUtils";
 
 export default function PDFPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -79,14 +80,12 @@ export default function PDFPage() {
       else blankType = Math.random() > 0.5 ? 'english' : 'korean';
       
       if (blankType === 'english') {
-        displayWord = "___";
+        displayWord = word.word.replace(/[a-zA-Z]/g, '·');
         if (displayExample !== "-") {
-          const regex = new RegExp(`(${word.word})`, 'gi');
-          const replacement = Array.from({length: word.word.length}).map(() => '_').join('');
-          displayExample = displayExample.replace(regex, replacement);
+          displayExample = maskExampleSentence(word.word, displayExample, '_');
         }
       } else {
-        displayMeaning = "___";
+        displayMeaning = "";
       }
     }
     return { displayWord, displayMeaning, displayExample, partOfSpeech: word.partOfSpeech || "-" };
@@ -144,7 +143,7 @@ export default function PDFPage() {
         startY: 26,
         head: [['No', '단어', '품사', '뜻', '예문']],
         body: tableData,
-        styles: { font: 'NanumGothic', fontSize: 10, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, minCellHeight: 10, valign: 'middle' },
+        styles: { font: 'NanumGothic', fontSize: 10, cellPadding: { top: 1.2, bottom: 1.2, left: 2, right: 2 }, minCellHeight: 9.5, valign: 'middle' },
         headStyles: { font: 'NanumGothic', fontStyle: 'normal', fillColor: [0, 108, 73], textColor: 255 },
         alternateRowStyles: { fillColor: [248, 250, 248] }, // Zebra striping
         columnStyles: {
@@ -155,7 +154,12 @@ export default function PDFPage() {
           4: { cellWidth: 'auto', fontSize: 8 } 
         },
         margin: { left: 10, right: 10, bottom: 10 },
-        theme: 'grid'
+        theme: 'grid',
+        didParseCell: (data) => {
+          if (data.section === 'body' && data.column.index === 1 && typeof data.cell.raw === 'string' && data.cell.raw.includes('·')) {
+            data.cell.styles.textColor = [160, 160, 160];
+          }
+        }
       });
 
       doc.save(`${title}.pdf`);
@@ -288,12 +292,12 @@ export default function PDFPage() {
                     return (
                       <tr key={idx} className={clsx("border-b border-surface-variant hover:bg-surface-container/50 transition-colors", idx % 2 === 1 ? "bg-surface-container-lowest" : "bg-surface-container/30")}>
                         <td className="py-2 px-3 text-center text-label-sm text-outline font-bold">{idx + 1}</td>
-                        <td className="py-2 px-3 text-body-md font-bold text-on-surface">
-                          {displayWord === "___" ? <div className="w-16 h-px bg-on-surface/50 my-2"></div> : displayWord}
+                        <td className={clsx("py-2 px-3 text-body-md", displayWord.includes('·') ? "text-outline/70" : "font-bold text-on-surface")}>
+                          {displayWord}
                         </td>
                         <td className="py-2 px-3 text-center text-[10px] text-outline font-semibold">{partOfSpeech}</td>
                         <td className="py-2 px-3 text-body-md text-on-surface">
-                          {displayMeaning === "___" ? <div className="w-16 h-px bg-on-surface/50 my-2"></div> : displayMeaning}
+                          {displayMeaning}
                         </td>
                         <td className="py-2 px-3 text-body-sm text-on-surface-variant max-w-[200px]" style={{ fontSize: '0.75rem', lineHeight: '1.2' }}>
                           {displayExample}
