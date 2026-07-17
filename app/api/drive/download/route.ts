@@ -7,7 +7,6 @@ export async function GET(
   try {
     const session = await auth();
     
-    // @ts-expect-error Session typing mismatch
     const accessToken = session?.accessToken;
 
     if (!session || !accessToken) {
