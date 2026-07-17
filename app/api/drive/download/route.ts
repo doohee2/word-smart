@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/auth";
 
 export async function GET(
   request: NextRequest
 ) {
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     
     const accessToken = session?.accessToken;
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { X, FileText, Loader2, Folder, Pin } from "lucide-react";
@@ -26,7 +26,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
   const [defaultFolderId, setDefaultFolderId] = useState<string | null>(null);
   
   // 寃쎈줈 ?곹깭 (breadcrumb)
-  const [path, setPath] = useState<{ id: string; name: string }[]>([{ id: "root", name: "???쒕씪?대툕" }]);
+  const [path, setPath] = useState<{ id: string; name: string }[]>([{ id: "root", name: "내 드라이브" }]);
   const currentFolderId = path[path.length - 1]?.id || "root";
 
   // 紐⑤떖 ?대┫ ??珥덇린 ?곹깭 ?뗭뾽
@@ -42,17 +42,17 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
           setPath(parsedPath);
         } catch {
           setDefaultFolderId(null);
-          setPath([{ id: "root", name: "???쒕씪?대툕" }]);
+          setPath([{ id: "root", name: "내 드라이브" }]);
         }
       } else {
         setDefaultFolderId(null);
-        setPath([{ id: "root", name: "???쒕씪?대툕" }]);
+        setPath([{ id: "root", name: "내 드라이브" }]);
       }
       setIsInitialized(true);
     } else {
       setIsInitialized(false);
       // 紐⑤떖???ロ옄 ??寃쎈줈瑜?珥덇린?뷀빐?먯뼱 ?ㅼ쓬 踰??대┫ ??源쒕묀?꾩쓣 諛⑹?
-      setPath([{ id: "root", name: "???쒕씪?대툕" }]);
+      setPath([{ id: "root", name: "내 드라이브" }]);
     }
   }, [isOpen]);
 
@@ -68,7 +68,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
       try {
         const res = await fetch(`/api/drive/list?folderId=${currentFolderId}`);
         if (!res.ok) {
-          throw new Error("?뚯씪 紐⑸줉??遺덈윭?ㅻ뒗 ???ㅽ뙣?덉뒿?덈떎.");
+          throw new Error("파일 목록을 불러오는 데 실패했습니다.");
         }
         const data = await res.json();
         
@@ -162,7 +162,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
                     ? "text-primary bg-primary/10 hover:bg-primary/20" 
                     : "text-on-surface-variant hover:text-on-surface hover:bg-surface-variant"
                 }`}
-                title={isPinned ? "湲곕낯 ?대뜑 ?댁젣" : "???대뜑瑜?湲곕낯?쇰줈 ? 怨좎젙"}
+                title={isPinned ? "기본 폴더 해제" : "이 폴더를 기본으로 고정"}
               >
                 <Pin size={20} className={isPinned ? "fill-primary" : ""} />
               </button>
@@ -178,7 +178,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
           {loading && (
             <div className="flex flex-col items-center justify-center py-12 text-primary">
               <Loader2 size={40} className="animate-spin mb-4" />
-              <p className="text-ui-label-bold text-on-surface-variant">?뚯씪 紐⑸줉??遺덈윭?ㅻ뒗 以?..</p>
+              <p className="text-ui-label-bold text-on-surface-variant">파일 목록을 불러오는 중...</p>
             </div>
           )}
           
@@ -190,7 +190,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
 
           {!loading && !error && displayFiles.length === 0 && (
             <div className="text-center py-12 text-on-surface-variant text-ui-body">
-              ???대뜑?먮뒗 ?대뜑??CSV ?뚯씪???놁뒿?덈떎.
+              이 폴더에는 폴더나 CSV 파일이 없습니다.
             </div>
           )}
 
@@ -211,7 +211,7 @@ export default function DrivePickerModal({ isOpen, onClose, onSelectFile }: Driv
                       <div className="flex-1 min-w-0">
                         <p className="text-ui-label-bold text-on-surface truncate">{file.name}</p>
                         <p className="text-xs text-on-surface-variant mt-0.5">
-                          {isFolder ? "?대뜑" : `${formatSize(file.size)} ??${new Date(file.modifiedTime).toLocaleDateString()}`}
+                          {isFolder ? "폴더" : `${formatSize(file.size)} • ${new Date(file.modifiedTime).toLocaleDateString()}`}
                         </p>
                       </div>
                     </button>
