@@ -33,7 +33,7 @@ export function ConfirmModal({
           {type === 'info' && <div className="p-2 bg-secondary-container text-on-secondary-container rounded-full"><Info size={24} /></div>}
           <h2 className="text-title-lg font-bold text-on-surface">{title}</h2>
         </div>
-        <p className="text-body-lg text-on-surface-variant mb-4 break-keep">
+        <p className="text-body-lg text-on-surface-variant mb-4 break-words whitespace-pre-wrap">
           {message}
         </p>
         <div className="flex justify-end gap-3 mt-auto">

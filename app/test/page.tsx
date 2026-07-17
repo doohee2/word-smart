@@ -196,7 +196,9 @@ export default function TestPage() {
       handleNextWord(true);
     } else {
       const wordLen = currentWord.word.length;
-      if (revealedIndices.length < wordLen - 1) {
+      const maxHints = Math.floor(wordLen / 2);
+      
+      if (revealedIndices.length < maxHints) {
         const available = Array.from({length: wordLen}, (_, i) => i).filter(i => !revealedIndices.includes(i) && currentWord.word[i] !== ' ');
         if (available.length > 0) {
           const toReveal = available[Math.floor(Math.random() * available.length)];
@@ -411,7 +413,7 @@ export default function TestPage() {
                 />
                 <button 
                   type="submit"
-                  disabled={feedback !== null || !spellingInput.trim()}
+                  disabled={feedback !== null}
                   className="bg-primary hover:bg-primary-container text-on-primary rounded-xl px-8 flex items-center justify-center transition-all disabled:opacity-50 shadow-md active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary outline-none"
                 >
                   <Send size={28} />

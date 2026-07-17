@@ -27,13 +27,23 @@ export function FileOpenButton() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const saveToDb = async (fileName: string, data: any[]) => {
     try {
-      const listId = await db.wordLists.add({
-        title: fileName.replace(/\.[^/.]+$/, ""), // remove extension
-        createdAt: new Date(),
-      });
+      const listTitle = fileName.replace(/\.[^/.]+$/, ""); // remove extension
+      
+      // Check if list already exists
+      const list = await db.wordLists.where('title').equals(listTitle).first();
+      let listId = list?.id;
+      let isNewList = false;
 
-      const words = data.map((row) => ({
-        listId,
+      if (!listId) {
+        listId = await db.wordLists.add({
+          title: listTitle,
+          createdAt: new Date(),
+        });
+        isNewList = true;
+      }
+
+      const parsedWords = data.map((row) => ({
+        listId: listId!,
         word: row["Word"] || "",
         partOfSpeech: row["Part of Speech"] || "",
         meaningKo: row["Korean Meaning"] || "",
@@ -44,12 +54,25 @@ export function FileOpenButton() {
         correctCount: 0,
       })).filter(w => w.word !== "");
 
-      if (words.length > 0) {
-        await db.words.bulkAdd(words);
+      // Get existing words to check for duplicates
+      const existingWords = await db.words.where('listId').equals(listId).toArray();
+      const existingWordSet = new Set(existingWords.map(w => w.word));
+
+      const newWords = parsedWords.filter(w => !existingWordSet.has(w.word));
+      const duplicateCount = parsedWords.length - newWords.length;
+
+      if (newWords.length > 0) {
+        await db.words.bulkAdd(newWords);
+        
+        let message = `단어장 '${listTitle}'에 ${newWords.length}개의 단어가 추가되었습니다.`;
+        if (duplicateCount > 0) {
+          message += `\n(중복되어 추가되지 않은 단어: ${duplicateCount}개)`;
+        }
+
         setModalConfig({
           isOpen: true,
           title: '추가 완료',
-          message: `단어장 '${fileName}'에 ${words.length}개의 단어가 추가되었습니다.`,
+          message: message,
           type: 'success',
           onConfirm: () => {
             setModalConfig(prev => ({...prev, isOpen: false}));
@@ -58,11 +81,18 @@ export function FileOpenButton() {
         });
       } else {
         setModalConfig({
-          isOpen: true, title: '오류', message: "유효한 단어 데이터가 없습니다.", type: 'error',
+          isOpen: true, 
+          title: '추가된 단어 없음', 
+          message: duplicateCount > 0 
+            ? `모든 단어(${duplicateCount}개)가 이미 단어장에 존재합니다.` 
+            : "유효한 단어 데이터가 없습니다.", 
+          type: 'info',
           onConfirm: () => setModalConfig(prev => ({...prev, isOpen: false}))
         });
-        // If empty, rollback list
-        await db.wordLists.delete(listId);
+        // If it was a newly created list but no words were added, clean it up
+        if (isNewList) {
+          await db.wordLists.delete(listId);
+        }
       }
     } catch (error) {
       console.error("DB Save Error:", error);

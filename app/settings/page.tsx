@@ -3,10 +3,22 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, WordList } from "@/lib/db";
 import { useState } from "react";
-import { Check, Edit, Trash2, X } from "lucide-react";
+import { Check, Edit, Trash2, X, Download, CloudUpload, CloudDownload } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
+import Papa from "papaparse";
+import { useSession } from "next-auth/react";
+import { DBDownloadModal } from "@/components/DBDownloadModal";
 
-function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteRequest: (list: WordList) => void }) {
+function WordListItem({ 
+  list, 
+  onDeleteRequest, 
+  onUploadRequest 
+}: { 
+  list: WordList, 
+  onDeleteRequest: (list: WordList) => void,
+  onUploadRequest: (list: WordList) => void 
+}) {
+  const { status } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(list.title);
 
@@ -38,6 +50,31 @@ function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteReque
       await db.wordLists.update(list.id, { title: editTitle.trim() });
       setIsEditing(false);
     }
+  };
+
+  const handleExportCSV = async () => {
+    if (!list.id) return;
+    const words = await db.words.where('listId').equals(list.id).toArray();
+    const csvData = words.map(w => ({
+      "Word": w.word,
+      "Part of Speech": w.partOfSpeech,
+      "Korean Meaning": w.meaningKo,
+      "Example Sentence": w.exampleEn,
+      "Korean Translation": w.exampleKo
+    }));
+    
+    const csvStr = Papa.unparse(csvData);
+    const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvStr], { type: "text/csv;charset=utf-8;" }); // BOM for Excel
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${list.title}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleUploadDB = () => {
+    onUploadRequest(list);
   };
 
   if (!stats) return null; // loading
@@ -76,7 +113,7 @@ function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteReque
               <h3 className="text-headline-md font-bold text-on-surface truncate group-hover:text-primary transition-colors">
                 {list.title}
               </h3>
-              <button onClick={() => setIsEditing(true)} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-variant opacity-0 group-hover:opacity-100 focus:opacity-100">
+              <button onClick={() => setIsEditing(true)} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-8 h-8 rounded-full hover:bg-surface-variant opacity-100 md:opacity-0 group-hover:opacity-100 focus:opacity-100">
                 <Edit size={18} />
               </button>
             </div>
@@ -105,8 +142,16 @@ function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteReque
             <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${stats.rate}%` }}></div>
           </div>
         </div>
-        <div className="flex items-center ml-auto md:ml-4">
-          <button onClick={handleDelete} className="text-outline hover:text-error transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-error-container min-h-touch-target min-w-touch-target">
+        <div className="flex items-center ml-auto md:ml-4 gap-1">
+          <button onClick={handleExportCSV} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant min-h-touch-target min-w-touch-target" title="CSV로 내보내기">
+            <Download size={20} />
+          </button>
+          {status === "authenticated" && (
+            <button onClick={handleUploadDB} className="text-outline hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant min-h-touch-target min-w-touch-target" title="DB로 업로드">
+              <CloudUpload size={20} />
+            </button>
+          )}
+          <button onClick={handleDelete} className="text-outline hover:text-error transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-error-container min-h-touch-target min-w-touch-target" title="삭제">
             <Trash2 size={20} />
           </button>
         </div>
@@ -116,8 +161,11 @@ function WordListItem({ list, onDeleteRequest }: { list: WordList, onDeleteReque
 }
 
 export default function SettingsPage() {
-  const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
+  const { status } = useSession();
+  const lists = useLiveQuery(() => db.wordLists.orderBy('title').toArray());
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, listToDelete: WordList | null}>({isOpen: false, listToDelete: null});
+  const [uploadStatus, setUploadStatus] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', isUploading: boolean}>({isOpen: false, message: '', type: 'info', isUploading: false});
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   const confirmDelete = async () => {
     const list = modalConfig.listToDelete;
@@ -128,13 +176,42 @@ export default function SettingsPage() {
     setModalConfig({isOpen: false, listToDelete: null});
   };
 
+  const handleUploadRequest = async (list: WordList) => {
+    if (!list.id) return;
+    setUploadStatus({ isOpen: true, message: `'${list.title}' 단어장을 업로드하는 중...`, type: 'info', isUploading: true });
+    try {
+      const words = await db.words.where('listId').equals(list.id).toArray();
+      const res = await fetch('/api/db/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: list.title, words })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Upload failed');
+      
+      setUploadStatus({ isOpen: true, message: `'${list.title}' 단어장이 성공적으로 업로드되었습니다!`, type: 'success', isUploading: false });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setUploadStatus({ isOpen: true, message: `업로드 실패: ${error.message}`, type: 'error', isUploading: false });
+    }
+  };
+
   return (
     <div className="w-full h-full flex flex-col pt-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-headline-lg font-bold text-on-surface mb-2">단어장 관리</h1>
           <p className="text-body-md text-on-surface-variant">저장된 단어장을 관리하고 학습 현황을 확인하세요.</p>
         </div>
+        {status === "authenticated" && (
+          <button 
+            onClick={() => setIsDownloadModalOpen(true)} 
+            className="flex items-center gap-2 px-5 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-colors shadow-sm"
+          >
+            <CloudDownload size={20} />
+            DB에서 다운로드
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-4">
@@ -147,7 +224,12 @@ export default function SettingsPage() {
           </div>
         ) : (
           lists.map(list => (
-            <WordListItem key={list.id} list={list} onDeleteRequest={(l) => setModalConfig({isOpen: true, listToDelete: l})} />
+            <WordListItem 
+              key={list.id} 
+              list={list} 
+              onDeleteRequest={(l) => setModalConfig({isOpen: true, listToDelete: l})} 
+              onUploadRequest={handleUploadRequest}
+            />
           ))
         )}
       </div>
@@ -161,6 +243,21 @@ export default function SettingsPage() {
         onConfirm={confirmDelete}
         confirmText="삭제"
       />
+
+      <ConfirmModal
+        isOpen={uploadStatus.isOpen}
+        onClose={() => { if (!uploadStatus.isUploading) setUploadStatus(prev => ({...prev, isOpen: false})) }}
+        title={uploadStatus.isUploading ? "업로드 중..." : (uploadStatus.type === 'success' ? "완료" : "오류")}
+        message={uploadStatus.message}
+        type={uploadStatus.type}
+      />
+
+      {isDownloadModalOpen && (
+        <DBDownloadModal 
+          isOpen={isDownloadModalOpen} 
+          onClose={() => setIsDownloadModalOpen(false)} 
+        />
+      )}
     </div>
   );
 }

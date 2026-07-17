@@ -10,7 +10,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function PDFPage() {
-  const lists = useLiveQuery(() => db.wordLists.orderBy('createdAt').reverse().toArray());
+  const lists = useLiveQuery(() => db.wordLists.orderBy('title').toArray());
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
 
   const rawWords = useLiveQuery(

@@ -7,7 +7,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center w-full min-h-[60vh] gap-8">
       <div className="text-center flex flex-col items-center">
         <Logo className="h-[48px] sm:h-[64px] mb-6" />
-        <p className="text-body-lg text-on-surface-variant">오프라인 스마트 영단어 학습</p>
+        <p className="text-body-lg text-on-surface-variant">워드 스마트 영단어 학습</p>
       </div>
       
       <div className="flex gap-4 w-full max-w-md">

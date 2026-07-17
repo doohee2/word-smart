@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     const query = `'${folderId}' in parents and (mimeType='application/vnd.google-apps.folder' or mimeType='text/csv') and trashed=false`;
     const fields = "files(id, name, modifiedTime, size, mimeType)";
     
-    const driveApiUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&orderBy=folder,modifiedTime desc`;
+    const driveApiUrl = `https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&orderBy=folder,name`;
 
     const response = await fetch(driveApiUrl, {
       method: "GET",
