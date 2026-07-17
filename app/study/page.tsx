@@ -48,6 +48,8 @@ export default function StudyPage() {
     };
   }, [isStarted, setIsActiveSession]);
 
+  const activeListIdsString = activeLists?.map(l => l.id).join(',') || '';
+
   useEffect(() => {
     // Reset state when lists change
     setIsStarted(false);
@@ -55,7 +57,7 @@ export default function StudyPage() {
     setStudyQueue([]);
     setCurrentIndex(0);
     setSessionLearnedCount(0);
-  }, [activeLists?.map(l => l.id).join(',')]);
+  }, [activeListIdsString]);
 
   const handleStartStudy = () => {
     if (!rawWords) return;
@@ -226,7 +228,7 @@ export default function StudyPage() {
             <div className="flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
-                {selectedList?.title}
+                {activeLists.map(l => l.title).join(', ')}
               </span>
             </div>
             <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">

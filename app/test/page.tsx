@@ -46,7 +46,6 @@ export default function TestPage() {
 
   // Feedback state
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [wrongAnswers, setWrongAnswers] = useState<Word[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState("");
   const { setIsActiveSession } = useStudySession();
 
@@ -66,13 +65,15 @@ export default function TestPage() {
     };
   }, [isStarted, setIsActiveSession]);
 
+  const activeListIdsString = activeLists?.map(l => l.id).join(',') || '';
+
   useEffect(() => {
     // Reset state when lists change
     setIsStarted(false);
     setIsModalOpen(false);
     setTestQueue([]);
     setCurrentIndex(0);
-  }, [activeLists?.map(l => l.id).join(',')]);
+  }, [activeListIdsString]);
 
   const handleStartTest = () => {
     if (!rawWords) return;
@@ -290,7 +291,7 @@ export default function TestPage() {
             <div className="w-full md:w-auto flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider font-bold truncate max-w-[200px]">
-                {selectedList?.title}
+                {activeLists.map(l => l.title).join(', ')}
               </span>
             </div>
             
