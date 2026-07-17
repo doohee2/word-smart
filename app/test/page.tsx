@@ -8,6 +8,7 @@ import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder } from "lucide
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 interface TestWord {
   wordData: Word;
@@ -26,6 +27,7 @@ export default function TestPage() {
   // Pre-start Configuration
   const [isStarted, setIsStarted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', title: string, onCloseCallback?: () => void}>({isOpen: false, message: '', type: 'info', title: ''});
   const [testCount, setTestCount] = useState<number | string>(30);
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
   const [questionType, setQuestionType] = useState<'english' | 'korean' | 'random'>('random');
@@ -82,7 +84,7 @@ export default function TestPage() {
     if (onlyUnlearned) pool = pool.filter(w => !w.isLearned);
     
     if (pool.length === 0) {
-      alert("조건에 맞는 단어가 없습니다.");
+      setAlertConfig({ isOpen: true, message: "조건에 맞는 단어가 없습니다.", type: 'info', title: '알림' });
       return;
     }
     
@@ -170,8 +172,13 @@ export default function TestPage() {
       if (currentIndex < testQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
       } else {
-        alert(`테스트 완료! 최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`);
-        setIsStarted(false);
+        setAlertConfig({ 
+          isOpen: true, 
+          message: `테스트 완료!\n최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`, 
+          type: 'success', 
+          title: '테스트 완료',
+          onCloseCallback: () => setIsStarted(false)
+        });
       }
     }, 1500);
   };
@@ -519,6 +526,17 @@ export default function TestPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={alertConfig.isOpen}
+        onClose={() => {
+          setAlertConfig(prev => ({...prev, isOpen: false}));
+          if (alertConfig.onCloseCallback) alertConfig.onCloseCallback();
+        }}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
     </div>
   );
 }

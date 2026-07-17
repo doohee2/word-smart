@@ -4,10 +4,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect } from "react";
-import { Folder, Volume2, RotateCcw, CheckCircle, Play, Settings2, X, Plus, Minus } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw } from "lucide-react";
 import clsx from "clsx";
+import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 export default function StudyPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -21,6 +22,7 @@ export default function StudyPage() {
   // Pre-start Configuration
   const [isStarted, setIsStarted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', title: string, onCloseCallback?: () => void}>({isOpen: false, message: '', type: 'info', title: ''});
   const [studyCount, setStudyCount] = useState<number | string>(30);
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
   
@@ -68,7 +70,7 @@ export default function StudyPage() {
     }
     
     if (pool.length === 0) {
-      alert("조건에 맞는 단어가 없습니다.");
+      setAlertConfig({ isOpen: true, message: "조건에 맞는 단어가 없습니다.", type: 'info', title: '알림' });
       return;
     }
     
@@ -115,16 +117,23 @@ export default function StudyPage() {
     setShowKoSentence(false);
     setDirection(1);
     
-    if (currentIndex < studyQueue.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+    const isLast = currentIndex === studyQueue.length - 1;
+
+    if (isLast) {
+      setAlertConfig({ 
+        isOpen: true, 
+        message: `학습이 완료되었습니다!\n(세션 완료 단어: ${learned ? sessionLearnedCount + 1 : sessionLearnedCount} / ${studyQueue.length})`, 
+        type: 'success', 
+        title: '학습 완료',
+        onCloseCallback: () => setIsStarted(false)
+      });
+      return;
     } else {
-      alert(`학습이 완료되었습니다! (세션 완료 단어: ${learned ? sessionLearnedCount + 1 : sessionLearnedCount} / ${studyQueue.length})`);
-      setIsStarted(false);
+      setCurrentIndex(prev => prev + 1);
     }
   };
 
   const currentWord = studyQueue[currentIndex];
-  const progressPercent = studyQueue.length === 0 ? 0 : Math.round((currentIndex / studyQueue.length) * 100);
 
   const variants = {
     enter: (direction: number) => ({
@@ -415,6 +424,17 @@ export default function StudyPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={alertConfig.isOpen}
+        onClose={() => {
+          setAlertConfig(prev => ({...prev, isOpen: false}));
+          if (alertConfig.onCloseCallback) alertConfig.onCloseCallback();
+        }}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
     </div>
   );
 }

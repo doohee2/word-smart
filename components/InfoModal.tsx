@@ -19,13 +19,13 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
         >
           <X size={20} />
         </button>
-        <div className="flex justify-center mb-2 mt-4">
-          <Logo />
+        <div className="flex justify-center mb-4 mt-2 pointer-events-none">
+          <Logo className="h-12 justify-center" />
         </div>
-        <p className="text-body-md text-on-surface-variant leading-relaxed break-keep">
+        <p className="text-body-md text-on-surface-variant leading-relaxed break-all text-left">
           {APP_INFO_MESSAGE}
         </p>
-        <p className="text-label-sm text-on-surface-variant font-medium mt-2">
+        <p className="text-label-sm text-on-surface-variant font-medium mt-2 text-right">
           {APP_VERSION}
         </p>
       </div>

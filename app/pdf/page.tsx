@@ -9,6 +9,7 @@ import clsx from "clsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { motion, AnimatePresence } from "framer-motion";
+import { ConfirmModal } from "@/components/ConfirmModal";
 
 export default function PDFPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -21,6 +22,7 @@ export default function PDFPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', title: string}>({isOpen: false, message: '', type: 'info', title: ''});
 
   // PDF Settings
   const [wordCount, setWordCount] = useState<number | string>(50);
@@ -159,7 +161,7 @@ export default function PDFPage() {
       doc.save(`${title}.pdf`);
     } catch (error) {
       console.error(error);
-      alert("PDF 생성 중 오류가 발생했습니다. (인터넷 연결을 확인해주세요)");
+      setAlertConfig({ isOpen: true, message: "PDF 생성 중 오류가 발생했습니다.\n(인터넷 연결을 확인해주세요)", type: 'error', title: '오류' });
     } finally {
       setIsGenerating(false);
     }
@@ -393,6 +395,14 @@ export default function PDFPage() {
           </div>
         )}
       </AnimatePresence>
+
+      <ConfirmModal
+        isOpen={alertConfig.isOpen}
+        onClose={() => setAlertConfig(prev => ({...prev, isOpen: false}))}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+      />
     </div>
   );
 }
