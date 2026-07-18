@@ -33,6 +33,23 @@ export default function TestPage() {
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
   const [questionType, setQuestionType] = useState<'english' | 'korean' | 'random'>('random');
 
+  // Load saved settings
+  useEffect(() => {
+    const savedCount = localStorage.getItem('setting_testCount');
+    if (savedCount) setTestCount(savedCount);
+    const savedOnly = localStorage.getItem('setting_testOnlyUnlearned');
+    if (savedOnly) setOnlyUnlearned(savedOnly === 'true');
+    const savedType = localStorage.getItem('setting_testQuestionType');
+    if (savedType) setQuestionType(savedType as 'english' | 'korean' | 'random');
+  }, []);
+
+  // Save settings on change
+  useEffect(() => {
+    localStorage.setItem('setting_testCount', testCount.toString());
+    localStorage.setItem('setting_testOnlyUnlearned', onlyUnlearned.toString());
+    localStorage.setItem('setting_testQuestionType', questionType);
+  }, [testCount, onlyUnlearned, questionType]);
+
   // Runtime State
   const [testQueue, setTestQueue] = useState<TestWord[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -181,7 +198,7 @@ export default function TestPage() {
           onCloseCallback: () => setIsStarted(false)
         });
       }
-    }, 1500);
+    }, isCorrect ? 1500 : 2500);
   };
 
   const handleMCQSelect = (selectedMeaning: string) => {
@@ -392,11 +409,11 @@ export default function TestPage() {
           {currentMode === 'spelling' && currentWord && (
             <div className="flex-1 flex flex-col">
               <div className={clsx(
-                "bg-surface-container-lowest shadow-sm rounded-2xl p-8 mb-6 border text-center transition-all",
+                "bg-surface-container-lowest shadow-sm rounded-2xl p-4 md:p-6 mb-4 border text-center transition-all",
                 feedback === 'correct' ? "border-primary bg-primary-container/20" : 
                 feedback === 'incorrect' ? "border-error bg-error-container/20" : "border-surface-variant"
               )}>
-                <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold mb-4">
+                <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold mb-2">
                   문제 {totalTested + 1}
                 </span>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
@@ -409,7 +426,7 @@ export default function TestPage() {
                   </div>
                 )}
 
-                <div className="mt-8 bg-surface-container py-6 rounded-xl w-full flex justify-center items-center px-4 min-h-[104px]">
+                <div className="mt-4 md:mt-6 bg-surface-container py-4 md:py-6 rounded-xl w-full flex justify-center items-center px-4 min-h-[104px]">
                   {feedback === 'incorrect' ? (
                     <span className={clsx("text-error font-bold text-center break-words", currentWord.word.length > 15 ? "text-headline-md" : "text-headline-lg tracking-widest")}>
                       {correctAnswer}
@@ -422,7 +439,7 @@ export default function TestPage() {
                 </div>
 
                 {feedback && (
-                  <div className={clsx("mt-6 font-bold text-headline-sm", feedback === 'correct' ? "text-primary" : "text-error")}>
+                  <div className={clsx("mt-4 font-bold text-headline-sm", feedback === 'correct' ? "text-primary" : "text-error")}>
                     {feedback === 'correct' ? "정답입니다!" : "오답입니다."}
                   </div>
                 )}

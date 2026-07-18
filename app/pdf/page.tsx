@@ -3,7 +3,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Download, Settings2, X, Plus, Minus, FileText, ChevronLeft } from "lucide-react";
 import clsx from "clsx";
 import jsPDF from "jspdf";
@@ -28,6 +28,20 @@ export default function PDFPage() {
   // PDF Settings
   const [wordCount, setWordCount] = useState<number | string>(50);
   const [questionType, setQuestionType] = useState<'english' | 'korean' | 'random'>('random');
+
+  // Load saved settings
+  useEffect(() => {
+    const savedCount = localStorage.getItem('setting_pdfWordCount');
+    if (savedCount) setWordCount(savedCount);
+    const savedType = localStorage.getItem('setting_pdfQuestionType');
+    if (savedType) setQuestionType(savedType as 'english' | 'korean' | 'random');
+  }, []);
+
+  // Save settings on change
+  useEffect(() => {
+    localStorage.setItem('setting_pdfWordCount', wordCount.toString());
+    localStorage.setItem('setting_pdfQuestionType', questionType);
+  }, [wordCount, questionType]);
 
   // Preview State
   const [isPreviewMode, setIsPreviewMode] = useState(false);

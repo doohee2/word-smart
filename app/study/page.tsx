@@ -26,6 +26,20 @@ export default function StudyPage() {
   const [alertConfig, setAlertConfig] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', title: string, onCloseCallback?: () => void}>({isOpen: false, message: '', type: 'info', title: ''});
   const [studyCount, setStudyCount] = useState<number | string>(30);
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
+
+  // Load saved settings
+  useEffect(() => {
+    const savedCount = localStorage.getItem('setting_studyCount');
+    if (savedCount) setStudyCount(savedCount);
+    const savedOnly = localStorage.getItem('setting_studyOnlyUnlearned');
+    if (savedOnly) setOnlyUnlearned(savedOnly === 'true');
+  }, []);
+
+  // Save settings on change
+  useEffect(() => {
+    localStorage.setItem('setting_studyCount', studyCount.toString());
+    localStorage.setItem('setting_studyOnlyUnlearned', onlyUnlearned.toString());
+  }, [studyCount, onlyUnlearned]);
   
   // Runtime State
   const [studyQueue, setStudyQueue] = useState<Word[]>([]);
