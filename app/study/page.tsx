@@ -26,6 +26,7 @@ export default function StudyPage() {
   const [alertConfig, setAlertConfig] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', title: string, onCloseCallback?: () => void}>({isOpen: false, message: '', type: 'info', title: ''});
   const [studyCount, setStudyCount] = useState<number | string>(30);
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
+  const [revealMode, setRevealMode] = useState<'2sec' | 'touch'>('2sec');
 
   // Load saved settings
   useEffect(() => {
@@ -33,13 +34,16 @@ export default function StudyPage() {
     if (savedCount) setStudyCount(savedCount);
     const savedOnly = localStorage.getItem('setting_studyOnlyUnlearned');
     if (savedOnly) setOnlyUnlearned(savedOnly === 'true');
+    const savedRevealMode = localStorage.getItem('setting_studyRevealMode');
+    if (savedRevealMode === '2sec' || savedRevealMode === 'touch') setRevealMode(savedRevealMode);
   }, []);
 
   // Save settings on change
   useEffect(() => {
     localStorage.setItem('setting_studyCount', studyCount.toString());
     localStorage.setItem('setting_studyOnlyUnlearned', onlyUnlearned.toString());
-  }, [studyCount, onlyUnlearned]);
+    localStorage.setItem('setting_studyRevealMode', revealMode);
+  }, [studyCount, onlyUnlearned, revealMode]);
   
   // Runtime State
   const [studyQueue, setStudyQueue] = useState<Word[]>([]);
@@ -47,7 +51,25 @@ export default function StudyPage() {
   const [showKoSentence, setShowKoSentence] = useState(false);
   const [direction, setDirection] = useState(1);
   const [sessionLearnedCount, setSessionLearnedCount] = useState(0);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [primarySide, setPrimarySide] = useState<'english' | 'korean'>('english');
   const { setIsActiveSession } = useStudySession();
+
+  // Reset state on new card
+  useEffect(() => {
+    setIsRevealed(false);
+    setPrimarySide(Math.random() > 0.5 ? 'english' : 'korean');
+    setShowKoSentence(false);
+  }, [currentIndex, studyQueue]);
+
+  // Handle 2sec reveal timer
+  useEffect(() => {
+    if (!isStarted || isRevealed || revealMode !== '2sec' || studyQueue.length === 0) return;
+    const timer = setTimeout(() => {
+      setIsRevealed(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [isStarted, isRevealed, revealMode, currentIndex, studyQueue]);
 
   useEffect(() => {
     setIsActiveSession(isStarted);
@@ -271,10 +293,14 @@ export default function StudyPage() {
                 animate="center"
                 exit="exit"
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="absolute inset-0 bg-surface-container-lowest rounded-[32px] shadow-lg p-6 md:p-12 flex flex-col items-center text-center justify-center border border-surface-variant"
+                className={clsx(
+                  "absolute inset-0 bg-surface-container-lowest rounded-[32px] shadow-lg p-6 md:p-12 flex flex-col items-center text-center justify-center border border-surface-variant",
+                  !isRevealed && "cursor-pointer"
+                )}
+                onClick={() => !isRevealed && setIsRevealed(true)}
               >
                 <button 
-                  onClick={playAudio}
+                  onClick={(e) => { e.stopPropagation(); playAudio(); }}
                   aria-label="발음 듣기" 
                   className="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
                 >
@@ -287,20 +313,29 @@ export default function StudyPage() {
                   </span>
                 </div>
                 
-                <h2 className="text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-4">
+                <h2 className={clsx(
+                  "text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-4 transition-all duration-300",
+                  (!isRevealed && primarySide === 'korean') ? "blur-md opacity-20 select-none text-transparent" : ""
+                )}>
                   {currentWord?.word}
                 </h2>
                 
                 <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
                 
-                <div className="text-headline-lg text-primary mb-8 font-bold">
+                <div className={clsx(
+                  "text-headline-lg text-primary mb-8 font-bold transition-all duration-300",
+                  (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : ""
+                )}>
                   {currentWord?.meaningKo}
                 </div>
 
                 {(currentWord?.exampleEn || currentWord?.exampleKo) && (
                   <div 
                     className="w-full mt-auto p-4 md:p-6 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors text-left group"
-                    onClick={() => setShowKoSentence(!showKoSentence)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowKoSentence(!showKoSentence);
+                    }}
                   >
                     <div className="flex gap-4 items-start">
                       <button 
@@ -420,11 +455,34 @@ export default function StudyPage() {
                       checked={onlyUnlearned} 
                       onChange={(e) => setOnlyUnlearned(e.target.checked)} 
                     />
-                    <div className={clsx("w-12 h-6 rounded-full transition-colors", onlyUnlearned ? "bg-primary" : "bg-outline-variant")}>
-                      <div className={clsx("w-4 h-4 rounded-full bg-white absolute top-1 transition-transform", onlyUnlearned ? "translate-x-7" : "translate-x-1")}></div>
+                    <div className="w-14 h-8 bg-surface-variant rounded-full p-1 flex items-center shrink-0" style={{ justifyContent: onlyUnlearned ? 'flex-end' : 'flex-start' }}>
+                      <div className={clsx("w-6 h-6 rounded-full shadow-sm transition-colors", onlyUnlearned ? "bg-primary" : "bg-outline")} />
                     </div>
                   </div>
                 </label>
+
+                {/* 단어/뜻 공개 방식 */}
+                <div>
+                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">단어 뜻 보이기</label>
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setRevealMode('2sec')}
+                      className={clsx("flex-1 py-3 px-2 rounded-xl font-bold transition-colors text-sm", 
+                        revealMode === '2sec' ? "bg-primary text-on-primary shadow-md" : "bg-surface-container hover:bg-surface-variant text-on-surface"
+                      )}
+                    >
+                      2초 후에 보이기
+                    </button>
+                    <button 
+                      onClick={() => setRevealMode('touch')}
+                      className={clsx("flex-1 py-3 px-2 rounded-xl font-bold transition-colors text-sm", 
+                        revealMode === 'touch' ? "bg-primary text-on-primary shadow-md" : "bg-surface-container hover:bg-surface-variant text-on-surface"
+                      )}
+                    >
+                      터치 후에 보이기
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <button 
