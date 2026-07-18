@@ -249,15 +249,13 @@ export default function SettingsPage() {
           </div>
           <p className="text-body-md text-on-surface-variant">저장된 단어장을 관리하고 학습 현황을 확인하세요.</p>
         </div>
-        {status === "authenticated" && (
-          <button 
-            onClick={() => setIsDownloadModalOpen(true)} 
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-colors shadow-sm"
-          >
-            <CloudDownload size={18} />
-            DB에서 다운로드
-          </button>
-        )}
+        <button 
+          onClick={() => setIsDownloadModalOpen(true)} 
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition-colors shadow-sm"
+        >
+          <CloudDownload size={18} />
+          DB에서 다운로드
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-2">

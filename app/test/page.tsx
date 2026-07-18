@@ -223,11 +223,28 @@ export default function TestPage() {
 
   const renderSpellingHint = () => {
     if (!currentWord) return null;
-    return currentWord.word.split('').map((char, idx) => {
-      if (revealedIndices.includes(idx) || char === ' ') {
-        return <span key={idx} className="mx-1 font-bold text-primary">{char}</span>;
+    
+    const words = currentWord.word.split(' ');
+    let globalIdx = 0;
+    
+    return words.map((word, wordIdx) => {
+      const wordElements = word.split('').map((char) => {
+        const idx = globalIdx++;
+        if (revealedIndices.includes(idx)) {
+          return <span key={idx} className="mx-[2px] sm:mx-1 font-bold text-primary">{char}</span>;
+        }
+        return <span key={idx} className="mx-[2px] sm:mx-1 text-outline">_</span>;
+      });
+      
+      if (wordIdx < words.length - 1) {
+        globalIdx++; 
       }
-      return <span key={idx} className="mx-1 text-outline">_</span>;
+      
+      return (
+        <div key={wordIdx} className="inline-block whitespace-nowrap mx-1 sm:mx-2">
+          {wordElements}
+        </div>
+      );
     });
   };
 
@@ -392,8 +409,16 @@ export default function TestPage() {
                   </div>
                 )}
 
-                <div className="mt-8 text-headline-lg tracking-widest bg-surface-container py-6 rounded-xl overflow-x-auto whitespace-nowrap px-4">
-                  {feedback === 'incorrect' ? <span className="text-error">{correctAnswer}</span> : renderSpellingHint()}
+                <div className="mt-8 bg-surface-container py-6 rounded-xl w-full flex justify-center items-center px-4 min-h-[104px]">
+                  {feedback === 'incorrect' ? (
+                    <span className={clsx("text-error font-bold text-center break-words", currentWord.word.length > 15 ? "text-headline-md" : "text-headline-lg tracking-widest")}>
+                      {correctAnswer}
+                    </span>
+                  ) : (
+                    <div className={clsx("flex flex-wrap justify-center items-center gap-y-3", currentWord.word.length > 15 ? "text-headline-sm sm:text-headline-md tracking-wider" : "text-headline-lg tracking-widest")}>
+                      {renderSpellingHint()}
+                    </div>
+                  )}
                 </div>
 
                 {feedback && (

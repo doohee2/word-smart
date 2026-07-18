@@ -5,10 +5,6 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET(_request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     // 1. Fetch all word lists
     const { data: lists, error: listsError } = await supabase
