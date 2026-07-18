@@ -161,7 +161,8 @@ export default function TestPage() {
       
       setOptions(Array.from(meanings).sort(() => 0.5 - Math.random()));
     }
-  }, [currentWord, currentMode, rawWords]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWord, currentMode]); // Do not include rawWords to prevent reshuffling on db.update
 
   // Reset spelling state on new word
   useEffect(() => {
