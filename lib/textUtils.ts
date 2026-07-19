@@ -51,7 +51,7 @@ function getMatchRange(wordStr: string, exampleStr: string): { start: number, en
   // 1. Exact match
   const escapedWord = wordStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const exactRegex = new RegExp(`(${escapedWord})`, 'gi');
-  let match = exactRegex.exec(exampleStr);
+  const match = exactRegex.exec(exampleStr);
   if (match) {
     return { start: match.index, end: match.index + match[0].length };
   }

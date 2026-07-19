@@ -1,5 +1,5 @@
 "use client";
-/* eslint-disable react-hooks/exhaustive-deps */
+ 
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
@@ -32,8 +32,10 @@ export default function PDFPage() {
   // Load saved settings
   useEffect(() => {
     const savedCount = localStorage.getItem('setting_pdfWordCount');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (savedCount) setWordCount(savedCount);
     const savedType = localStorage.getItem('setting_pdfQuestionType');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (savedType) setQuestionType(savedType as 'english' | 'korean' | 'random');
   }, []);
 
