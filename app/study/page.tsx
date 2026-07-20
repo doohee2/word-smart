@@ -53,14 +53,24 @@ export default function StudyPage() {
   const [sessionLearnedCount, setSessionLearnedCount] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [primarySide, setPrimarySide] = useState<'english' | 'korean'>('english');
-  const { setIsActiveSession } = useStudySession();
+  const { setIsActiveSession, setCurrentListTitle } = useStudySession();
 
   // Reset state on new card
   useEffect(() => {
     setIsRevealed(false);
     setPrimarySide(Math.random() > 0.5 ? 'english' : 'korean');
     setShowKoSentence(false);
-  }, [currentIndex, studyQueue]);
+
+    if (studyQueue[currentIndex] && activeLists) {
+      const currentList = activeLists.find(l => l.id === studyQueue[currentIndex].listId);
+      setCurrentListTitle(currentList?.title || null);
+    }
+  }, [currentIndex, studyQueue, activeLists, setCurrentListTitle]);
+
+  useEffect(() => {
+    if (!isStarted) setCurrentListTitle(null);
+    return () => setCurrentListTitle(null);
+  }, [isStarted, setCurrentListTitle]);
 
   // Handle 2sec reveal timer
   useEffect(() => {

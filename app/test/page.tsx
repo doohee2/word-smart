@@ -67,7 +67,7 @@ export default function TestPage() {
   // Feedback state
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState("");
-  const { setIsActiveSession } = useStudySession();
+  const { setIsActiveSession, setCurrentListTitle } = useStudySession();
 
   useEffect(() => {
     setIsActiveSession(isStarted);
@@ -84,6 +84,19 @@ export default function TestPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [isStarted, setIsActiveSession]);
+
+  useEffect(() => {
+    if (isStarted && testQueue[currentIndex] && activeLists) {
+      const currentList = activeLists.find(l => l.id === testQueue[currentIndex].word.listId);
+      setCurrentListTitle(currentList?.title || null);
+    } else {
+      setCurrentListTitle(null);
+    }
+  }, [currentIndex, testQueue, activeLists, isStarted, setCurrentListTitle]);
+
+  useEffect(() => {
+    return () => setCurrentListTitle(null);
+  }, [setCurrentListTitle]);
 
   const activeListIdsString = activeLists?.map(l => l.id).join(',') || '';
 
