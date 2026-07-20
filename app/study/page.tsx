@@ -53,24 +53,14 @@ export default function StudyPage() {
   const [sessionLearnedCount, setSessionLearnedCount] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [primarySide, setPrimarySide] = useState<'english' | 'korean'>('english');
-  const { setIsActiveSession, setCurrentListTitle } = useStudySession();
+  const { setIsActiveSession } = useStudySession();
 
   // Reset state on new card
   useEffect(() => {
     setIsRevealed(false);
     setPrimarySide(Math.random() > 0.5 ? 'english' : 'korean');
     setShowKoSentence(false);
-
-    if (studyQueue[currentIndex] && activeLists) {
-      const currentList = activeLists.find(l => l.id === studyQueue[currentIndex].listId);
-      setCurrentListTitle(currentList?.title || null);
-    }
-  }, [currentIndex, studyQueue, activeLists, setCurrentListTitle]);
-
-  useEffect(() => {
-    if (!isStarted) setCurrentListTitle(null);
-    return () => setCurrentListTitle(null);
-  }, [isStarted, setCurrentListTitle]);
+  }, [currentIndex, studyQueue]);
 
   // Handle 2sec reveal timer
   useEffect(() => {
@@ -285,7 +275,7 @@ export default function StudyPage() {
             <div className="flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
-                {activeLists.map(l => l.title).join(', ')}
+                {studyQueue[currentIndex] && activeLists ? activeLists.find(l => l.id === studyQueue[currentIndex].listId)?.title || '단어장' : '단어장'}
               </span>
             </div>
             <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">

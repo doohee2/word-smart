@@ -67,7 +67,7 @@ export default function TestPage() {
   // Feedback state
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState("");
-  const { setIsActiveSession, setCurrentListTitle } = useStudySession();
+  const { setIsActiveSession } = useStudySession();
 
   useEffect(() => {
     setIsActiveSession(isStarted);
@@ -84,19 +84,6 @@ export default function TestPage() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [isStarted, setIsActiveSession]);
-
-  useEffect(() => {
-    if (isStarted && testQueue[currentIndex] && activeLists) {
-      const currentList = activeLists.find(l => l.id === testQueue[currentIndex].wordData.listId);
-      setCurrentListTitle(currentList?.title || null);
-    } else {
-      setCurrentListTitle(null);
-    }
-  }, [currentIndex, testQueue, activeLists, isStarted, setCurrentListTitle]);
-
-  useEffect(() => {
-    return () => setCurrentListTitle(null);
-  }, [setCurrentListTitle]);
 
   const activeListIdsString = activeLists?.map(l => l.id).join(',') || '';
 
@@ -349,7 +336,7 @@ export default function TestPage() {
             <div className="w-full md:w-auto flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider font-bold truncate max-w-[200px]">
-                {activeLists.map(l => l.title).join(', ')}
+                {testQueue[currentIndex] && activeLists ? activeLists.find(l => l.id === testQueue[currentIndex].wordData.listId)?.title || '단어장' : '단어장'}
               </span>
             </div>
             

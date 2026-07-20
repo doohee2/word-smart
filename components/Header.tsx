@@ -9,11 +9,9 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
-import { useStudySession } from "@/providers/StudySessionProvider";
 
 export function Header() {
   const { data: session } = useSession();
-  const { currentListTitle, isActiveSession } = useStudySession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -24,18 +22,9 @@ export function Header() {
   return (
     <header className="bg-surface docked full-width top-0 shadow-sm z-40 sticky">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center">
           <div className="md:hidden pt-1">
-            {isActiveSession && currentListTitle ? (
-               <span className="text-title-md font-bold text-on-surface truncate max-w-[200px] block">{currentListTitle}</span>
-            ) : (
-               <Logo className="h-[24px]" />
-            )}
-          </div>
-          <div className="hidden md:block">
-            {isActiveSession && currentListTitle && (
-              <span className="text-title-md font-bold text-on-surface truncate max-w-[400px] block">{currentListTitle}</span>
-            )}
+            <Logo className="h-[24px]" />
           </div>
         </div>
         <div className="flex items-center gap-0.5">
