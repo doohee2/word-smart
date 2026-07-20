@@ -1,81 +1,81 @@
-﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
-algebra,n.,대수학,Algebra involves using letters and symbols to represent numbers in equations.,대수학은 방정식에서 숫자를 나타내기 위해 문자와 기호를 사용하는 것을 포함한다.
-geometry,n.,기하학,"Geometry is the branch of mathematics concerned with shapes, sizes, and the properties of space.","기하학은 모양, 크기, 그리고 공간의 속성을 다루는 수학의 한 분야이다."
-calculus,n.,미적분학,Calculus is essential for understanding continuous change in physics and engineering.,미적분학은 물리학과 공학에서 연속적인 변화를 이해하는 데 필수적이다.
-arithmetic,n.,"산수, 연산","Basic arithmetic includes addition, subtraction, multiplication, and division.","기본적인 산수에는 덧셈, 뺄셈, 곱셈, 나눗셈이 포함된다."
-equation,n.,방정식,The students struggled to solve the complex quadratic equation.,학생들은 그 복잡한 이차 방정식을 푸는 데 어려움을 겪었다.
-variable,n.,변수,"In the equation y = 2x, both x and y are variables.",방정식 y = 2x에서 x와 y는 모두 변수이다.
-coefficient,n.,계수,"In the term 5x, the number 5 is the coefficient.",5x라는 항에서 숫자 5는 계수이다.
-fraction,n.,"분수, 일부",A half is represented by the fraction 1/2.,절반은 1/2이라는 분수로 표시된다.
-decimal,n.,"소수, 십진법",The number 3.14 is a decimal representing the approximate value of pi.,3.14라는 숫자는 파이의 대략적인 값을 나타내는 소수이다.
-integer,n.,정수,"An integer is a whole number that can be positive, negative, or zero.","정수는 양수, 음수 또는 0이 될 수 있는 완전한 수(자연수, 음의 정수, 0)이다."
-prime,adj.,"소수의, 가장 중요한",Seven is a prime number because it can only be divided by one and itself.,7은 1과 자기 자신으로만 나눌 수 있기 때문에 소수이다.
-ratio,n.,"비율, 비",The ratio of men to women in the engineering department is three to one.,공학부의 남녀 비율은 3 대 1이다.
-proportion,n.,"비례, 부분",The head of a baby is large in proportion to the rest of its body.,아기의 머리는 나머지 신체에 비례하여 크다.
-theorem,n.,"정리, 법칙",The Pythagorean theorem applies only to right-angled triangles.,피타고라스의 정리는 직각 삼각형에만 적용된다.
-axiom,n.,"공리, 자명한 이치",It is a widely accepted axiom that parallel lines never meet.,평행선은 결코 만나지 않는다는 것은 널리 받아들여지는 공리이다.
-symmetry,n.,대칭,The butterfly's wings exhibit perfect bilateral symmetry.,나비의 날개는 완벽한 좌우 대칭을 보여준다.
-intersect,v.,"교차하다, 만나다",The two lines intersect at exactly one point.,그 두 선은 정확히 한 점에서 교차한다.
-parallel,adj.,평행한,The railroad tracks run parallel to each other for miles.,기찻길은 수 마일 동안 서로 평행하게 달린다.
-perpendicular,adj.,수직의,The flagpole stands perpendicular to the ground.,깃대는 땅에 수직으로 서 있다.
-matrix,n.,"행렬, 모형",The data can be organized into a mathematical matrix for easier computation.,데이터는 더 쉬운 계산을 위해 수학적 행렬로 정리될 수 있다.
-statistics,n.,"통계학, 통계 자료",Statistics show a clear link between smoking and lung cancer.,통계는 흡연과 폐암 사이의 명확한 연관성을 보여준다.
-probability,n.,확률,There is a high probability of rain tomorrow afternoon.,내일 오후에 비가 올 확률이 높다.
-mean,n.,평균,"To find the mean, add up all the numbers and divide by the total count.",평균을 구하려면 모든 숫자를 더한 다음 전체 개수로 나누면 된다.
-median,n.,중앙값,The median household income provides a better picture than the mean in this heavily skewed dataset.,이 심하게 편향된 데이터 세트에서는 가구 소득의 중앙값이 평균보다 더 나은 상황을 보여준다.
-mode,n.,최빈값,The mode is the number that appears most frequently in a given set of data.,최빈값은 주어진 데이터 세트에서 가장 자주 나타나는 숫자이다.
-variance,n.,분산,The variance measures how far each number in the set is from the mean.,분산은 세트 내의 각 숫자가 평균에서 얼마나 떨어져 있는지 측정한다.
-deviation,n.,편차,Standard deviation is a key metric used to understand the spread of data.,표준 편차는 데이터의 분포를 이해하는 데 사용되는 핵심 지표이다.
-correlation,n.,상관관계,The study found a strong positive correlation between exercise and mental health.,그 연구는 운동과 정신 건강 사이에 강한 양의 상관관계를 발견했다.
-regression,n.,회귀,Linear regression can be used to predict future trends based on historical data.,선형 회귀는 과거 데이터를 기반으로 미래 추세를 예측하는 데 사용될 수 있다.
-outlier,n.,"이상치, 극단치",The researcher removed the outlier from the dataset to avoid skewing the results.,연구원은 결과를 왜곡하는 것을 피하기 위해 데이터 세트에서 이상치를 제거했다.
-distribution,n.,분포,"Heights in a population typically follow a normal distribution, forming a bell curve.",인구의 키는 일반적으로 정규 분포를 따르며 종 모양 곡선을 형성한다.
-sample,n.,"표본, 샘플","A random sample of 1,000 voters was selected for the pre-election poll.","선거 전 여론조사를 위해 1,000명의 유권자가 무작위 표본으로 선정되었다."
-population,n.,"모집단, 인구","In statistics, the population refers to the entire group you want to draw conclusions about.",통계학에서 모집단은 결론을 도출하고자 하는 전체 집단을 의미한다.
-qualitative,adj.,"정성적인, 질적인",Qualitative research focuses on understanding people's subjective experiences and motivations.,정성적 연구는 사람들의 주관적인 경험과 동기를 이해하는 데 초점을 맞춘다.
-quantitative,adj.,"정량적인, 양적인",Quantitative analysis relies on numerical data and statistical models.,정량적 분석은 수치 데이터와 통계 모델에 의존한다.
-validity,n.,타당성,The committee questioned the validity of the experiment's results.,위원회는 그 실험 결과의 타당성에 의문을 제기했다.
-reliability,n.,신뢰성,The reliability of the test means it will produce consistent results every time.,검사의 신뢰성은 그것이 매번 일관된 결과를 산출할 것임을 의미한다.
-survey,n.,설문 조사,The online survey aims to gather consumer feedback on the new product.,온라인 설문 조사는 신제품에 대한 소비자 피드백을 수집하는 것을 목표로 한다.
-demographic,adj.,인구통계학의,The company targets a specific demographic of young professionals.,그 회사는 젊은 전문직 종사자라는 특정 인구통계학적 집단을 타겟으로 한다.
-significant,adj.,"유의미한, 중요한",The medical trial showed a statistically significant improvement in the patients' condition.,그 의학 시험은 환자들의 상태에서 통계적으로 유의미한 호전을 보여주었다.
-methodology,n.,방법론,The paper outlines the research methodology used to collect the data.,그 논문은 데이터를 수집하는 데 사용된 연구 방법론을 개괄한다.
-hypothesis,n.,가설,The scientist designed an experiment to test her new hypothesis.,과학자는 그녀의 새로운 가설을 검증하기 위해 실험을 설계했다.
-empirical,adj.,"실증적인, 경험적인",The theory must be backed by empirical evidence to be accepted by the scientific community.,그 이론이 과학계에서 받아들여지려면 실증적 증거로 뒷받침되어야 한다.
-rigorous,adj.,"엄격한, 철저한",The new drug must undergo rigorous testing before it can be sold to the public.,신약이 대중에게 판매되기 전에 엄격한 테스트를 거쳐야 한다.
-control,n.,"통제(집단), 대조군","In the experiment, the control group was given a placebo instead of the real medicine.",실험에서 대조군은 진짜 약 대신 위약을 받았다.
-placebo,n.,"위약, 플라시보",The placebo effect demonstrates the power of the mind over the body's physical state.,플라시보 효과는 신체의 물리적 상태에 대한 마음의 힘을 보여준다.
-observation,n.,관찰,Careful observation is the first step in the scientific method.,주의 깊은 관찰은 과학적 방법의 첫 번째 단계이다.
-replicate,v.,"복제하다, 재현하다",Other researchers were unable to replicate the results of the initial study.,다른 연구자들은 초기 연구의 결과를 재현할 수 없었다.
-formulate,v.,"공식화하다, 만들어내다",He took a long time to formulate a comprehensive response to the critique.,그는 비판에 대한 포괄적인 답변을 공식화하는 데 오랜 시간이 걸렸다.
-deduce,v.,"연역하다, 추론하다","From the given facts, we can deduce that the suspect was at the scene.",주어진 사실들로부터 우리는 용의자가 현장에 있었다고 추론할 수 있다.
-induce,v.,"귀납하다, 유도하다",Scientists induce general laws from specific observations in nature.,과학자들은 자연에서의 구체적인 관찰들로부터 일반적인 법칙을 귀납적으로 도출한다.
-postulate,v.,"상정하다, 가정하다",Einstein postulated that the speed of light is constant for all observers.,아인슈타인은 빛의 속도가 모든 관찰자에게 일정하다고 가정했다.
-derive,v.,"도출하다, 끌어내다",The formula can be derived directly from Newton's second law of motion.,그 공식은 뉴턴의 운동 제2법칙에서 직접 도출될 수 있다.
-anomaly,n.,"이례적인 것, 변칙",The sudden spike in temperature was treated as a statistical anomaly.,온도의 갑작스러운 급상승은 통계적 변칙으로 취급되었다.
-discrepancy,n.,"불일치, 차이",There is a significant discrepancy between the two sets of experimental data.,두 실험 데이터 세트 사이에는 상당한 불일치가 있다.
-peer-review,n.,동료 평가,The journal article passed a strict peer-review process before publication.,그 학술지 논문은 출판되기 전에 엄격한 동료 평가 과정을 통과했다.
-consensus,n.,"합의, 의견 일치",There is a broad scientific consensus that climate change is real and ongoing.,기후 변화가 실재하며 진행 중이라는 광범위한 과학적 합의가 있다.
-criterion,n.,기준,The main criterion for selecting participants was their age.,참가자를 선정하는 주요 기준은 그들의 나이였다.
-apparatus,n.,"장치, 기구",The laboratory is equipped with state-of-the-art apparatus for chemical analysis.,그 실험실은 화학 분석을 위한 최첨단 장치를 갖추고 있다.
-tentative,adj.,"잠정적인, 머뭇거리는",The researchers reached a tentative conclusion based on early data.,연구원들은 초기 데이터를 바탕으로 잠정적인 결론에 도달했다.
-dimension,n.,"차원, 크기",We live in a universe with three spatial dimensions and one temporal dimension.,우리는 세 개의 공간적 차원과 한 개의 시간적 차원이 있는 우주에 산다.
-magnitude,n.,"규모, 정도",The magnitude of the earthquake was unprecedented in the region's history.,그 지진의 규모는 그 지역 역사상 전례가 없는 것이었다.
-volume,n.,"부피, 음량",The volume of a sphere can be calculated using a specific mathematical formula.,구의 부피는 특정한 수학 공식을 사용하여 계산될 수 있다.
-density,n.,밀도,Oil floats on top of water because it has a lower density.,기름은 물보다 밀도가 낮기 때문에 물 위에 뜬다.
-concentration,n.,"농도, 집중",The high concentration of salt makes the lake uninhabitable for fish.,높은 염분 농도는 그 호수를 물고기가 살 수 없게 만든다.
-proportional,adj.,비례하는,The force applied is directly proportional to the acceleration of the object.,가해진 힘은 물체의 가속도에 정비례한다.
-exponential,adj.,기하급수적인,The invention of the internet led to an exponential increase in data sharing.,인터넷의 발명은 데이터 공유의 기하급수적인 증가를 이끌었다.
-linear,adj.,"선형의, 직선형의",The graph shows a linear relationship between study time and exam scores.,그래프는 공부 시간과 시험 점수 사이의 선형 관계를 보여준다.
-threshold,n.,"임계점, 문턱","If the temperature drops below a certain threshold, the water will freeze.",온도가 특정 임계점 아래로 떨어지면 물이 얼 것이다.
-trajectory,n.,"궤적, 경로",The missile's trajectory was carefully tracked by radar.,미사일의 궤적은 레이더에 의해 주의 깊게 추적되었다.
-precise,adj.,정밀한,The laser beam enables extremely precise cutting of the metal.,레이저 빔은 금속의 매우 정밀한 절단을 가능하게 한다.
-accurate,adj.,정확한,The weather forecast was surprisingly accurate this week.,이번 주 일기 예보는 놀랍도록 정확했다.
-approximate,adj.,대략적인,The approximate distance from the Earth to the Sun is 93 million miles.,"지구에서 태양까지의 대략적인 거리는 9,300만 마일이다."
-objective,adj.,객관적인,Scientists strive to remain objective and unbiased in their research.,과학자들은 연구에서 객관적이고 편견을 갖지 않으려고 노력한다.
-subjective,adj.,주관적인,"Pain is highly subjective; what one person finds unbearable, another may tolerate.","통증은 매우 주관적이라서, 한 사람이 참을 수 없는 것을 다른 사람은 견딜 수도 있다."
-sequence,n.,"순서, 배열",The DNA sequence determines the genetic makeup of an organism.,DNA 서열은 유기체의 유전적 구성을 결정한다.
-phase,n.,"단계, 상",Water changes from a liquid phase to a gas phase when it boils.,물은 끓을 때 액체상에서 기체상으로 변한다.
-fluctuate,v.,"변동하다, 오르내리다",The patient's heart rate continued to fluctuate throughout the night.,환자의 심박수는 밤새도록 계속 변동했다.
-macroscopic,adj.,"거시적인, 육안으로 보이는","Macroscopic objects, like apples and planets, follow the laws of classical physics.",사과나 행성 같은 거시적인 물체들은 고전 물리학의 법칙을 따른다.
-microscopic,adj.,"미시적인, 현미경으로 봐야만 보이는",Bacteria are microscopic organisms that exist almost everywhere on Earth.,박테리아는 지구상 거의 모든 곳에 존재하는 미시적인 유기체이다.
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation,Zipf Score
+algebra,n.,대수학,Algebra involves using letters and symbols to represent numbers in equations.,대수학은 방정식에서 숫자를 나타내기 위해 문자와 기호를 사용하는 것을 포함한다.,3.77
+geometry,n.,기하학,"Geometry is the branch of mathematics concerned with shapes, sizes, and the properties of space.","기하학은 모양, 크기, 그리고 공간의 속성을 다루는 수학의 한 분야이다.",3.88
+calculus,n.,미적분학,Calculus is essential for understanding continuous change in physics and engineering.,미적분학은 물리학과 공학에서 연속적인 변화를 이해하는 데 필수적이다.,3.6
+arithmetic,n.,"산수, 연산","Basic arithmetic includes addition, subtraction, multiplication, and division.","기본적인 산수에는 덧셈, 뺄셈, 곱셈, 나눗셈이 포함된다.",3.4
+equation,n.,방정식,The students struggled to solve the complex quadratic equation.,학생들은 그 복잡한 이차 방정식을 푸는 데 어려움을 겪었다.,4.02
+variable,n.,변수,"In the equation y = 2x, both x and y are variables.",방정식 y = 2x에서 x와 y는 모두 변수이다.,4.12
+coefficient,n.,계수,"In the term 5x, the number 5 is the coefficient.",5x라는 항에서 숫자 5는 계수이다.,3.39
+fraction,n.,"분수, 일부",A half is represented by the fraction 1/2.,절반은 1/2이라는 분수로 표시된다.,3.96
+decimal,n.,"소수, 십진법",The number 3.14 is a decimal representing the approximate value of pi.,3.14라는 숫자는 파이의 대략적인 값을 나타내는 소수이다.,3.28
+integer,n.,정수,"An integer is a whole number that can be positive, negative, or zero.","정수는 양수, 음수 또는 0이 될 수 있는 완전한 수(자연수, 음의 정수, 0)이다.",3.39
+prime,adj.,"소수의, 가장 중요한",Seven is a prime number because it can only be divided by one and itself.,7은 1과 자기 자신으로만 나눌 수 있기 때문에 소수이다.,4.81
+ratio,n.,"비율, 비",The ratio of men to women in the engineering department is three to one.,공학부의 남녀 비율은 3 대 1이다.,4.37
+proportion,n.,"비례, 부분",The head of a baby is large in proportion to the rest of its body.,아기의 머리는 나머지 신체에 비례하여 크다.,4.11
+theorem,n.,"정리, 법칙",The Pythagorean theorem applies only to right-angled triangles.,피타고라스의 정리는 직각 삼각형에만 적용된다.,3.71
+axiom,n.,"공리, 자명한 이치",It is a widely accepted axiom that parallel lines never meet.,평행선은 결코 만나지 않는다는 것은 널리 받아들여지는 공리이다.,3.02
+symmetry,n.,대칭,The butterfly's wings exhibit perfect bilateral symmetry.,나비의 날개는 완벽한 좌우 대칭을 보여준다.,3.51
+intersect,v.,"교차하다, 만나다",The two lines intersect at exactly one point.,그 두 선은 정확히 한 점에서 교차한다.,3.19
+parallel,adj.,평행한,The railroad tracks run parallel to each other for miles.,기찻길은 수 마일 동안 서로 평행하게 달린다.,4.27
+perpendicular,adj.,수직의,The flagpole stands perpendicular to the ground.,깃대는 땅에 수직으로 서 있다.,3.29
+matrix,n.,"행렬, 모형",The data can be organized into a mathematical matrix for easier computation.,데이터는 더 쉬운 계산을 위해 수학적 행렬로 정리될 수 있다.,4.07
+statistics,n.,"통계학, 통계 자료",Statistics show a clear link between smoking and lung cancer.,통계는 흡연과 폐암 사이의 명확한 연관성을 보여준다.,4.6
+probability,n.,확률,There is a high probability of rain tomorrow afternoon.,내일 오후에 비가 올 확률이 높다.,4.02
+mean,n.,평균,"To find the mean, add up all the numbers and divide by the total count.",평균을 구하려면 모든 숫자를 더한 다음 전체 개수로 나누면 된다.,5.53
+median,n.,중앙값,The median household income provides a better picture than the mean in this heavily skewed dataset.,이 심하게 편향된 데이터 세트에서는 가구 소득의 중앙값이 평균보다 더 나은 상황을 보여준다.,4.05
+mode,n.,최빈값,The mode is the number that appears most frequently in a given set of data.,최빈값은 주어진 데이터 세트에서 가장 자주 나타나는 숫자이다.,4.63
+variance,n.,분산,The variance measures how far each number in the set is from the mean.,분산은 세트 내의 각 숫자가 평균에서 얼마나 떨어져 있는지 측정한다.,3.45
+deviation,n.,편차,Standard deviation is a key metric used to understand the spread of data.,표준 편차는 데이터의 분포를 이해하는 데 사용되는 핵심 지표이다.,3.4
+correlation,n.,상관관계,The study found a strong positive correlation between exercise and mental health.,그 연구는 운동과 정신 건강 사이에 강한 양의 상관관계를 발견했다.,3.86
+regression,n.,회귀,Linear regression can be used to predict future trends based on historical data.,선형 회귀는 과거 데이터를 기반으로 미래 추세를 예측하는 데 사용될 수 있다.,3.5
+outlier,n.,"이상치, 극단치",The researcher removed the outlier from the dataset to avoid skewing the results.,연구원은 결과를 왜곡하는 것을 피하기 위해 데이터 세트에서 이상치를 제거했다.,2.86
+distribution,n.,분포,"Heights in a population typically follow a normal distribution, forming a bell curve.",인구의 키는 일반적으로 정규 분포를 따르며 종 모양 곡선을 형성한다.,4.64
+sample,n.,"표본, 샘플","A random sample of 1,000 voters was selected for the pre-election poll.","선거 전 여론조사를 위해 1,000명의 유권자가 무작위 표본으로 선정되었다.",4.53
+population,n.,"모집단, 인구","In statistics, the population refers to the entire group you want to draw conclusions about.",통계학에서 모집단은 결론을 도출하고자 하는 전체 집단을 의미한다.,5.01
+qualitative,adj.,"정성적인, 질적인",Qualitative research focuses on understanding people's subjective experiences and motivations.,정성적 연구는 사람들의 주관적인 경험과 동기를 이해하는 데 초점을 맞춘다.,3.45
+quantitative,adj.,"정량적인, 양적인",Quantitative analysis relies on numerical data and statistical models.,정량적 분석은 수치 데이터와 통계 모델에 의존한다.,3.73
+validity,n.,타당성,The committee questioned the validity of the experiment's results.,위원회는 그 실험 결과의 타당성에 의문을 제기했다.,3.7
+reliability,n.,신뢰성,The reliability of the test means it will produce consistent results every time.,검사의 신뢰성은 그것이 매번 일관된 결과를 산출할 것임을 의미한다.,3.92
+survey,n.,설문 조사,The online survey aims to gather consumer feedback on the new product.,온라인 설문 조사는 신제품에 대한 소비자 피드백을 수집하는 것을 목표로 한다.,4.69
+demographic,adj.,인구통계학의,The company targets a specific demographic of young professionals.,그 회사는 젊은 전문직 종사자라는 특정 인구통계학적 집단을 타겟으로 한다.,3.92
+significant,adj.,"유의미한, 중요한",The medical trial showed a statistically significant improvement in the patients' condition.,그 의학 시험은 환자들의 상태에서 통계적으로 유의미한 호전을 보여주었다.,4.98
+methodology,n.,방법론,The paper outlines the research methodology used to collect the data.,그 논문은 데이터를 수집하는 데 사용된 연구 방법론을 개괄한다.,3.82
+hypothesis,n.,가설,The scientist designed an experiment to test her new hypothesis.,과학자는 그녀의 새로운 가설을 검증하기 위해 실험을 설계했다.,3.87
+empirical,adj.,"실증적인, 경험적인",The theory must be backed by empirical evidence to be accepted by the scientific community.,그 이론이 과학계에서 받아들여지려면 실증적 증거로 뒷받침되어야 한다.,3.62
+rigorous,adj.,"엄격한, 철저한",The new drug must undergo rigorous testing before it can be sold to the public.,신약이 대중에게 판매되기 전에 엄격한 테스트를 거쳐야 한다.,3.68
+control,n.,"통제(집단), 대조군","In the experiment, the control group was given a placebo instead of the real medicine.",실험에서 대조군은 진짜 약 대신 위약을 받았다.,5.4
+placebo,n.,"위약, 플라시보",The placebo effect demonstrates the power of the mind over the body's physical state.,플라시보 효과는 신체의 물리적 상태에 대한 마음의 힘을 보여준다.,3.48
+observation,n.,관찰,Careful observation is the first step in the scientific method.,주의 깊은 관찰은 과학적 방법의 첫 번째 단계이다.,4.13
+replicate,v.,"복제하다, 재현하다",Other researchers were unable to replicate the results of the initial study.,다른 연구자들은 초기 연구의 결과를 재현할 수 없었다.,3.55
+formulate,v.,"공식화하다, 만들어내다",He took a long time to formulate a comprehensive response to the critique.,그는 비판에 대한 포괄적인 답변을 공식화하는 데 오랜 시간이 걸렸다.,3.23
+deduce,v.,"연역하다, 추론하다","From the given facts, we can deduce that the suspect was at the scene.",주어진 사실들로부터 우리는 용의자가 현장에 있었다고 추론할 수 있다.,2.97
+induce,v.,"귀납하다, 유도하다",Scientists induce general laws from specific observations in nature.,과학자들은 자연에서의 구체적인 관찰들로부터 일반적인 법칙을 귀납적으로 도출한다.,3.56
+postulate,v.,"상정하다, 가정하다",Einstein postulated that the speed of light is constant for all observers.,아인슈타인은 빛의 속도가 모든 관찰자에게 일정하다고 가정했다.,2.6
+derive,v.,"도출하다, 끌어내다",The formula can be derived directly from Newton's second law of motion.,그 공식은 뉴턴의 운동 제2법칙에서 직접 도출될 수 있다.,3.51
+anomaly,n.,"이례적인 것, 변칙",The sudden spike in temperature was treated as a statistical anomaly.,온도의 갑작스러운 급상승은 통계적 변칙으로 취급되었다.,3.47
+discrepancy,n.,"불일치, 차이",There is a significant discrepancy between the two sets of experimental data.,두 실험 데이터 세트 사이에는 상당한 불일치가 있다.,3.29
+peer-review,n.,동료 평가,The journal article passed a strict peer-review process before publication.,그 학술지 논문은 출판되기 전에 엄격한 동료 평가 과정을 통과했다.,4.1
+consensus,n.,"합의, 의견 일치",There is a broad scientific consensus that climate change is real and ongoing.,기후 변화가 실재하며 진행 중이라는 광범위한 과학적 합의가 있다.,4.1
+criterion,n.,기준,The main criterion for selecting participants was their age.,참가자를 선정하는 주요 기준은 그들의 나이였다.,3.46
+apparatus,n.,"장치, 기구",The laboratory is equipped with state-of-the-art apparatus for chemical analysis.,그 실험실은 화학 분석을 위한 최첨단 장치를 갖추고 있다.,3.78
+tentative,adj.,"잠정적인, 머뭇거리는",The researchers reached a tentative conclusion based on early data.,연구원들은 초기 데이터를 바탕으로 잠정적인 결론에 도달했다.,3.45
+dimension,n.,"차원, 크기",We live in a universe with three spatial dimensions and one temporal dimension.,우리는 세 개의 공간적 차원과 한 개의 시간적 차원이 있는 우주에 산다.,4.02
+magnitude,n.,"규모, 정도",The magnitude of the earthquake was unprecedented in the region's history.,그 지진의 규모는 그 지역 역사상 전례가 없는 것이었다.,4.0
+volume,n.,"부피, 음량",The volume of a sphere can be calculated using a specific mathematical formula.,구의 부피는 특정한 수학 공식을 사용하여 계산될 수 있다.,4.76
+density,n.,밀도,Oil floats on top of water because it has a lower density.,기름은 물보다 밀도가 낮기 때문에 물 위에 뜬다.,4.33
+concentration,n.,"농도, 집중",The high concentration of salt makes the lake uninhabitable for fish.,높은 염분 농도는 그 호수를 물고기가 살 수 없게 만든다.,4.27
+proportional,adj.,비례하는,The force applied is directly proportional to the acceleration of the object.,가해진 힘은 물체의 가속도에 정비례한다.,3.6
+exponential,adj.,기하급수적인,The invention of the internet led to an exponential increase in data sharing.,인터넷의 발명은 데이터 공유의 기하급수적인 증가를 이끌었다.,3.33
+linear,adj.,"선형의, 직선형의",The graph shows a linear relationship between study time and exam scores.,그래프는 공부 시간과 시험 점수 사이의 선형 관계를 보여준다.,4.12
+threshold,n.,"임계점, 문턱","If the temperature drops below a certain threshold, the water will freeze.",온도가 특정 임계점 아래로 떨어지면 물이 얼 것이다.,4.03
+trajectory,n.,"궤적, 경로",The missile's trajectory was carefully tracked by radar.,미사일의 궤적은 레이더에 의해 주의 깊게 추적되었다.,3.61
+precise,adj.,정밀한,The laser beam enables extremely precise cutting of the metal.,레이저 빔은 금속의 매우 정밀한 절단을 가능하게 한다.,4.13
+accurate,adj.,정확한,The weather forecast was surprisingly accurate this week.,이번 주 일기 예보는 놀랍도록 정확했다.,4.57
+approximate,adj.,대략적인,The approximate distance from the Earth to the Sun is 93 million miles.,"지구에서 태양까지의 대략적인 거리는 9,300만 마일이다.",3.64
+objective,adj.,객관적인,Scientists strive to remain objective and unbiased in their research.,과학자들은 연구에서 객관적이고 편견을 갖지 않으려고 노력한다.,4.36
+subjective,adj.,주관적인,"Pain is highly subjective; what one person finds unbearable, another may tolerate.","통증은 매우 주관적이라서, 한 사람이 참을 수 없는 것을 다른 사람은 견딜 수도 있다.",3.79
+sequence,n.,"순서, 배열",The DNA sequence determines the genetic makeup of an organism.,DNA 서열은 유기체의 유전적 구성을 결정한다.,4.35
+phase,n.,"단계, 상",Water changes from a liquid phase to a gas phase when it boils.,물은 끓을 때 액체상에서 기체상으로 변한다.,4.64
+fluctuate,v.,"변동하다, 오르내리다",The patient's heart rate continued to fluctuate throughout the night.,환자의 심박수는 밤새도록 계속 변동했다.,2.99
+macroscopic,adj.,"거시적인, 육안으로 보이는","Macroscopic objects, like apples and planets, follow the laws of classical physics.",사과나 행성 같은 거시적인 물체들은 고전 물리학의 법칙을 따른다.,2.66
+microscopic,adj.,"미시적인, 현미경으로 봐야만 보이는",Bacteria are microscopic organisms that exist almost everywhere on Earth.,박테리아는 지구상 거의 모든 곳에 존재하는 미시적인 유기체이다.,3.37

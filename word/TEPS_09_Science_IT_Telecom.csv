@@ -1,81 +1,81 @@
-﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
-hardware,n.,"하드웨어, 장비",The computer's hardware needs to be upgraded to run the new software smoothly.,새 소프트웨어를 원활하게 실행하려면 컴퓨터 하드웨어를 업그레이드해야 한다.
-bandwidth,n.,대역폭,Streaming high-definition video requires an internet connection with high bandwidth.,고화질 비디오를 스트리밍하려면 대역폭이 높은 인터넷 연결이 필요하다.
-broadband,n.,광대역,The government plans to expand broadband access to rural areas.,정부는 농촌 지역으로 광대역 접속을 확대할 계획이다.
-node,n.,"노드, 교점","In a computer network, each connected device acts as a separate node.",컴퓨터 네트워크에서 연결된 각 장치는 독립적인 노드 역할을 한다.
-server,n.,서버,The company's website went down because the main server crashed.,메인 서버가 다운되어 회사의 웹사이트가 접속 불능 상태가 되었다.
-terminal,n.,단말기,Employees access the central database through their desktop terminals.,직원들은 데스크톱 단말기를 통해 중앙 데이터베이스에 접속한다.
-router,n.,"라우터, 공유기","If your Wi-Fi is slow, try restarting the wireless router.",Wi-Fi가 느리면 무선 라우터를 재시작해 보십시오.
-processor,n.,"프로세서, 처리기",A faster processor allows the computer to perform complex calculations in milliseconds.,더 빠른 프로세서는 컴퓨터가 밀리초 단위로 복잡한 계산을 수행할 수 있게 해준다.
-peripheral,n.,주변기기,Printers and scanners are common computer peripherals.,프린터와 스캐너는 흔한 컴퓨터 주변기기이다.
-circuit,n.,회로,A short circuit caused the building's fire alarm system to fail.,합선(단락 회로)으로 인해 건물의 화재경보기가 고장 났다.
-semiconductor,n.,반도체,Silicon is the most widely used material in the semiconductor industry.,실리콘은 반도체 산업에서 가장 널리 사용되는 재료이다.
-framework,n.,"프레임워크, 뼈대",The developers built the web application using a modern JavaScript framework.,개발자들은 최신 자바스크립트 프레임워크를 사용하여 웹 애플리케이션을 구축했다.
-configuration,n.,"구성, 설정",You can change the display configuration in the control panel.,제어판에서 디스플레이 설정을 변경할 수 있다.
-integrate,v.,통합하다,The new software is designed to integrate seamlessly with existing systems.,새 소프트웨어는 기존 시스템과 매끄럽게 통합되도록 설계되었다.
-transmission,n.,"전송, 송신",Fiber-optic cables allow for the rapid transmission of large amounts of data.,광섬유 케이블은 대량의 데이터를 빠르게 전송할 수 있게 해준다.
-latency,n.,"대기 시간, 지연",Low latency is essential for applications like online gaming and video conferencing.,낮은 대기 시간은 온라인 게임 및 화상 회의와 같은 응용 프로그램에 필수적이다.
-wireless,adj.,무선의,Wireless technology has eliminated the need for cumbersome cables.,무선 기술은 번거로운 케이블의 필요성을 없앴다.
-fiber-optic,adj.,광섬유의,A fiber-optic network delivers internet speeds significantly faster than traditional copper wires.,광섬유 네트워크는 기존 구리선보다 훨씬 빠른 인터넷 속도를 제공한다.
-telecommunication,n.,"원격 통신, 전기 통신",The telecommunication sector has grown exponentially over the last two decades.,원격 통신 부문은 지난 20년 동안 기하급수적으로 성장했다.
-port,n.,"포트, 연결 단자",Plug the USB drive into the port on the side of your laptop.,USB 드라이브를 노트북 측면의 포트에 꽂으세요.
-software,n.,소프트웨어,You need to install specialized software to edit these video files.,이 비디오 파일들을 편집하려면 특수 소프트웨어를 설치해야 한다.
-algorithm,n.,알고리즘,The search engine uses a complex algorithm to rank web pages.,그 검색 엔진은 웹 페이지의 순위를 매기기 위해 복잡한 알고리즘을 사용한다.
-code,n.,"코드, 암호",Learning to write code is becoming a crucial skill in the digital economy.,코드를 작성하는 법을 배우는 것은 디지털 경제에서 중요한 기술이 되고 있다.
-compile,v.,"컴파일하다, 엮다",The programmer must compile the source code into an executable program.,프로그래머는 소스 코드를 실행 가능한 프로그램으로 컴파일해야 한다.
-debug,v.,"디버그하다, 오류를 수정하다",It took the team several days to debug the new mobile application.,팀이 새 모바일 애플리케이션의 오류를 수정하는 데 며칠이 걸렸다.
-interface,n.,"인터페이스, 접점",The app features a user-friendly interface that is easy to navigate.,그 앱은 탐색하기 쉬운 사용자 친화적인 인터페이스를 특징으로 한다.
-application,n.,응용 프로그램 (앱),This software application is designed to help businesses manage their inventory.,이 소프트웨어 응용 프로그램은 기업이 재고를 관리하도록 돕기 위해 설계되었다.
-operating system,n.,운영 체제 (OS),Windows and macOS are the most widely used operating systems for personal computers.,윈도우와 macOS는 개인용 컴퓨터에 가장 널리 사용되는 운영 체제이다.
-database,n.,데이터베이스,"The hospital stores patient records in a secure, centralized database.",병원은 환자 기록을 안전한 중앙 집중식 데이터베이스에 저장한다.
-query,n.,"질의, 쿼리",The analyst ran a database query to extract last month's sales figures.,분석가는 지난달 판매 수치를 추출하기 위해 데이터베이스 쿼리를 실행했다.
-syntax,n.,구문,A single syntax error can prevent the entire computer program from running.,단 하나의 구문 오류만으로도 전체 컴퓨터 프로그램이 실행되지 않을 수 있다.
-execute,v.,실행하다,Click this button to execute the script.,스크립트를 실행하려면 이 버튼을 클릭하십시오.
-deploy,v.,"배포하다, 전개하다",The IT department will deploy the software update over the weekend.,IT 부서는 주말 동안 소프트웨어 업데이트를 배포할 것이다.
-patch,n.,"패치, 수정 프로그램",The developer released a patch to fix the security vulnerability.,개발자는 보안 취약점을 수정하기 위해 패치를 출시했다.
-upgrade,v.,업그레이드하다,We strongly recommend that you upgrade to the latest version for better performance.,더 나은 성능을 위해 최신 버전으로 업그레이드할 것을 강력히 권장합니다.
-virtual,adj.,가상의,Virtual memory allows a computer to compensate for physical memory shortages.,가상 메모리는 컴퓨터가 물리적 메모리 부족을 보완할 수 있게 해준다.
-compatible,adj.,호환되는,This new software is not compatible with older operating systems.,이 새 소프트웨어는 구형 운영 체제와 호환되지 않는다.
-module,n.,"모듈, 구성 단위","The program is divided into several modules, each handling a specific task.","프로그램은 여러 모듈로 나뉘며, 각각 특정 작업을 처리한다."
-default,n.,기본값,"If you don't select a color, the system will use the default setting.",색상을 선택하지 않으면 시스템이 기본 설정을 사용한다.
-customized,adj.,맞춤형의,The company provides customized software solutions for large enterprises.,그 회사는 대기업을 위한 맞춤형 소프트웨어 솔루션을 제공한다.
-encryption,n.,암호화,End-to-end encryption ensures that only the sender and recipient can read the messages.,종단 간 암호화는 오직 발신자와 수신자만이 메시지를 읽을 수 있도록 보장한다.
-decryption,n.,복호화,The decryption process requires a specific digital key.,복호화 과정에는 특정 디지털 키가 필요하다.
-authenticate,v.,인증하다,Users must authenticate their identity using a password and a fingerprint.,사용자들은 비밀번호와 지문을 사용하여 신원을 인증해야 한다.
-authorize,v.,권한을 부여하다,Only system administrators are authorized to access this restricted folder.,시스템 관리자만이 이 제한된 폴더에 접근할 권한이 부여된다.
-privacy,n.,"프라이버시, 사생활",Many users are concerned about data privacy on social media platforms.,많은 사용자들이 소셜 미디어 플랫폼의 데이터 프라이버시에 대해 우려하고 있다.
-confidential,adj.,기밀의,All medical records are treated as strictly confidential information.,모든 의료 기록은 엄격한 기밀 정보로 취급된다.
-vulnerability,n.,취약점,The software company offered a reward for finding any security vulnerability.,그 소프트웨어 회사는 보안 취약점을 발견하는 것에 대해 보상금을 제공했다.
-breach,n.,"위반, 침해",The massive data breach exposed the personal information of millions of customers.,대규모 데이터 침해로 수백만 고객의 개인 정보가 유출되었다.
-hacker,n.,해커,A group of hackers managed to infiltrate the government's secure network.,한 무리의 해커들이 정부의 보안 네트워크에 침투하는 데 성공했다.
-malware,n.,악성 소프트웨어,Do not open attachments from unknown senders to avoid downloading malware.,악성 소프트웨어를 다운로드하지 않으려면 알 수 없는 발신자로부터 온 첨부 파일을 열지 마십시오.
-firewall,n.,방화벽,The corporate firewall blocks unauthorized access to the internal network.,기업 방화벽은 내부 네트워크에 대한 무단 접근을 차단한다.
-backup,n.,"백업, 예비",It is crucial to keep a backup of all important files on an external hard drive.,모든 중요한 파일의 백업을 외부 하드 드라이브에 보관하는 것이 매우 중요하다.
-archive,v.,보관소에 저장하다,Old emails are automatically archived to save storage space.,오래된 이메일은 저장 공간을 절약하기 위해 자동으로 보관된다.
-compress,v.,압축하다,You should compress large files before sending them via email.,대용량 파일은 이메일로 보내기 전에 압축해야 한다.
-retrieve,v.,"검색하다, 되찾다",The system allows users to retrieve deleted files within 30 days.,이 시스템은 사용자가 삭제된 파일을 30일 이내에 복구(검색)할 수 있게 해준다.
-corrupt,adj.,손상된 / v. 손상시키다,A sudden power outage can corrupt the files stored on your computer.,갑작스러운 정전은 컴퓨터에 저장된 파일을 손상시킬 수 있다.
-anonymous,adj.,익명의,The whistleblower provided the sensitive information through an anonymous account.,내부 고발자는 익명 계정을 통해 민감한 정보를 제공했다.
-surveillance,n.,감시,Advanced AI software is being used for video surveillance in public areas.,첨단 AI 소프트웨어가 공공장소의 비디오 감시에 사용되고 있다.
-verify,v.,"확인하다, 검증하다",The bank will send an SMS code to verify your recent transaction.,은행은 귀하의 최근 거래를 확인하기 위해 SMS 코드를 보낼 것입니다.
-compromise,v.,"위태롭게 하다, 손상시키다",Sharing your password can compromise the security of your entire account.,비밀번호를 공유하는 것은 계정 전체의 보안을 위태롭게 할 수 있다.
-artificial intelligence,n.,인공지능 (AI),Artificial intelligence is revolutionizing industries from healthcare to finance.,인공지능은 의료에서 금융에 이르기까지 산업 전반에 혁명을 일으키고 있다.
-machine learning,n.,기계 학습,Machine learning algorithms improve their performance as they are exposed to more data.,기계 학습 알고리즘은 더 많은 데이터에 노출될수록 성능이 향상된다.
-cloud,n.,클라우드,Storing documents in the cloud allows you to access them from any device.,문서를 클라우드에 저장하면 모든 장치에서 문서에 액세스할 수 있다.
-automate,v.,자동화하다,Companies are using software to automate repetitive administrative tasks.,기업들은 반복적인 관리 작업을 자동화하기 위해 소프트웨어를 사용하고 있다.
-autonomous,adj.,자율적인,Autonomous vehicles are expected to drastically reduce traffic accidents.,자율 주행 차량은 교통사고를 크게 줄일 것으로 기대된다.
-virtual reality,n.,가상 현실 (VR),Virtual reality headsets provide an immersive gaming experience.,가상 현실 헤드셋은 몰입감 있는 게임 경험을 제공한다.
-simulate,v.,"시뮬레이션하다, 모의실험하다",Flight simulators are used to safely simulate emergency situations for pilots.,비행 시뮬레이터는 조종사들을 위해 비상 상황을 안전하게 모의실험하는 데 사용된다.
-biometric,adj.,생체 인식의,"Many smartphones now use biometric authentication, such as facial recognition.",많은 스마트폰이 이제 안면 인식과 같은 생체 인식 인증을 사용한다.
-digital divide,n.,정보 격차,The government aims to bridge the digital divide between urban and rural areas.,정부는 도시와 농촌 간의 정보 격차를 줄이는 것을 목표로 한다.
-e-commerce,n.,전자 상거래,The rapid growth of e-commerce has transformed the retail industry.,전자 상거래의 급속한 성장은 소매 산업을 변화시켰다.
-interactive,adj.,상호작용하는,The museum features interactive exhibits that engage visitors of all ages.,그 박물관은 모든 연령대의 방문객을 참여시키는 대화형(상호작용) 전시를 특징으로 한다.
-multimedia,n.,멀티미디어,"The presentation used multimedia elements, including text, audio, and video.","그 프레젠테이션은 텍스트, 오디오, 비디오를 포함한 멀티미디어 요소를 사용했다."
-navigate,v.,"탐색하다, 길을 찾다",The new website layout makes it much easier for users to navigate.,새로운 웹사이트 레이아웃은 사용자들이 훨씬 쉽게 탐색할 수 있도록 해준다.
-outsource,v.,"외주를 주다, 아웃소싱하다",Many corporations outsource their customer support to specialized call centers.,많은 기업들이 고객 지원을 전문 콜센터에 외주를 준다.
-real-time,adj.,실시간의,The stock market application provides real-time updates on share prices.,주식 시장 애플리케이션은 주가에 대한 실시간 업데이트를 제공한다.
-streaming,n.,스트리밍 (실시간 재생),Video streaming services have largely replaced traditional DVD rentals.,비디오 스트리밍 서비스가 전통적인 DVD 대여를 크게 대체했다.
-synchronize,v.,동기화하다,Make sure to synchronize your mobile device with your computer to back up photos.,사진을 백업하려면 모바일 장치를 컴퓨터와 동기화해야 합니다.
-recognition,n.,인식,Advances in speech recognition technology have greatly improved automated customer service.,음성 인식 기술의 발전은 자동화된 고객 서비스를 크게 향상시켰다.
-intuitive,adj.,직관적인,Apple products are known for their highly intuitive user interfaces.,애플 제품들은 매우 직관적인 사용자 인터페이스로 유명하다.
-seamlessly,adv.,"매끄럽게, 끊김없이",The new smartphone integrates seamlessly with other smart home devices.,새 스마트폰은 다른 스마트 홈 기기들과 매끄럽게 통합된다.
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation,Zipf Score
+hardware,n.,"하드웨어, 장비",The computer's hardware needs to be upgraded to run the new software smoothly.,새 소프트웨어를 원활하게 실행하려면 컴퓨터 하드웨어를 업그레이드해야 한다.,4.3
+bandwidth,n.,대역폭,Streaming high-definition video requires an internet connection with high bandwidth.,고화질 비디오를 스트리밍하려면 대역폭이 높은 인터넷 연결이 필요하다.,3.62
+broadband,n.,광대역,The government plans to expand broadband access to rural areas.,정부는 농촌 지역으로 광대역 접속을 확대할 계획이다.,3.69
+node,n.,"노드, 교점","In a computer network, each connected device acts as a separate node.",컴퓨터 네트워크에서 연결된 각 장치는 독립적인 노드 역할을 한다.,3.88
+server,n.,서버,The company's website went down because the main server crashed.,메인 서버가 다운되어 회사의 웹사이트가 접속 불능 상태가 되었다.,4.46
+terminal,n.,단말기,Employees access the central database through their desktop terminals.,직원들은 데스크톱 단말기를 통해 중앙 데이터베이스에 접속한다.,4.31
+router,n.,"라우터, 공유기","If your Wi-Fi is slow, try restarting the wireless router.",Wi-Fi가 느리면 무선 라우터를 재시작해 보십시오.,3.5
+processor,n.,"프로세서, 처리기",A faster processor allows the computer to perform complex calculations in milliseconds.,더 빠른 프로세서는 컴퓨터가 밀리초 단위로 복잡한 계산을 수행할 수 있게 해준다.,3.87
+peripheral,n.,주변기기,Printers and scanners are common computer peripherals.,프린터와 스캐너는 흔한 컴퓨터 주변기기이다.,3.66
+circuit,n.,회로,A short circuit caused the building's fire alarm system to fail.,합선(단락 회로)으로 인해 건물의 화재경보기가 고장 났다.,4.47
+semiconductor,n.,반도체,Silicon is the most widely used material in the semiconductor industry.,실리콘은 반도체 산업에서 가장 널리 사용되는 재료이다.,3.53
+framework,n.,"프레임워크, 뼈대",The developers built the web application using a modern JavaScript framework.,개발자들은 최신 자바스크립트 프레임워크를 사용하여 웹 애플리케이션을 구축했다.,4.29
+configuration,n.,"구성, 설정",You can change the display configuration in the control panel.,제어판에서 디스플레이 설정을 변경할 수 있다.,3.97
+integrate,v.,통합하다,The new software is designed to integrate seamlessly with existing systems.,새 소프트웨어는 기존 시스템과 매끄럽게 통합되도록 설계되었다.,3.72
+transmission,n.,"전송, 송신",Fiber-optic cables allow for the rapid transmission of large amounts of data.,광섬유 케이블은 대량의 데이터를 빠르게 전송할 수 있게 해준다.,4.33
+latency,n.,"대기 시간, 지연",Low latency is essential for applications like online gaming and video conferencing.,낮은 대기 시간은 온라인 게임 및 화상 회의와 같은 응용 프로그램에 필수적이다.,3.31
+wireless,adj.,무선의,Wireless technology has eliminated the need for cumbersome cables.,무선 기술은 번거로운 케이블의 필요성을 없앴다.,4.2
+fiber-optic,adj.,광섬유의,A fiber-optic network delivers internet speeds significantly faster than traditional copper wires.,광섬유 네트워크는 기존 구리선보다 훨씬 빠른 인터넷 속도를 제공한다.,3.51
+telecommunication,n.,"원격 통신, 전기 통신",The telecommunication sector has grown exponentially over the last two decades.,원격 통신 부문은 지난 20년 동안 기하급수적으로 성장했다.,3.16
+port,n.,"포트, 연결 단자",Plug the USB drive into the port on the side of your laptop.,USB 드라이브를 노트북 측면의 포트에 꽂으세요.,4.73
+software,n.,소프트웨어,You need to install specialized software to edit these video files.,이 비디오 파일들을 편집하려면 특수 소프트웨어를 설치해야 한다.,4.77
+algorithm,n.,알고리즘,The search engine uses a complex algorithm to rank web pages.,그 검색 엔진은 웹 페이지의 순위를 매기기 위해 복잡한 알고리즘을 사용한다.,4.02
+code,n.,"코드, 암호",Learning to write code is becoming a crucial skill in the digital economy.,코드를 작성하는 법을 배우는 것은 디지털 경제에서 중요한 기술이 되고 있다.,5.08
+compile,v.,"컴파일하다, 엮다",The programmer must compile the source code into an executable program.,프로그래머는 소스 코드를 실행 가능한 프로그램으로 컴파일해야 한다.,3.38
+debug,v.,"디버그하다, 오류를 수정하다",It took the team several days to debug the new mobile application.,팀이 새 모바일 애플리케이션의 오류를 수정하는 데 며칠이 걸렸다.,2.86
+interface,n.,"인터페이스, 접점",The app features a user-friendly interface that is easy to navigate.,그 앱은 탐색하기 쉬운 사용자 친화적인 인터페이스를 특징으로 한다.,4.12
+application,n.,응용 프로그램 (앱),This software application is designed to help businesses manage their inventory.,이 소프트웨어 응용 프로그램은 기업이 재고를 관리하도록 돕기 위해 설계되었다.,4.86
+operating system,n.,운영 체제 (OS),Windows and macOS are the most widely used operating systems for personal computers.,윈도우와 macOS는 개인용 컴퓨터에 가장 널리 사용되는 운영 체제이다.,
+database,n.,데이터베이스,"The hospital stores patient records in a secure, centralized database.",병원은 환자 기록을 안전한 중앙 집중식 데이터베이스에 저장한다.,4.31
+query,n.,"질의, 쿼리",The analyst ran a database query to extract last month's sales figures.,분석가는 지난달 판매 수치를 추출하기 위해 데이터베이스 쿼리를 실행했다.,3.64
+syntax,n.,구문,A single syntax error can prevent the entire computer program from running.,단 하나의 구문 오류만으로도 전체 컴퓨터 프로그램이 실행되지 않을 수 있다.,3.53
+execute,v.,실행하다,Click this button to execute the script.,스크립트를 실행하려면 이 버튼을 클릭하십시오.,3.95
+deploy,v.,"배포하다, 전개하다",The IT department will deploy the software update over the weekend.,IT 부서는 주말 동안 소프트웨어 업데이트를 배포할 것이다.,3.7
+patch,n.,"패치, 수정 프로그램",The developer released a patch to fix the security vulnerability.,개발자는 보안 취약점을 수정하기 위해 패치를 출시했다.,4.2
+upgrade,v.,업그레이드하다,We strongly recommend that you upgrade to the latest version for better performance.,더 나은 성능을 위해 최신 버전으로 업그레이드할 것을 강력히 권장합니다.,4.24
+virtual,adj.,가상의,Virtual memory allows a computer to compensate for physical memory shortages.,가상 메모리는 컴퓨터가 물리적 메모리 부족을 보완할 수 있게 해준다.,4.32
+compatible,adj.,호환되는,This new software is not compatible with older operating systems.,이 새 소프트웨어는 구형 운영 체제와 호환되지 않는다.,3.97
+module,n.,"모듈, 구성 단위","The program is divided into several modules, each handling a specific task.","프로그램은 여러 모듈로 나뉘며, 각각 특정 작업을 처리한다.",3.89
+default,n.,기본값,"If you don't select a color, the system will use the default setting.",색상을 선택하지 않으면 시스템이 기본 설정을 사용한다.,4.29
+customized,adj.,맞춤형의,The company provides customized software solutions for large enterprises.,그 회사는 대기업을 위한 맞춤형 소프트웨어 솔루션을 제공한다.,3.44
+encryption,n.,암호화,End-to-end encryption ensures that only the sender and recipient can read the messages.,종단 간 암호화는 오직 발신자와 수신자만이 메시지를 읽을 수 있도록 보장한다.,3.56
+decryption,n.,복호화,The decryption process requires a specific digital key.,복호화 과정에는 특정 디지털 키가 필요하다.,2.58
+authenticate,v.,인증하다,Users must authenticate their identity using a password and a fingerprint.,사용자들은 비밀번호와 지문을 사용하여 신원을 인증해야 한다.,2.72
+authorize,v.,권한을 부여하다,Only system administrators are authorized to access this restricted folder.,시스템 관리자만이 이 제한된 폴더에 접근할 권한이 부여된다.,3.38
+privacy,n.,"프라이버시, 사생활",Many users are concerned about data privacy on social media platforms.,많은 사용자들이 소셜 미디어 플랫폼의 데이터 프라이버시에 대해 우려하고 있다.,4.36
+confidential,adj.,기밀의,All medical records are treated as strictly confidential information.,모든 의료 기록은 엄격한 기밀 정보로 취급된다.,3.9
+vulnerability,n.,취약점,The software company offered a reward for finding any security vulnerability.,그 소프트웨어 회사는 보안 취약점을 발견하는 것에 대해 보상금을 제공했다.,3.7
+breach,n.,"위반, 침해",The massive data breach exposed the personal information of millions of customers.,대규모 데이터 침해로 수백만 고객의 개인 정보가 유출되었다.,4.13
+hacker,n.,해커,A group of hackers managed to infiltrate the government's secure network.,한 무리의 해커들이 정부의 보안 네트워크에 침투하는 데 성공했다.,3.67
+malware,n.,악성 소프트웨어,Do not open attachments from unknown senders to avoid downloading malware.,악성 소프트웨어를 다운로드하지 않으려면 알 수 없는 발신자로부터 온 첨부 파일을 열지 마십시오.,3.49
+firewall,n.,방화벽,The corporate firewall blocks unauthorized access to the internal network.,기업 방화벽은 내부 네트워크에 대한 무단 접근을 차단한다.,3.24
+backup,n.,"백업, 예비",It is crucial to keep a backup of all important files on an external hard drive.,모든 중요한 파일의 백업을 외부 하드 드라이브에 보관하는 것이 매우 중요하다.,4.21
+archive,v.,보관소에 저장하다,Old emails are automatically archived to save storage space.,오래된 이메일은 저장 공간을 절약하기 위해 자동으로 보관된다.,3.98
+compress,v.,압축하다,You should compress large files before sending them via email.,대용량 파일은 이메일로 보내기 전에 압축해야 한다.,3.07
+retrieve,v.,"검색하다, 되찾다",The system allows users to retrieve deleted files within 30 days.,이 시스템은 사용자가 삭제된 파일을 30일 이내에 복구(검색)할 수 있게 해준다.,3.69
+corrupt,adj.,손상된 / v. 손상시키다,A sudden power outage can corrupt the files stored on your computer.,갑작스러운 정전은 컴퓨터에 저장된 파일을 손상시킬 수 있다.,4.14
+anonymous,adj.,익명의,The whistleblower provided the sensitive information through an anonymous account.,내부 고발자는 익명 계정을 통해 민감한 정보를 제공했다.,4.17
+surveillance,n.,감시,Advanced AI software is being used for video surveillance in public areas.,첨단 AI 소프트웨어가 공공장소의 비디오 감시에 사용되고 있다.,4.17
+verify,v.,"확인하다, 검증하다",The bank will send an SMS code to verify your recent transaction.,은행은 귀하의 최근 거래를 확인하기 위해 SMS 코드를 보낼 것입니다.,3.88
+compromise,v.,"위태롭게 하다, 손상시키다",Sharing your password can compromise the security of your entire account.,비밀번호를 공유하는 것은 계정 전체의 보안을 위태롭게 할 수 있다.,4.15
+artificial intelligence,n.,인공지능 (AI),Artificial intelligence is revolutionizing industries from healthcare to finance.,인공지능은 의료에서 금융에 이르기까지 산업 전반에 혁명을 일으키고 있다.,
+machine learning,n.,기계 학습,Machine learning algorithms improve their performance as they are exposed to more data.,기계 학습 알고리즘은 더 많은 데이터에 노출될수록 성능이 향상된다.,
+cloud,n.,클라우드,Storing documents in the cloud allows you to access them from any device.,문서를 클라우드에 저장하면 모든 장치에서 문서에 액세스할 수 있다.,4.46
+automate,v.,자동화하다,Companies are using software to automate repetitive administrative tasks.,기업들은 반복적인 관리 작업을 자동화하기 위해 소프트웨어를 사용하고 있다.,3.08
+autonomous,adj.,자율적인,Autonomous vehicles are expected to drastically reduce traffic accidents.,자율 주행 차량은 교통사고를 크게 줄일 것으로 기대된다.,3.85
+virtual reality,n.,가상 현실 (VR),Virtual reality headsets provide an immersive gaming experience.,가상 현실 헤드셋은 몰입감 있는 게임 경험을 제공한다.,
+simulate,v.,"시뮬레이션하다, 모의실험하다",Flight simulators are used to safely simulate emergency situations for pilots.,비행 시뮬레이터는 조종사들을 위해 비상 상황을 안전하게 모의실험하는 데 사용된다.,3.44
+biometric,adj.,생체 인식의,"Many smartphones now use biometric authentication, such as facial recognition.",많은 스마트폰이 이제 안면 인식과 같은 생체 인식 인증을 사용한다.,2.99
+digital divide,n.,정보 격차,The government aims to bridge the digital divide between urban and rural areas.,정부는 도시와 농촌 간의 정보 격차를 줄이는 것을 목표로 한다.,
+e-commerce,n.,전자 상거래,The rapid growth of e-commerce has transformed the retail industry.,전자 상거래의 급속한 성장은 소매 산업을 변화시켰다.,4.32
+interactive,adj.,상호작용하는,The museum features interactive exhibits that engage visitors of all ages.,그 박물관은 모든 연령대의 방문객을 참여시키는 대화형(상호작용) 전시를 특징으로 한다.,4.06
+multimedia,n.,멀티미디어,"The presentation used multimedia elements, including text, audio, and video.","그 프레젠테이션은 텍스트, 오디오, 비디오를 포함한 멀티미디어 요소를 사용했다.",3.56
+navigate,v.,"탐색하다, 길을 찾다",The new website layout makes it much easier for users to navigate.,새로운 웹사이트 레이아웃은 사용자들이 훨씬 쉽게 탐색할 수 있도록 해준다.,3.68
+outsource,v.,"외주를 주다, 아웃소싱하다",Many corporations outsource their customer support to specialized call centers.,많은 기업들이 고객 지원을 전문 콜센터에 외주를 준다.,2.92
+real-time,adj.,실시간의,The stock market application provides real-time updates on share prices.,주식 시장 애플리케이션은 주가에 대한 실시간 업데이트를 제공한다.,5.52
+streaming,n.,스트리밍 (실시간 재생),Video streaming services have largely replaced traditional DVD rentals.,비디오 스트리밍 서비스가 전통적인 DVD 대여를 크게 대체했다.,4.22
+synchronize,v.,동기화하다,Make sure to synchronize your mobile device with your computer to back up photos.,사진을 백업하려면 모바일 장치를 컴퓨터와 동기화해야 합니다.,2.71
+recognition,n.,인식,Advances in speech recognition technology have greatly improved automated customer service.,음성 인식 기술의 발전은 자동화된 고객 서비스를 크게 향상시켰다.,4.47
+intuitive,adj.,직관적인,Apple products are known for their highly intuitive user interfaces.,애플 제품들은 매우 직관적인 사용자 인터페이스로 유명하다.,3.57
+seamlessly,adv.,"매끄럽게, 끊김없이",The new smartphone integrates seamlessly with other smart home devices.,새 스마트폰은 다른 스마트 홈 기기들과 매끄럽게 통합된다.,3.1

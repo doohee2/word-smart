@@ -1,0 +1,79 @@
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
+pathology,n.,병리학,Pathology is the study of the causes and effects of diseases.,병리학은 질병의 원인과 결과를 연구하는 학문이다.
+prognosis,n.,예후,The doctor gave a positive prognosis after the successful surgery.,성공적인 수술 후 의사는 긍정적인 예후를 내렸다.
+symptom,n.,증상,High fever and persistent cough are common symptoms of the virus.,고열과 지속적인 기침은 그 바이러스의 흔한 증상이다.
+diagnosis,n.,진단,Early diagnosis is critical for effective treatment of this condition.,조기 진단은 이 질환의 효과적인 치료에 매우 중요하다.
+pharmacology,n.,약리학,Pharmacology is the study of how drugs interact with the body.,약리학은 약물이 신체와 어떻게 상호 작용하는지를 연구하는 학문이다.
+dosage,n.,복용량,The doctor adjusted the dosage to minimize side effects.,의사는 부작용을 최소화하기 위해 복용량을 조정했다.
+administration,n.,투여,The administration of the medication should be done with food.,그 약물의 투여는 음식과 함께 이루어져야 한다.
+adverse,adj.,"부정적인, 유해한",Some patients may experience adverse reactions to this antibiotic.,일부 환자들은 이 항생제에 대해 유해한 반응을 경험할 수 있다.
+contraindication,n.,금기 사항,Pregnancy is a contraindication for this particular medical treatment.,임신은 이 특정 의학적 치료에 대한 금기 사항이다.
+efficacy,n.,효능,Clinical trials confirmed the efficacy of the new vaccine in preventing infection.,임상 시험은 감염 예방에 대한 새 백신의 효능을 확인했다.
+therapeutic,adj.,치료의,The therapeutic benefits of regular exercise are well-documented.,규칙적인 운동의 치료적 이점은 잘 기록되어 있다.
+chronic,adj.,만성적인,Chronic pain requires a long-term management plan.,만성 통증은 장기적인 관리 계획이 필요하다.
+acute,adj.,급성의,The patient was treated for an acute case of pneumonia.,그 환자는 급성 폐렴으로 치료를 받았다.
+clinical,adj.,임상의,The drug is currently undergoing clinical trials in several countries.,그 약물은 현재 여러 국가에서 임상 시험을 거치고 있다.
+epidemiology,n.,역학,Epidemiology tracks the spread and control of diseases in populations.,역학은 인구 집단 내 질병의 확산과 통제를 추적한다.
+pathogen,n.,병원균,Hand hygiene is the best way to prevent the transmission of pathogens.,손 위생은 병원균의 전파를 막는 가장 좋은 방법이다.
+vaccine,n.,백신,The vaccine stimulates the immune system to produce antibodies.,백신은 면역 체계가 항체를 생성하도록 자극한다.
+antibiotic,n.,항생제,Antibiotics are used specifically to treat bacterial infections.,항생제는 박테리아 감염을 치료하기 위해 특별히 사용된다.
+immune,adj.,면역의,He has become immune to the virus after his recovery.,그는 회복 후 그 바이러스에 대해 면역이 생겼다.
+antibody,n.,항체,The body produces antibodies to recognize and neutralize foreign invaders.,몸은 외부 침입자를 인식하고 중화하기 위해 항체를 생성한다.
+metabolism,n.,신진대사,Age can significantly slow down your metabolic rate.,나이는 신진대사율을 상당히 늦추 수 있다.
+enzyme,n.,효소,Digestive enzymes are essential for breaking down complex food molecules.,소화 효소는 복잡한 음식 분자를 분해하는 데 필수적이다.
+hormone,n.,호르몬,"Hormones regulate various bodily functions, including growth and mood.",호르몬은 성장과 기분을 포함한 다양한 신체 기능을 조절한다.
+endocrine,adj.,내분비의,The endocrine system produces hormones that are released into the bloodstream.,내분비계는 혈류로 방출되는 호르몬을 생성한다.
+cardiovascular,adj.,심혈관의,Regular cardio exercise improves cardiovascular health.,규칙적인 유산소 운동은 심혈관 건강을 향상시킨다.
+respiratory,adj.,호흡의,Smoking causes damage to the respiratory system over time.,흡연은 시간이 지남에 따라 호흡기 계통에 손상을 입힌다.
+neurological,adj.,신경학의,Alzheimer's is a progressive neurological disorder.,알츠하이머는 점진적인 신경학적 장애이다.
+pediatric,adj.,소아과의,She specializes in pediatric care for newborn infants.,그녀는 신생아를 위한 소아과 진료를 전문으로 한다.
+geriatric,adj.,노인학의,Geriatric medicine focuses on the health problems of the elderly.,노인 의학은 노인들의 건강 문제에 초점을 맞춘다.
+oncology,n.,종양학,Oncology is the branch of medicine dealing with the diagnosis and treatment of cancer.,종양학은 암의 진단과 치료를 다루는 의학의 한 분야이다.
+radiology,n.,방사선학,The doctor reviewed the MRI images provided by the radiology department.,의사는 방사선과에서 제공한 MRI 영상을 검토했다.
+pathological,adj.,병리학의,The patient exhibited pathological behavior that required immediate intervention.,환자는 즉각적인 개입이 필요한 병리학적 행동을 보였다.
+systemic,adj.,전신의,Systemic infection means the bacteria have spread throughout the body.,전신 감염은 박테리아가 몸 전체로 퍼졌음을 의미한다.
+toxicology,n.,독성학,Toxicology is the study of the adverse effects of chemicals on living organisms.,독성학은 화학 물질이 생명체에 미치는 유해한 영향을 연구하는 학문이다.
+rehabilitation,n.,재활,The rehabilitation program helped the athlete recover from a serious knee injury.,재활 프로그램은 그 운동선수가 심각한 무릎 부상에서 회복하도록 도왔다.
+anesthesia,n.,마취,The patient was put under general anesthesia before the major operation.,환자는 대수술 전에 전신 마취되었다.
+sedative,n.,진정제,The patient was given a mild sedative to calm their anxiety before the procedure.,환자는 시술 전 불안을 진정시키기 위해 가벼운 진정제를 투여받았다.
+antidote,n.,해독제,The doctor administered the antidote immediately after identifying the snake venom.,의사는 뱀 독을 확인한 직후 즉시 해독제를 투여했다.
+surgery,n.,수술,Minimal invasive surgery reduces recovery time and post-operative pain.,최소 침습 수술은 회복 시간과 수술 후 통증을 줄여준다.
+biopsy,n.,생검,The doctor performed a biopsy to determine if the tumor was malignant.,의사는 종양이 악성인지 확인하기 위해 생검을 실시했다.
+malignant,adj.,악성의,Malignant tumors can grow uncontrollably and spread to other parts of the body.,악성 종양은 통제할 수 없이 자라나 신체의 다른 부분으로 퍼질 수 있다.
+benign,adj.,양성의,"Fortunately, the tests showed that the tumor was benign.",다행히도 검사 결과 종양은 양성인 것으로 나타났다.
+remission,n.,관해(완화),The cancer has been in remission for over five years.,암은 5년 넘게 관해 상태이다.
+immune,adj.,면역의,The immune system is complex and protects the body from external threats.,면역 체계는 복잡하며 외부 위협으로부터 신체를 보호한다.
+inflammation,n.,염증,Chronic inflammation is linked to many long-term health problems.,만성 염증은 많은 장기적인 건강 문제와 관련이 있다.
+sedentary,adj.,앉아서 생활하는,A sedentary lifestyle increases the risk of heart disease.,앉아서 생활하는 라이프스타일은 심장 질환의 위험을 증가시킨다.
+mortality,n.,사망률,Advances in medicine have significantly lowered infant mortality rates.,의학의 발전은 영유아 사망률을 크게 낮추었다.
+morbidity,n.,질병률,The morbidity rate from this disease has decreased thanks to better treatments.,이 질병으로 인한 질병률은 더 나은 치료법 덕분에 감소했다.
+outbreak,n.,발병,The health authorities are trying to contain the outbreak of the disease.,보건 당국은 그 질병의 발병을 억제하려고 노력하고 있다.
+screening,n.,"검사, 선별",Regular cancer screening is recommended for people over fifty.,50세 이상에게는 정기적인 암 검사가 권장된다.
+consultation,n.,진료 상담,I have a consultation with a specialist scheduled for tomorrow.,내일 전문가와의 진료 상담이 예정되어 있다.
+triage,n.,환자 분류,"In the emergency room, nurses perform triage to prioritize critical patients.",응급실에서 간호사들은 위급한 환자들에게 우선순위를 두기 위해 환자 분류를 수행한다.
+comorbidity,n.,동반 질환,The patient suffers from diabetes and hypertension as comorbidities.,그 환자는 동반 질환으로 당뇨병과 고혈압을 앓고 있다.
+prophylaxis,n.,예방,Taking malaria pills is a form of prophylaxis for travelers in endemic areas.,말라리아 약을 복용하는 것은 풍토병 지역 여행자들을 위한 예방의 한 형태이다.
+asymptomatic,adj.,무증상의,Some infected individuals remain asymptomatic but can still spread the virus.,일부 감염된 개인들은 무증상 상태로 남아 있지만 여전히 바이러스를 퍼뜨릴 수 있다.
+transplant,n.,이식,The patient is waiting for a kidney transplant.,그 환자는 신장 이식을 기다리고 있다.
+physician,n.,내과 의사,A general physician can handle a wide variety of health issues.,일반 내과 의사는 다양한 건강 문제를 다룰 수 있다.
+specialist,n.,전문의,He was referred to a specialist to treat his skin condition.,그는 피부 질환을 치료하기 위해 전문의에게 의뢰되었다.
+practitioner,n.,개업의,She is a licensed practitioner with over twenty years of experience.,그녀는 20년 이상의 경력을 가진 면허 있는 개업의이다.
+ward,n.,병동,The patient was moved to the intensive care ward.,환자는 집중 치료 병동으로 옮겨졌다.
+emergency,n.,응급,"In case of a medical emergency, dial the local emergency number.",의학적 응급 상황이 발생하면 지역 응급 번호로 전화하십시오.
+infirmary,n.,의무실,Students can visit the school infirmary if they feel unwell during class.,학생들은 수업 중 몸이 좋지 않으면 학교 의무실을 방문할 수 있다.
+suture,n.,봉합,The doctor used stitches for the suture of the large wound.,의사는 큰 상처를 봉합하기 위해 실을 사용했다.
+scalpel,n.,메스,The surgeon carefully used the scalpel to make the incision.,외과의사는 절개를 하기 위해 메스를 조심스럽게 사용했다.
+stretcher,n.,들것,Paramedics placed the patient on a stretcher to carry them to the ambulance.,구급대원들은 환자를 구급차로 옮기기 위해 들것에 태웠다.
+clinical,adj.,임상적인,The report provides a detailed clinical description of the patient's condition.,그 보고서는 환자 상태에 대한 상세한 임상적 설명을 제공한다.
+physiotherapy,n.,물리 치료,Physiotherapy is essential for recovery after a major injury.,물리 치료는 큰 부상 후 회복을 위해 필수적이다.
+chiropractic,n.,척추 지압,Many people seek chiropractic care for back pain relief.,많은 사람들이 요통 완화를 위해 척추 지압 치료를 받는다.
+holistic,adj.,전체론적인,"Holistic medicine considers the patient's physical, mental, and social health.","전체론적 의학은 환자의 신체적, 정신적, 사회적 건강을 모두 고려한다."
+hypochondria,n.,건강 염려증,His hypochondria causes him to constantly worry about minor health issues.,그의 건강 염려증은 사소한 건강 문제에 대해서도 계속 걱정하게 만든다.
+placebo,n.,위약,The results showed no significant difference between the drug and the placebo.,결과는 약물과 위약 사이에 유의미한 차이가 없음을 보여주었다.
+sterilization,n.,살균,Proper sterilization of medical equipment prevents the spread of infection.,의료 장비의 적절한 살균은 감염 확산을 방지한다.
+quarantine,n.,격리,Travelers arriving from high-risk areas must undergo a mandatory quarantine.,고위험 지역에서 도착하는 여행자들은 의무적인 격리를 거쳐야 한다.
+outpatient,n.,외래 환자,The outpatient clinic is open from 9 am to 5 pm.,외래 진료소는 오전 9시부터 오후 5시까지 운영된다.
+inpatient,n.,입원 환자,Inpatient care is necessary for patients requiring 24-hour medical monitoring.,24시간 의료 모니터링이 필요한 환자에게는 입원 치료가 필요하다.
+triage,n.,환자 분류,Triage protocols are used to manage limited resources during a health crisis.,환자 분류 프로토콜은 보건 위기 시 제한된 자원을 관리하기 위해 사용된다.
+prophylactic,adj.,예방의,Vaccination acts as a prophylactic measure against certain diseases.,예접 접종은 특정 질병에 대한 예방 조치로 작용한다.
+epidemiology,n.,역학,Studying epidemiology helps governments plan for future pandemics.,역학을 공부하는 것은 정부가 미래의 팬데믹에 대비하도록 돕는다.

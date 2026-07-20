@@ -1,81 +1,81 @@
-﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
-philosophy,n.,철학,She decided to major in philosophy to explore the fundamental questions of existence.,그녀는 존재의 근본적인 질문들을 탐구하기 위해 철학을 전공하기로 결정했다.
-metaphysics,n.,형이상학,"Metaphysics deals with abstract concepts such as being, knowing, and identity.","형이상학은 존재, 앎, 정체성과 같은 추상적인 개념들을 다룬다."
-ontology,n.,존재론,Ontology is a branch of metaphysics dealing with the nature of being.,존재론은 존재의 본질을 다루는 형이상학의 한 분야이다.
-existence,n.,"존재, 실재",The philosopher questioned the very existence of a physical reality.,그 철학자는 물리적 실재의 존재 자체에 의문을 제기했다.
-entity,n.,"실재물, 본질","In this theory, the mind and the body are treated as a single entity.",이 이론에서 정신과 육체는 단일한 실재물로 취급된다.
-essence,n.,"본질, 정수",The essence of his argument is that human nature is fundamentally good.,그의 주장의 본질은 인간의 본성이 근본적으로 선하다는 것이다.
-phenomenon,n.,현상,Kant distinguished between the observable phenomenon and the thing-in-itself.,칸트는 관찰 가능한 현상과 물자체(사물 그 자체)를 구분했다.
-noumenon,n.,"물자체, 본체",The noumenon is a posited object or event that exists independently of human sense.,물자체는 인간의 감각과 독립적으로 존재하는 것으로 가정된 대상이나 사건이다.
-dualism,n.,이원론,Cartesian dualism argues that the mind and body are distinct and separable.,데카르트의 이원론은 정신과 육체가 구별되며 분리될 수 있다고 주장한다.
-monism,n.,일원론,Monism is the view that attributes oneness or singleness to a concept like existence.,일원론은 존재와 같은 개념에 단일성이나 일체성을 부여하는 견해이다.
-materialism,n.,유물론,Materialism holds that matter is the fundamental substance in nature.,유물론은 물질이 자연의 근본적인 실체라고 주장한다.
-idealism,n.,관념론,"Idealism asserts that reality, or reality as we can know it, is fundamentally mental.","관념론은 현실, 혹은 우리가 알 수 있는 현실이 근본적으로 정신적이라고 주장한다."
-determinism,n.,결정론,Determinism suggests that every event or state of affairs is the inevitable result of preceding events.,결정론은 모든 사건이나 상황이 이전 사건들의 필연적인 결과라고 시사한다.
-free will,n.,자유 의지,The debate between determinism and free will has been ongoing for centuries.,결정론과 자유 의지 사이의 논쟁은 수세기 동안 계속되어 왔다.
-teleology,n.,목적론,Teleology is the explanation of phenomena by the purpose they serve rather than by postulated causes.,목적론은 가정한 원인보다는 그것이 기여하는 목적에 의해 현상을 설명하는 것이다.
-causality,n.,인과 관계,Hume famously questioned the logical necessity of causality.,흄은 인과 관계의 논리적 필연성에 의문을 제기한 것으로 유명하다.
-transcendental,adj.,"초월적인, 선험적인",He had a transcendental experience that changed his perspective on life.,그는 삶에 대한 관점을 바꾼 초월적인 경험을 했다.
-immanent,adj.,내재하는,Some philosophies believe that the divine is immanent in all of nature.,어떤 철학들은 신성이 모든 자연에 내재한다고 믿는다.
-cosmos,n.,우주 (질서 있는 체계로서의),The ancient Greeks viewed the universe as a harmonious cosmos.,고대 그리스인들은 우주를 조화로운 코스모스로 보았다.
-chaos,n.,혼돈,"Before the universe was formed, there was only primordial chaos.",우주가 형성되기 전에는 원시적인 혼돈만이 존재했다.
-epistemology,n.,인식론,"Epistemology investigates the origin, nature, methods, and limits of human knowledge.","인식론은 인간 지식의 기원, 본질, 방법 및 한계를 조사한다."
-logic,n.,"논리학, 논리",Studying logic helps to improve one's critical thinking skills.,논리학을 공부하는 것은 비판적 사고 능력을 향상시키는 데 도움이 된다.
-premise,n.,전제,"If the premise is false, the conclusion cannot be guaranteed to be true.",전제가 거짓이라면 결론이 참이라고 보장할 수 없다.
-conclusion,n.,결론,He drew a logical conclusion based on the available evidence.,그는 이용 가능한 증거를 바탕으로 논리적인 결론을 도출했다.
-syllogism,n.,삼단 논법,"A classic syllogism consists of a major premise, a minor premise, and a conclusion.","고전적인 삼단 논법은 대전제, 소전제, 그리고 결론으로 구성된다."
-deduction,n.,연역(법),"In deduction, you start with a general rule and apply it to a specific case.",연역법에서는 일반적인 규칙에서 시작하여 특정 사례에 적용한다.
-induction,n.,귀납(법),Induction involves drawing general conclusions from specific observations.,귀납법은 특정한 관찰로부터 일반적인 결론을 도출하는 것을 포함한다.
-fallacy,n.,오류,Attacking the person instead of the argument is a common logical fallacy.,주장 대신 사람을 공격하는 것은 흔한 논리적 오류이다.
-paradox,n.,역설,The Liar's Paradox ('This statement is false') is a famous philosophical problem.,거짓말쟁이의 역설('이 문장은 거짓이다')은 유명한 철학적 문제이다.
-dialectic,n.,변증법,"Hegel's dialectic involves a thesis, an antithesis, and a synthesis.","헤겔의 변증법은 정립, 반정립, 그리고 종합을 포함한다."
-empiricism,n.,경험주의,"Empiricism emphasizes the role of experience and evidence, especially sensory experience.","경험주의는 경험과 증거, 특히 감각적 경험의 역할을 강조한다."
-rationalism,n.,"합리주의, 이성주의",Rationalism regards reason as the chief source and test of knowledge.,합리주의는 이성을 지식의 주된 원천이자 시험대로 간주한다.
-skepticism,n.,회의주의,Philosophical skepticism doubts the possibility of certainty in knowledge.,철학적 회의주의는 지식에 있어서 확실성의 가능성을 의심한다.
-dogmatism,n.,독단주의,"Dogmatism is the tendency to lay down principles as undeniably true, without consideration of evidence.",독단주의는 증거에 대한 고려 없이 원칙들을 부인할 수 없는 진리로 규정하려는 경향이다.
-a priori,adj.,선험적인 (경험 이전의),Mathematical truths are often considered to be known a priori.,수학적 진리는 종종 선험적으로 알려진 것으로 간주된다.
-a posteriori,adj.,후험적인 (경험 이후의),A posteriori knowledge is derived from empirical observation.,후험적 지식은 경험적 관찰로부터 파생된다.
-cognitive,adj.,인지적인,Cognitive science studies how the mind processes information.,인지 과학은 마음이 정보를 처리하는 방식을 연구한다.
-intuition,n.,직관,"Sometimes, moral decisions rely more on intuition than on careful reasoning.",때때로 도덕적 결정은 신중한 추론보다 직관에 더 의존한다.
-perception,n.,"지각, 인식",Our perception of reality is often shaped by our cultural background.,우리의 현실 인식은 종종 문화적 배경에 의해 형성된다.
-cognizant,adj.,"인식하고 있는, 알고 있는",He was fully cognizant of the risks involved in the philosophical debate.,그는 철학적 논쟁에 수반되는 위험을 완전히 인식하고 있었다.
-ethics,n.,"윤리학, 윤리",Medical ethics is a highly debated field regarding patient rights.,의료 윤리는 환자의 권리와 관련하여 매우 논쟁이 되는 분야이다.
-morality,n.,도덕(성),The play explores the morality of taking a human life in self-defense.,그 연극은 정당방위로 사람의 목숨을 앗아가는 것의 도덕성을 탐구한다.
-virtue,n.,"미덕, 선",Patience is often considered a great virtue.,인내는 종종 큰 미덕으로 여겨진다.
-vice,n.,"악덕, 결함",Greed is a vice that can destroy relationships.,탐욕은 관계를 파괴할 수 있는 악덕이다.
-altruism,n.,이타주의,"Some argue that true altruism does not exist, as people always act out of self-interest.",어떤 사람들은 사람들이 항상 사리사욕에서 행동하기 때문에 진정한 이타주의는 존재하지 않는다고 주장한다.
-egoism,n.,이기주의,Ethical egoism claims that individuals should always act in their own best interest.,윤리적 이기주의는 개인이 항상 자신의 최선의 이익을 위해 행동해야 한다고 주장한다.
-utilitarianism,n.,공리주의,Utilitarianism advocates actions that maximize happiness and well-being for the majority.,공리주의는 다수의 행복과 안녕을 극대화하는 행동을 옹호한다.
-deontology,n.,의무론,"Deontology focuses on the rightness or wrongness of actions themselves, rather than their consequences.",의무론은 행동의 결과보다는 행동 자체의 옳고 그름에 초점을 맞춘다.
-pragmatism,n.,실용주의,Pragmatism evaluates theories or beliefs in terms of the success of their practical application.,실용주의는 이론이나 신념을 실제 적용의 성공 측면에서 평가한다.
-hedonism,n.,쾌락주의,Hedonism argues that pleasure is the most important intrinsic good.,쾌락주의는 쾌락이 가장 중요한 내재적 선이라고 주장한다.
-asceticism,n.,금욕주의,"Monks often practice asceticism, denying themselves physical pleasures for spiritual growth.",수도승들은 영적 성장을 위해 육체적 쾌락을 부인하며 종종 금욕주의를 실천한다.
-relativism,n.,상대주의,Moral relativism posits that moral judgments are true or false only relative to a specific standpoint.,도덕적 상대주의는 도덕적 판단이 특정 관점에 상대적으로만 참이거나 거짓이라고 상정한다.
-absolutism,n.,절대주의,Moral absolutism asserts that there are universal ethical standards that apply to all actions.,도덕적 절대주의는 모든 행동에 적용되는 보편적인 윤리 기준이 있다고 주장한다.
-normative,adj.,규범적인,Normative ethics attempts to establish rules and principles for moral behavior.,규범 윤리학은 도덕적 행동을 위한 규칙과 원칙을 확립하려고 시도한다.
-imperative,n.,"명령, 의무",Kant's categorical imperative is a central concept in his moral philosophy.,칸트의 정언 명령은 그의 도덕 철학에서 중심적인 개념이다.
-autonomy,n.,자율(성),Respecting a patient's autonomy is a fundamental principle of bioethics.,환자의 자율성을 존중하는 것은 생명윤리의 기본 원칙이다.
-paternalism,n.,온정주의,Laws requiring seatbelts are sometimes seen as an example of state paternalism.,안전벨트를 요구하는 법은 때때로 국가 온정주의의 한 예로 간주된다.
-value,n.,가치,The philosopher questioned what gives human life its intrinsic value.,그 철학자는 무엇이 인간의 삶에 내재적 가치를 부여하는지 질문했다.
-obligation,n.,의무,We have a moral obligation to protect the environment for future generations.,우리는 미래 세대를 위해 환경을 보호할 도덕적 의무가 있다.
-justice,n.,정의,Plato's Republic is essentially a long dialogue about the nature of justice.,플라톤의 국가론은 본질적으로 정의의 본질에 대한 긴 대화이다.
-existentialism,n.,실존주의,"Existentialism emphasizes individual freedom, choice, and subjective experience.","실존주의는 개인의 자유, 선택, 그리고 주관적 경험을 강조한다."
-nihilism,n.,허무주의,"Nihilism argues that life is without objective meaning, purpose, or intrinsic value.","허무주의는 삶에 객관적인 의미, 목적 또는 내재적 가치가 없다고 주장한다."
-stoicism,n.,"스토아주의, 극기",Stoicism teaches the development of self-control and fortitude as a means of overcoming destructive emotions.,스토아주의는 파괴적인 감정을 극복하는 수단으로써 자제력과 불굴의 용기 개발을 가르친다.
-epicureanism,n.,에피쿠로스주의,Epicureanism advocates living simply and pursuing modest pleasures to achieve a state of tranquility.,에피쿠로스주의는 평온의 상태에 도달하기 위해 소박하게 살고 겸손한 쾌락을 추구할 것을 옹호한다.
-humanism,n.,인본주의,Humanism attaches prime importance to human rather than divine or supernatural matters.,인본주의는 신적이거나 초자연적인 문제보다 인간에게 가장 중요한 의미를 부여한다.
-secularism,n.,세속주의,Secularism promotes the separation of government institutions from religious institutions.,세속주의는 종교 기관으로부터 정부 기관의 분리를 촉진한다.
-solipsism,n.,유아론,Solipsism is the philosophical idea that only one's own mind is sure to exist.,유아론은 오직 자신의 마음만이 확실히 존재한다는 철학적 사상이다.
-pantheism,n.,범신론,"Pantheism is the belief that reality is identical with divinity, or that all-things compose an all-encompassing god.",범신론은 현실이 신성과 동일하거나 모든 만물이 모든 것을 포괄하는 신을 구성한다는 믿음이다.
-phenomenology,n.,현상학,Phenomenology is the study of structures of consciousness as experienced from the first-person point of view.,현상학은 1인칭 관점에서 경험되는 의식의 구조에 대한 연구이다.
-hermeneutics,n.,해석학,Hermeneutics was originally the study of interpreting religious texts but expanded to all forms of communication.,해석학은 원래 종교 문헌을 해석하는 학문이었으나 모든 형태의 의사소통으로 확장되었다.
-tautology,n.,동어 반복,Saying 'he is a bachelor who is unmarried' is a logical tautology.,'그는 미혼인 독신남이다'라고 말하는 것은 논리적 동어 반복이다.
-dichotomy,n.,"이분법, 양분",The mind-body dichotomy has been a persistent issue in Western philosophy.,심신 이분법은 서양 철학에서 지속적인 문제였다.
-heuristic,adj.,"발견적인, 체험적인",A heuristic method allows people to discover or learn something for themselves.,체험적 방법은 사람들이 스스로 무언가를 발견하거나 배우게 해준다.
-contingent,adj.,"우연적인, ~에 달려있는","In philosophy, a contingent truth is one that happens to be true but could have been false.",철학에서 우연적 진리는 참이긴 하지만 거짓일 수도 있었던 진리이다.
-necessary,adj.,필연적인,A necessary truth is one that could not possibly be false under any circumstances.,필연적 진리는 어떤 상황에서도 결코 거짓일 수 없는 진리이다.
-agnosticism,n.,불가지론,Agnosticism holds that human reason is incapable of providing sufficient rational grounds to justify either the belief that God exists or the belief that God does not exist.,불가지론은 인간의 이성이 신이 존재한다는 믿음이나 존재하지 않는다는 믿음 중 어느 것도 정당화할 충분한 합리적 근거를 제공할 능력이 없다고 주장한다.
-atheism,n.,무신론,Atheism is broadly defined as the rejection of belief in the existence of deities.,무신론은 광범위하게 신들의 존재에 대한 믿음의 거부로 정의된다.
-theology,n.,신학,Theology is the systematic study of the nature of the divine and religious belief.,신학은 신성의 본질과 종교적 믿음에 대한 체계적인 연구이다.
-orthodox,adj.,정통의,He holds highly orthodox views on the nature of morality.,그는 도덕의 본질에 대해 매우 정통적인 견해를 가지고 있다.
-paradigm,n.,패러다임,Thomas Kuhn introduced the concept of a paradigm shift in the history of science.,토머스 쿤은 과학사에서 패러다임 전환이라는 개념을 도입했다.
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation,Zipf Score
+philosophy,n.,철학,She decided to major in philosophy to explore the fundamental questions of existence.,그녀는 존재의 근본적인 질문들을 탐구하기 위해 철학을 전공하기로 결정했다.,4.49
+metaphysics,n.,형이상학,"Metaphysics deals with abstract concepts such as being, knowing, and identity.","형이상학은 존재, 앎, 정체성과 같은 추상적인 개념들을 다룬다.",3.08
+ontology,n.,존재론,Ontology is a branch of metaphysics dealing with the nature of being.,존재론은 존재의 본질을 다루는 형이상학의 한 분야이다.,2.94
+existence,n.,"존재, 실재",The philosopher questioned the very existence of a physical reality.,그 철학자는 물리적 실재의 존재 자체에 의문을 제기했다.,4.55
+entity,n.,"실재물, 본질","In this theory, the mind and the body are treated as a single entity.",이 이론에서 정신과 육체는 단일한 실재물로 취급된다.,4.12
+essence,n.,"본질, 정수",The essence of his argument is that human nature is fundamentally good.,그의 주장의 본질은 인간의 본성이 근본적으로 선하다는 것이다.,4.03
+phenomenon,n.,현상,Kant distinguished between the observable phenomenon and the thing-in-itself.,칸트는 관찰 가능한 현상과 물자체(사물 그 자체)를 구분했다.,4.13
+noumenon,n.,"물자체, 본체",The noumenon is a posited object or event that exists independently of human sense.,물자체는 인간의 감각과 독립적으로 존재하는 것으로 가정된 대상이나 사건이다.,1.46
+dualism,n.,이원론,Cartesian dualism argues that the mind and body are distinct and separable.,데카르트의 이원론은 정신과 육체가 구별되며 분리될 수 있다고 주장한다.,2.6
+monism,n.,일원론,Monism is the view that attributes oneness or singleness to a concept like existence.,일원론은 존재와 같은 개념에 단일성이나 일체성을 부여하는 견해이다.,2.11
+materialism,n.,유물론,Materialism holds that matter is the fundamental substance in nature.,유물론은 물질이 자연의 근본적인 실체라고 주장한다.,3.05
+idealism,n.,관념론,"Idealism asserts that reality, or reality as we can know it, is fundamentally mental.","관념론은 현실, 혹은 우리가 알 수 있는 현실이 근본적으로 정신적이라고 주장한다.",3.1
+determinism,n.,결정론,Determinism suggests that every event or state of affairs is the inevitable result of preceding events.,결정론은 모든 사건이나 상황이 이전 사건들의 필연적인 결과라고 시사한다.,2.75
+free will,n.,자유 의지,The debate between determinism and free will has been ongoing for centuries.,결정론과 자유 의지 사이의 논쟁은 수세기 동안 계속되어 왔다.,
+teleology,n.,목적론,Teleology is the explanation of phenomena by the purpose they serve rather than by postulated causes.,목적론은 가정한 원인보다는 그것이 기여하는 목적에 의해 현상을 설명하는 것이다.,1.9
+causality,n.,인과 관계,Hume famously questioned the logical necessity of causality.,흄은 인과 관계의 논리적 필연성에 의문을 제기한 것으로 유명하다.,2.92
+transcendental,adj.,"초월적인, 선험적인",He had a transcendental experience that changed his perspective on life.,그는 삶에 대한 관점을 바꾼 초월적인 경험을 했다.,3.0
+immanent,adj.,내재하는,Some philosophies believe that the divine is immanent in all of nature.,어떤 철학들은 신성이 모든 자연에 내재한다고 믿는다.,2.27
+cosmos,n.,우주 (질서 있는 체계로서의),The ancient Greeks viewed the universe as a harmonious cosmos.,고대 그리스인들은 우주를 조화로운 코스모스로 보았다.,3.51
+chaos,n.,혼돈,"Before the universe was formed, there was only primordial chaos.",우주가 형성되기 전에는 원시적인 혼돈만이 존재했다.,4.27
+epistemology,n.,인식론,"Epistemology investigates the origin, nature, methods, and limits of human knowledge.","인식론은 인간 지식의 기원, 본질, 방법 및 한계를 조사한다.",2.89
+logic,n.,"논리학, 논리",Studying logic helps to improve one's critical thinking skills.,논리학을 공부하는 것은 비판적 사고 능력을 향상시키는 데 도움이 된다.,4.36
+premise,n.,전제,"If the premise is false, the conclusion cannot be guaranteed to be true.",전제가 거짓이라면 결론이 참이라고 보장할 수 없다.,3.82
+conclusion,n.,결론,He drew a logical conclusion based on the available evidence.,그는 이용 가능한 증거를 바탕으로 논리적인 결론을 도출했다.,4.4
+syllogism,n.,삼단 논법,"A classic syllogism consists of a major premise, a minor premise, and a conclusion.","고전적인 삼단 논법은 대전제, 소전제, 그리고 결론으로 구성된다.",2.12
+deduction,n.,연역(법),"In deduction, you start with a general rule and apply it to a specific case.",연역법에서는 일반적인 규칙에서 시작하여 특정 사례에 적용한다.,3.46
+induction,n.,귀납(법),Induction involves drawing general conclusions from specific observations.,귀납법은 특정한 관찰로부터 일반적인 결론을 도출하는 것을 포함한다.,3.71
+fallacy,n.,오류,Attacking the person instead of the argument is a common logical fallacy.,주장 대신 사람을 공격하는 것은 흔한 논리적 오류이다.,3.21
+paradox,n.,역설,The Liar's Paradox ('This statement is false') is a famous philosophical problem.,거짓말쟁이의 역설('이 문장은 거짓이다')은 유명한 철학적 문제이다.,3.63
+dialectic,n.,변증법,"Hegel's dialectic involves a thesis, an antithesis, and a synthesis.","헤겔의 변증법은 정립, 반정립, 그리고 종합을 포함한다.",2.69
+empiricism,n.,경험주의,"Empiricism emphasizes the role of experience and evidence, especially sensory experience.","경험주의는 경험과 증거, 특히 감각적 경험의 역할을 강조한다.",2.48
+rationalism,n.,"합리주의, 이성주의",Rationalism regards reason as the chief source and test of knowledge.,합리주의는 이성을 지식의 주된 원천이자 시험대로 간주한다.,2.6
+skepticism,n.,회의주의,Philosophical skepticism doubts the possibility of certainty in knowledge.,철학적 회의주의는 지식에 있어서 확실성의 가능성을 의심한다.,3.4
+dogmatism,n.,독단주의,"Dogmatism is the tendency to lay down principles as undeniably true, without consideration of evidence.",독단주의는 증거에 대한 고려 없이 원칙들을 부인할 수 없는 진리로 규정하려는 경향이다.,2.11
+a priori,adj.,선험적인 (경험 이전의),Mathematical truths are often considered to be known a priori.,수학적 진리는 종종 선험적으로 알려진 것으로 간주된다.,
+a posteriori,adj.,후험적인 (경험 이후의),A posteriori knowledge is derived from empirical observation.,후험적 지식은 경험적 관찰로부터 파생된다.,
+cognitive,adj.,인지적인,Cognitive science studies how the mind processes information.,인지 과학은 마음이 정보를 처리하는 방식을 연구한다.,4.11
+intuition,n.,직관,"Sometimes, moral decisions rely more on intuition than on careful reasoning.",때때로 도덕적 결정은 신중한 추론보다 직관에 더 의존한다.,3.54
+perception,n.,"지각, 인식",Our perception of reality is often shaped by our cultural background.,우리의 현실 인식은 종종 문화적 배경에 의해 형성된다.,4.18
+cognizant,adj.,"인식하고 있는, 알고 있는",He was fully cognizant of the risks involved in the philosophical debate.,그는 철학적 논쟁에 수반되는 위험을 완전히 인식하고 있었다.,2.82
+ethics,n.,"윤리학, 윤리",Medical ethics is a highly debated field regarding patient rights.,의료 윤리는 환자의 권리와 관련하여 매우 논쟁이 되는 분야이다.,4.19
+morality,n.,도덕(성),The play explores the morality of taking a human life in self-defense.,그 연극은 정당방위로 사람의 목숨을 앗아가는 것의 도덕성을 탐구한다.,3.86
+virtue,n.,"미덕, 선",Patience is often considered a great virtue.,인내는 종종 큰 미덕으로 여겨진다.,3.94
+vice,n.,"악덕, 결함",Greed is a vice that can destroy relationships.,탐욕은 관계를 파괴할 수 있는 악덕이다.,4.71
+altruism,n.,이타주의,"Some argue that true altruism does not exist, as people always act out of self-interest.",어떤 사람들은 사람들이 항상 사리사욕에서 행동하기 때문에 진정한 이타주의는 존재하지 않는다고 주장한다.,2.94
+egoism,n.,이기주의,Ethical egoism claims that individuals should always act in their own best interest.,윤리적 이기주의는 개인이 항상 자신의 최선의 이익을 위해 행동해야 한다고 주장한다.,2.38
+utilitarianism,n.,공리주의,Utilitarianism advocates actions that maximize happiness and well-being for the majority.,공리주의는 다수의 행복과 안녕을 극대화하는 행동을 옹호한다.,2.51
+deontology,n.,의무론,"Deontology focuses on the rightness or wrongness of actions themselves, rather than their consequences.",의무론은 행동의 결과보다는 행동 자체의 옳고 그름에 초점을 맞춘다.,1.73
+pragmatism,n.,실용주의,Pragmatism evaluates theories or beliefs in terms of the success of their practical application.,실용주의는 이론이나 신념을 실제 적용의 성공 측면에서 평가한다.,2.97
+hedonism,n.,쾌락주의,Hedonism argues that pleasure is the most important intrinsic good.,쾌락주의는 쾌락이 가장 중요한 내재적 선이라고 주장한다.,2.59
+asceticism,n.,금욕주의,"Monks often practice asceticism, denying themselves physical pleasures for spiritual growth.",수도승들은 영적 성장을 위해 육체적 쾌락을 부인하며 종종 금욕주의를 실천한다.,2.4
+relativism,n.,상대주의,Moral relativism posits that moral judgments are true or false only relative to a specific standpoint.,도덕적 상대주의는 도덕적 판단이 특정 관점에 상대적으로만 참이거나 거짓이라고 상정한다.,2.68
+absolutism,n.,절대주의,Moral absolutism asserts that there are universal ethical standards that apply to all actions.,도덕적 절대주의는 모든 행동에 적용되는 보편적인 윤리 기준이 있다고 주장한다.,2.45
+normative,adj.,규범적인,Normative ethics attempts to establish rules and principles for moral behavior.,규범 윤리학은 도덕적 행동을 위한 규칙과 원칙을 확립하려고 시도한다.,3.1
+imperative,n.,"명령, 의무",Kant's categorical imperative is a central concept in his moral philosophy.,칸트의 정언 명령은 그의 도덕 철학에서 중심적인 개념이다.,3.66
+autonomy,n.,자율(성),Respecting a patient's autonomy is a fundamental principle of bioethics.,환자의 자율성을 존중하는 것은 생명윤리의 기본 원칙이다.,3.86
+paternalism,n.,온정주의,Laws requiring seatbelts are sometimes seen as an example of state paternalism.,안전벨트를 요구하는 법은 때때로 국가 온정주의의 한 예로 간주된다.,2.26
+value,n.,가치,The philosopher questioned what gives human life its intrinsic value.,그 철학자는 무엇이 인간의 삶에 내재적 가치를 부여하는지 질문했다.,5.15
+obligation,n.,의무,We have a moral obligation to protect the environment for future generations.,우리는 미래 세대를 위해 환경을 보호할 도덕적 의무가 있다.,4.07
+justice,n.,정의,Plato's Republic is essentially a long dialogue about the nature of justice.,플라톤의 국가론은 본질적으로 정의의 본질에 대한 긴 대화이다.,4.97
+existentialism,n.,실존주의,"Existentialism emphasizes individual freedom, choice, and subjective experience.","실존주의는 개인의 자유, 선택, 그리고 주관적 경험을 강조한다.",2.59
+nihilism,n.,허무주의,"Nihilism argues that life is without objective meaning, purpose, or intrinsic value.","허무주의는 삶에 객관적인 의미, 목적 또는 내재적 가치가 없다고 주장한다.",2.74
+stoicism,n.,"스토아주의, 극기",Stoicism teaches the development of self-control and fortitude as a means of overcoming destructive emotions.,스토아주의는 파괴적인 감정을 극복하는 수단으로써 자제력과 불굴의 용기 개발을 가르친다.,2.63
+epicureanism,n.,에피쿠로스주의,Epicureanism advocates living simply and pursuing modest pleasures to achieve a state of tranquility.,에피쿠로스주의는 평온의 상태에 도달하기 위해 소박하게 살고 겸손한 쾌락을 추구할 것을 옹호한다.,1.65
+humanism,n.,인본주의,Humanism attaches prime importance to human rather than divine or supernatural matters.,인본주의는 신적이거나 초자연적인 문제보다 인간에게 가장 중요한 의미를 부여한다.,2.99
+secularism,n.,세속주의,Secularism promotes the separation of government institutions from religious institutions.,세속주의는 종교 기관으로부터 정부 기관의 분리를 촉진한다.,3.03
+solipsism,n.,유아론,Solipsism is the philosophical idea that only one's own mind is sure to exist.,유아론은 오직 자신의 마음만이 확실히 존재한다는 철학적 사상이다.,2.11
+pantheism,n.,범신론,"Pantheism is the belief that reality is identical with divinity, or that all-things compose an all-encompassing god.",범신론은 현실이 신성과 동일하거나 모든 만물이 모든 것을 포괄하는 신을 구성한다는 믿음이다.,2.14
+phenomenology,n.,현상학,Phenomenology is the study of structures of consciousness as experienced from the first-person point of view.,현상학은 1인칭 관점에서 경험되는 의식의 구조에 대한 연구이다.,2.73
+hermeneutics,n.,해석학,Hermeneutics was originally the study of interpreting religious texts but expanded to all forms of communication.,해석학은 원래 종교 문헌을 해석하는 학문이었으나 모든 형태의 의사소통으로 확장되었다.,2.49
+tautology,n.,동어 반복,Saying 'he is a bachelor who is unmarried' is a logical tautology.,'그는 미혼인 독신남이다'라고 말하는 것은 논리적 동어 반복이다.,2.24
+dichotomy,n.,"이분법, 양분",The mind-body dichotomy has been a persistent issue in Western philosophy.,심신 이분법은 서양 철학에서 지속적인 문제였다.,3.09
+heuristic,adj.,"발견적인, 체험적인",A heuristic method allows people to discover or learn something for themselves.,체험적 방법은 사람들이 스스로 무언가를 발견하거나 배우게 해준다.,2.72
+contingent,adj.,"우연적인, ~에 달려있는","In philosophy, a contingent truth is one that happens to be true but could have been false.",철학에서 우연적 진리는 참이긴 하지만 거짓일 수도 있었던 진리이다.,3.69
+necessary,adj.,필연적인,A necessary truth is one that could not possibly be false under any circumstances.,필연적 진리는 어떤 상황에서도 결코 거짓일 수 없는 진리이다.,4.91
+agnosticism,n.,불가지론,Agnosticism holds that human reason is incapable of providing sufficient rational grounds to justify either the belief that God exists or the belief that God does not exist.,불가지론은 인간의 이성이 신이 존재한다는 믿음이나 존재하지 않는다는 믿음 중 어느 것도 정당화할 충분한 합리적 근거를 제공할 능력이 없다고 주장한다.,2.36
+atheism,n.,무신론,Atheism is broadly defined as the rejection of belief in the existence of deities.,무신론은 광범위하게 신들의 존재에 대한 믿음의 거부로 정의된다.,3.45
+theology,n.,신학,Theology is the systematic study of the nature of the divine and religious belief.,신학은 신성의 본질과 종교적 믿음에 대한 체계적인 연구이다.,3.92
+orthodox,adj.,정통의,He holds highly orthodox views on the nature of morality.,그는 도덕의 본질에 대해 매우 정통적인 견해를 가지고 있다.,3.93
+paradigm,n.,패러다임,Thomas Kuhn introduced the concept of a paradigm shift in the history of science.,토머스 쿤은 과학사에서 패러다임 전환이라는 개념을 도입했다.,3.61

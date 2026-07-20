@@ -82,6 +82,7 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
         isLearned: false,
         testCount: 0,
         correctCount: 0,
+        zipfScore: w.zipf_score !== null && w.zipf_score !== undefined ? Number(w.zipf_score) : undefined,
       }));
 
       // Find existing words to avoid duplicates

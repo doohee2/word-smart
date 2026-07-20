@@ -42,17 +42,22 @@ export function FileOpenButton() {
         isNewList = true;
       }
 
-      const parsedWords = data.map((row) => ({
-        listId: listId!,
-        word: row["Word"] || "",
-        partOfSpeech: row["Part of Speech"] || "",
-        meaningKo: row["Korean Meaning"] || "",
-        exampleEn: row["Example Sentence"] || "",
-        exampleKo: row["Korean Translation"] || "",
-        isLearned: false,
-        testCount: 0,
-        correctCount: 0,
-      })).filter(w => w.word !== "");
+      const parsedWords = data.map((row) => {
+        const rawZipf = row["zipf_score"] || row["Zipf Score"];
+        const zipfScore = rawZipf && !isNaN(parseFloat(rawZipf)) ? parseFloat(rawZipf) : undefined;
+        return {
+          listId: listId!,
+          word: row["Word"] || "",
+          partOfSpeech: row["Part of Speech"] || "",
+          meaningKo: row["Korean Meaning"] || "",
+          exampleEn: row["Example Sentence"] || "",
+          exampleKo: row["Korean Translation"] || "",
+          isLearned: false,
+          testCount: 0,
+          correctCount: 0,
+          zipfScore,
+        };
+      }).filter(w => w.word !== "");
 
       // Get existing words to check for duplicates
       const existingWords = await db.words.where('listId').equals(listId).toArray();

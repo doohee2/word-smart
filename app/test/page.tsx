@@ -3,7 +3,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -24,6 +24,9 @@ export default function TestPage() {
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
   }, []);
+  const listMap = useMemo(() => {
+    return new Map((activeLists || []).map(l => [l.id, l]));
+  }, [activeLists]);
 
   // Pre-start Configuration
   const [isStarted, setIsStarted] = useState(false);
@@ -32,6 +35,8 @@ export default function TestPage() {
   const [testCount, setTestCount] = useState<number | string>(30);
   const [onlyUnlearned, setOnlyUnlearned] = useState(false);
   const [questionType, setQuestionType] = useState<'english' | 'korean' | 'random'>('random');
+  const [zipfFilter, setZipfFilter] = useState<'all' | 'hard' | 'custom'>('all');
+  const [customZipf, setCustomZipf] = useState<number | string>(4.0);
 
   // Load saved settings
   useEffect(() => {
@@ -41,6 +46,10 @@ export default function TestPage() {
     if (savedOnly) setOnlyUnlearned(savedOnly === 'true');
     const savedType = localStorage.getItem('setting_testQuestionType');
     if (savedType) setQuestionType(savedType as 'english' | 'korean' | 'random');
+    const savedZipfFilter = localStorage.getItem('setting_testZipfFilter');
+    if (savedZipfFilter === 'all' || savedZipfFilter === 'hard' || savedZipfFilter === 'custom') setZipfFilter(savedZipfFilter);
+    const savedCustomZipf = localStorage.getItem('setting_testCustomZipf');
+    if (savedCustomZipf) setCustomZipf(savedCustomZipf);
   }, []);
 
   // Save settings on change
@@ -48,7 +57,9 @@ export default function TestPage() {
     localStorage.setItem('setting_testCount', testCount.toString());
     localStorage.setItem('setting_testOnlyUnlearned', onlyUnlearned.toString());
     localStorage.setItem('setting_testQuestionType', questionType);
-  }, [testCount, onlyUnlearned, questionType]);
+    localStorage.setItem('setting_testZipfFilter', zipfFilter);
+    localStorage.setItem('setting_testCustomZipf', customZipf.toString());
+  }, [testCount, onlyUnlearned, questionType, zipfFilter, customZipf]);
 
   // Runtime State
   const [testQueue, setTestQueue] = useState<TestWord[]>([]);
@@ -99,6 +110,16 @@ export default function TestPage() {
     if (!rawWords) return;
     
     let pool = [...rawWords];
+    
+    // Zipf filtering
+    if (zipfFilter !== 'all') {
+      const threshold = zipfFilter === 'hard' ? 4.0 : (typeof customZipf === 'number' ? customZipf : parseFloat(customZipf) || 4.0);
+      pool = pool.filter(w => {
+        if (w.zipfScore === undefined || w.zipfScore === null || w.zipfScore === 0) return true;
+        return w.zipfScore < threshold;
+      });
+    }
+
     if (onlyUnlearned) pool = pool.filter(w => !w.isLearned);
     
     if (pool.length === 0) {
@@ -336,7 +357,7 @@ export default function TestPage() {
             <div className="w-full md:w-auto flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider font-bold truncate max-w-[200px]">
-                {testQueue[currentIndex] && activeLists ? activeLists.find(l => l.id === testQueue[currentIndex].wordData.listId)?.title || '단어장' : '단어장'}
+                {testQueue[currentIndex] ? listMap.get(testQueue[currentIndex].wordData.listId)?.title || '단어장' : '단어장'}
               </span>
             </div>
             
@@ -359,9 +380,16 @@ export default function TestPage() {
                 feedback === 'correct' ? "border-primary bg-primary-container/20" : 
                 feedback === 'incorrect' ? "border-error bg-error-container/20" : "border-surface-variant"
               )}>
-                <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold mb-4">
-                  문제 {totalTested + 1}
-                </span>
+                <div className="flex justify-between items-center mb-4">
+                  <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
+                    문제 {totalTested + 1}
+                  </span>
+                  {currentWord?.zipfScore !== undefined && currentWord?.zipfScore !== null && currentWord?.zipfScore > 0 && (
+                    <span className="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-bold shadow-sm">
+                      Zipf {currentWord.zipfScore.toFixed(1)}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-on-surface mb-2 tracking-tight break-words">
                   {currentWord.word}
                 </h3>
@@ -414,9 +442,16 @@ export default function TestPage() {
                 feedback === 'correct' ? "border-primary bg-primary-container/20" : 
                 feedback === 'incorrect' ? "border-error bg-error-container/20" : "border-surface-variant"
               )}>
-                <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold mb-2">
-                  문제 {totalTested + 1}
-                </span>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
+                    문제 {totalTested + 1}
+                  </span>
+                  {currentWord?.zipfScore !== undefined && currentWord?.zipfScore !== null && currentWord?.zipfScore > 0 && (
+                    <span className="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-bold shadow-sm">
+                      Zipf {currentWord.zipfScore.toFixed(1)}
+                    </span>
+                  )}
+                </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
                   {currentWord.meaningKo}
                 </h3>
@@ -530,6 +565,34 @@ export default function TestPage() {
                     </div>
                   </div>
                 </label>
+
+                {/* 난이도 필터 (Zipf) */}
+                <div>
+                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
+                  <select 
+                    value={zipfFilter}
+                    onChange={(e) => setZipfFilter(e.target.value as 'all' | 'hard' | 'custom')}
+                    className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                  >
+                    <option value="all">전체 단어 (기본)</option>
+                    <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
+                    <option value="custom">직접 입력 (입력값 미만)</option>
+                  </select>
+                  
+                  {zipfFilter === 'custom' && (
+                    <div className="mt-3 flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl">
+                      <span className="text-body-sm font-bold text-on-surface">Zipf 스코어 기준:</span>
+                      <input 
+                        type="number"
+                        step="0.1"
+                        value={customZipf}
+                        onChange={(e) => setCustomZipf(e.target.value)}
+                        className="w-20 bg-transparent text-headline-sm font-bold text-primary outline-none border-b-2 border-outline focus:border-primary px-1 text-center"
+                      />
+                      <span className="text-body-sm text-on-surface-variant">미만</span>
+                    </div>
+                  )}
+                </div>
 
                 {/* 출제 유형 */}
                 <div>

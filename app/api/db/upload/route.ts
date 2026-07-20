@@ -86,6 +86,7 @@ export async function POST(request: NextRequest) {
       meaning_ko: w.meaningKo,
       example_en: w.exampleEn || null,
       example_ko: w.exampleKo || null,
+      zipf_score: w.zipfScore !== undefined ? w.zipfScore : null,
     }));
 
     const { error: wordsError } = await supabase

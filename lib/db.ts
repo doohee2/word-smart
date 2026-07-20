@@ -18,6 +18,7 @@ export interface Word {
   isLearned: boolean;
   testCount: number;
   correctCount: number;
+  zipfScore?: number;
 }
 
 export class WordSmartDB extends Dexie {

@@ -1,81 +1,81 @@
-﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation
-engineering,n.,"공학, 기술",Civil engineering focuses on the design and construction of public infrastructure.,토목 공학은 공공 기반 시설의 설계와 건설에 초점을 맞춘다.
-prototype,n.,"원형, 시제품",The engineers built a working prototype to test the new design.,엔지니어들은 새로운 설계를 테스트하기 위해 작동하는 시제품을 만들었다.
-patent,n.,특허(권),The inventor filed a patent to protect his innovative technology.,발명가는 자신의 혁신적인 기술을 보호하기 위해 특허를 출원했다.
-blueprint,n.,"청사진, 상세 계획",The construction workers followed the blueprint carefully.,건설 노동자들은 청사진을 주의 깊게 따랐다.
-alloy,n.,합금,Steel is an alloy made primarily of iron and carbon.,강철은 주로 철과 탄소로 만들어진 합금이다.
-composite,n.,"합성물, 복합 재료",Carbon fiber is a lightweight and incredibly strong composite material.,탄소 섬유는 가볍고 믿을 수 없을 정도로 강한 복합 재료이다.
-tensile,adj.,"장력의, 늘어나는",The engineers tested the tensile strength of the steel cables.,엔지니어들은 강철 케이블의 인장 강도를 테스트했다.
-strain,n.,"부담, 변형",The heavy load put a massive strain on the bridge's support beams.,무거운 하중은 다리의 지지보에 엄청난 변형(부담)을 주었다.
-durability,n.,내구성,The new material was chosen for its high durability in extreme weather.,새로운 재료는 극한의 날씨에서의 높은 내구성 때문에 선택되었다.
-tolerance,n.,"허용 오차, 공차",Precision engineering requires parts to be machined to very tight tolerances.,정밀 공학은 부품들이 매우 엄격한 허용 오차 내로 가공될 것을 요구한다.
-parameter,n.,"매개변수, 한도",The machine operates safely as long as it stays within the set parameters.,그 기계는 설정된 한도 내에 머무는 한 안전하게 작동한다.
-innovation,n.,혁신,Technological innovation has rapidly changed the way we communicate.,기술적 혁신은 우리가 의사소통하는 방식을 빠르게 변화시켰다.
-implement,v.,"실행하다, 도입하다",The factory plans to implement a new safety system next month.,공장은 다음 달에 새로운 안전 시스템을 도입할 계획이다.
-optimize,v.,최적화하다,We need to optimize the software code to reduce the processing time.,처리 시간을 줄이기 위해 소프트웨어 코드를 최적화해야 한다.
-robust,adj.,"탄탄한, 견고한",The system requires a robust firewall to prevent cyber attacks.,그 시스템은 사이버 공격을 막기 위해 견고한 방화벽을 필요로 한다.
-feasible,adj.,실현 가능한,The committee discussed whether the proposed project was economically feasible.,위원회는 제안된 프로젝트가 경제적으로 실현 가능한지 논의했다.
-scalable,adj.,확장 가능한,Cloud computing provides a highly scalable solution for growing businesses.,클라우드 컴퓨팅은 성장하는 기업에 매우 확장 가능한 솔루션을 제공한다.
-modulate,v.,"조절하다, 변조하다",The device can modulate the frequency of the radio waves.,그 장치는 전파의 주파수를 변조할 수 있다.
-synthesize,v.,합성하다,Chemists managed to synthesize the rare compound in the laboratory.,화학자들은 실험실에서 그 희귀한 화합물을 합성해 냈다.
-corrosion,n.,부식,The metal pipes were treated with a special coating to prevent corrosion.,금속 파이프는 부식을 방지하기 위해 특수 코팅 처리되었다.
-infrastructure,n.,사회 기반 시설,The government invested billions in upgrading the country's aging infrastructure.,정부는 국가의 노후화된 기반 시설을 개선하는 데 수십억 달러를 투자했다.
-hydraulic,adj.,"수압의, 유압식의",The excavator uses a powerful hydraulic system to lift heavy debris.,굴착기는 무거운 잔해를 들어 올리기 위해 강력한 유압 시스템을 사용한다.
-pneumatic,adj.,공기 압축에 의한,Pneumatic drills are commonly used in construction and mining.,공압 드릴은 건설 및 광업에서 흔히 사용된다.
-combustion,n.,연소,The internal combustion engine powered the majority of vehicles in the 20th century.,내연 기관은 20세기에 대부분의 차량에 동력을 공급했다.
-aerodynamics,n.,공기 역학,The sports car was designed with aerodynamics in mind to reduce drag.,그 스포츠카는 항력을 줄이기 위해 공기 역학을 염두에 두고 설계되었다.
-friction,n.,마찰(력),Engine oil is used to reduce friction between the moving metal parts.,엔진 오일은 움직이는 금속 부품들 사이의 마찰을 줄이기 위해 사용된다.
-lubrication,n.,윤활 (작용),Proper lubrication extends the lifespan of industrial machinery.,적절한 윤활은 산업 기계의 수명을 연장한다.
-chassis,n.,"새시, (자동차의) 차대",The car's chassis is made of lightweight aluminum to improve fuel efficiency.,자동차의 섀시는 연비 향상을 위해 가벼운 알루미늄으로 만들어졌다.
-turbine,n.,터빈,Wind turbines convert the kinetic energy of the wind into electrical power.,풍력 터빈은 바람의 운동 에너지를 전력으로 변환한다.
-pulley,n.,도르래,They used a simple pulley system to lift the heavy piano to the second floor.,그들은 무거운 피아노를 2층으로 끌어올리기 위해 간단한 도르래 장치를 사용했다.
-lever,n.,"지레, 레버",A lever allows you to move a heavy object with less effort.,지레는 적은 힘으로 무거운 물체를 옮길 수 있게 해준다.
-gear,n.,"기어, 톱니바퀴",The bicycle has a 21-speed gear system for climbing steep hills.,그 자전거는 가파른 언덕을 오르기 위한 21단 기어 시스템을 갖추고 있다.
-excavate,v.,"파내다, 굴착하다",The construction crew will excavate the site before laying the foundation.,건설 작업반은 기초를 놓기 전에 현장을 굴착할 것이다.
-drill,v.,구멍을 뚫다 / n. 드릴,The engineers had to drill through solid rock to build the tunnel.,엔지니어들은 터널을 뚫기 위해 단단한 암석을 파내야 했다.
-weld,v.,용접하다,Robots are often used to weld car parts together on the assembly line.,로봇은 조립 라인에서 자동차 부품들을 용접하는 데 종종 사용된다.
-rivet,n.,"대갈못, 리벳 / v. 리벳으로 고정하다",Millions of steel rivets were used to construct the Eiffel Tower.,에펠탑을 짓는 데 수백만 개의 강철 리벳이 사용되었다.
-suspension,n.,"현탁액, 서스펜션(완충 장치)",The car's suspension system absorbs shocks from rough roads.,자동차의 완충 장치는 거친 도로의 충격을 흡수한다.
-cantilever,n.,"외팔보, 캔틸레버",The architect designed a stunning cantilever roof that extends over the patio.,건축가는 파티오 위로 뻗어 있는 멋진 외팔보 지붕을 설계했다.
-masonry,n.,"석조 공사, 벽돌쌓기",The old church features beautiful brick masonry.,그 오래된 교회는 아름다운 벽돌 석조 공사를 특징으로 한다.
-insulation,n.,"단열, 절연",Proper insulation in the walls keeps the house warm in winter.,벽의 적절한 단열재는 겨울에 집을 따뜻하게 유지해 준다.
-generator,n.,발전기,A backup generator immediately started working when the power went out.,정전이 되자 백업 발전기가 즉시 작동하기 시작했다.
-transformer,n.,변압기,The transformer decreases the high voltage from the power lines for safe home use.,변압기는 안전한 가정용 사용을 위해 전력선의 고전압을 낮춘다.
-grid,n.,"전력망, 그리드",The storm caused a massive failure in the national power grid.,폭풍으로 인해 국가 전력망에 대규모 장애가 발생했다.
-renewable,adj.,재생 가능한,Solar and wind are popular forms of renewable energy.,태양열과 풍력은 인기 있는 형태의 재생 가능 에너지이다.
-sustainable,adj.,지속 가능한,The company is committed to sustainable manufacturing practices.,그 회사는 지속 가능한 제조 관행에 전념하고 있다.
-photovoltaic,adj.,"광전성의, 태양광 발전의",Photovoltaic cells convert sunlight directly into electricity.,광전지는 햇빛을 직접 전기로 변환한다.
-geothermal,adj.,지열의,Iceland relies heavily on geothermal energy for heating and power.,아이슬란드는 난방과 전력을 위해 지열 에너지에 크게 의존한다.
-hydroelectric,adj.,수력 발전의,The massive dam produces hydroelectric power for the entire region.,거대한 댐은 전체 지역을 위한 수력 발전을 생산한다.
-biomass,n.,"생물량, 바이오매스",Burning biomass for energy can reduce dependence on fossil fuels.,에너지를 위해 바이오매스를 태우는 것은 화석 연료에 대한 의존을 줄일 수 있다.
-reactor,n.,원자로,Engineers are continuously monitoring the core temperature of the nuclear reactor.,엔지니어들은 원자로의 노심 온도를 지속적으로 모니터링하고 있다.
-fossil fuel,n.,화석 연료,"Coal, oil, and natural gas are all examples of fossil fuels.","석탄, 석유, 천연가스는 모두 화석 연료의 예이다."
-emission,n.,"배출, 배기가스",Strict regulations have been introduced to cut vehicle emissions.,차량 배기가스를 줄이기 위해 엄격한 규제가 도입되었다.
-capacity,n.,"용량, 수용력",The new battery factory will have an annual production capacity of 10 gigawatts.,새 배터리 공장은 연간 10기가와트의 생산 용량을 갖출 것이다.
-voltage,n.,전압,You must use an adapter because the electrical voltage is different in this country.,이 나라는 전압이 다르기 때문에 어댑터를 사용해야 한다.
-wattage,n.,전력(량),Check the wattage of the lightbulb before installing it.,설치하기 전에 전구의 전력량을 확인하시오.
-efficiency,n.,효율성,LED lights are favored for their high energy efficiency.,LED 조명은 높은 에너지 효율성으로 선호된다.
-conserve,v.,"보존하다, 절약하다",Please turn off your computers at night to conserve electricity.,전기를 절약하기 위해 밤에는 컴퓨터를 꺼 주시기 바랍니다.
-dissipate,v.,"소산되다, 흩어지다",Heat sinks are used in computers to dissipate heat safely.,방열판은 열을 안전하게 소산시키기 위해 컴퓨터에 사용된다.
-kinetic,adj.,"운동의, 운동에 의해 생기는",The braking system converts the car's kinetic energy into heat.,제동 장치는 자동차의 운동 에너지를 열로 변환한다.
-harness,v.,"이용하다, 동력화하다",Engineers are finding new ways to harness the power of ocean tides.,엔지니어들은 바다 조수의 힘을 이용하는 새로운 방법을 찾고 있다.
-manufacture,v.,"제조하다, 생산하다",The company uses automated machines to manufacture these auto parts.,그 회사는 이 자동차 부품들을 제조하기 위해 자동화된 기계를 사용한다.
-assembly,n.,"조립, 집회",Henry Ford revolutionized the automotive industry with the assembly line.,헨리 포드는 조립 라인으로 자동차 산업에 혁명을 일으켰다.
-automation,n.,자동화,Factory automation has significantly increased production speed and accuracy.,공장 자동화는 생산 속도와 정확성을 크게 향상시켰다.
-robotics,n.,로봇 공학,Advancements in robotics have transformed modern manufacturing floors.,로봇 공학의 발전은 현대 제조 현장을 변화시켰다.
-sensor,n.,"센서, 감지기",The temperature sensor will automatically shut off the machine if it overheats.,온도 센서는 기계가 과열되면 자동으로 기계를 차단한다.
-refine,v.,"정제하다, 개선하다",Crude oil must be refined to produce gasoline and diesel.,원유는 휘발유와 경유를 생산하기 위해 정제되어야 한다.
-distill,v.,증류하다,The plant distills seawater to provide fresh drinking water for the island.,그 공장은 섬에 깨끗한 식수를 제공하기 위해 바닷물을 증류한다.
-extract,v.,추출하다,Chemical processes are used to extract precious metals from electronic waste.,전자 폐기물에서 귀금속을 추출하기 위해 화학 공정이 사용된다.
-yield,n.,"산출량, 수확량 / v. 산출하다",The new agricultural technique dramatically increased the crop yield.,새로운 농업 기술은 농작물 수확량을 극적으로 증가시켰다.
-streamline,v.,"유선형으로 하다, 간소화하다",The software helps to streamline the supply chain process.,그 소프트웨어는 공급망 프로세스를 간소화하는 데 도움을 준다.
-logistics,n.,"물류, 병참",Managing the logistics of a global delivery network is highly complex.,글로벌 배송 네트워크의 물류를 관리하는 것은 매우 복잡하다.
-inventory,n.,재고(품),The store takes a complete inventory of its goods at the end of each month.,그 상점은 매월 말에 상품의 전체 재고 조사를 한다.
-maintenance,n.,"유지 보수, 정비",Regular maintenance is crucial to keep the machinery running smoothly.,기계를 원활하게 작동시키려면 정기적인 유지 보수가 중요하다.
-calibrate,v.,"눈금을 매기다, 영점을 맞추다",The testing equipment must be calibrated daily to ensure precise results.,정확한 결과를 보장하기 위해 테스트 장비는 매일 영점을 맞춰야 한다.
-defect,n.,결함,Every product undergoes strict quality control to catch any manufacturing defects.,모든 제품은 제조상의 결함을 잡기 위해 엄격한 품질 관리를 거친다.
-standardized,adj.,표준화된,Standardized parts make it easier and cheaper to repair machines.,표준화된 부품은 기계를 수리하는 것을 더 쉽고 저렴하게 만든다.
-fabricate,v.,"제작하다, 조립하다",The metal workshop can fabricate custom parts based on your specifications.,금속 작업장은 귀하의 사양에 따라 맞춤형 부품을 제작할 수 있습니다.
-synthetic,adj.,"합성의, 인조의",Synthetic rubber is widely used in the production of car tires.,합성 고무는 자동차 타이어 생산에 널리 사용된다.
-byproduct,n.,부산물,"Molasses is a sweet, sticky byproduct of refining sugar cane.",당밀은 사탕수수를 정제할 때 나오는 달콤하고 끈적끈적한 부산물이다.
-tolerance,n.,"공차, 내성",The machine cuts metal with a tolerance of less than one millimeter.,그 기계는 1밀리미터 미만의 공차로 금속을 자른다.
+﻿Word,Part of Speech,Korean Meaning,Example Sentence,Korean Translation,Zipf Score
+engineering,n.,"공학, 기술",Civil engineering focuses on the design and construction of public infrastructure.,토목 공학은 공공 기반 시설의 설계와 건설에 초점을 맞춘다.,4.8
+prototype,n.,"원형, 시제품",The engineers built a working prototype to test the new design.,엔지니어들은 새로운 설계를 테스트하기 위해 작동하는 시제품을 만들었다.,3.83
+patent,n.,특허(권),The inventor filed a patent to protect his innovative technology.,발명가는 자신의 혁신적인 기술을 보호하기 위해 특허를 출원했다.,4.18
+blueprint,n.,"청사진, 상세 계획",The construction workers followed the blueprint carefully.,건설 노동자들은 청사진을 주의 깊게 따랐다.,3.48
+alloy,n.,합금,Steel is an alloy made primarily of iron and carbon.,강철은 주로 철과 탄소로 만들어진 합금이다.,3.61
+composite,n.,"합성물, 복합 재료",Carbon fiber is a lightweight and incredibly strong composite material.,탄소 섬유는 가볍고 믿을 수 없을 정도로 강한 복합 재료이다.,3.94
+tensile,adj.,"장력의, 늘어나는",The engineers tested the tensile strength of the steel cables.,엔지니어들은 강철 케이블의 인장 강도를 테스트했다.,2.96
+strain,n.,"부담, 변형",The heavy load put a massive strain on the bridge's support beams.,무거운 하중은 다리의 지지보에 엄청난 변형(부담)을 주었다.,4.15
+durability,n.,내구성,The new material was chosen for its high durability in extreme weather.,새로운 재료는 극한의 날씨에서의 높은 내구성 때문에 선택되었다.,3.45
+tolerance,n.,"허용 오차, 공차",Precision engineering requires parts to be machined to very tight tolerances.,정밀 공학은 부품들이 매우 엄격한 허용 오차 내로 가공될 것을 요구한다.,4.06
+parameter,n.,"매개변수, 한도",The machine operates safely as long as it stays within the set parameters.,그 기계는 설정된 한도 내에 머무는 한 안전하게 작동한다.,3.57
+innovation,n.,혁신,Technological innovation has rapidly changed the way we communicate.,기술적 혁신은 우리가 의사소통하는 방식을 빠르게 변화시켰다.,4.32
+implement,v.,"실행하다, 도입하다",The factory plans to implement a new safety system next month.,공장은 다음 달에 새로운 안전 시스템을 도입할 계획이다.,4.2
+optimize,v.,최적화하다,We need to optimize the software code to reduce the processing time.,처리 시간을 줄이기 위해 소프트웨어 코드를 최적화해야 한다.,3.33
+robust,adj.,"탄탄한, 견고한",The system requires a robust firewall to prevent cyber attacks.,그 시스템은 사이버 공격을 막기 위해 견고한 방화벽을 필요로 한다.,3.94
+feasible,adj.,실현 가능한,The committee discussed whether the proposed project was economically feasible.,위원회는 제안된 프로젝트가 경제적으로 실현 가능한지 논의했다.,3.72
+scalable,adj.,확장 가능한,Cloud computing provides a highly scalable solution for growing businesses.,클라우드 컴퓨팅은 성장하는 기업에 매우 확장 가능한 솔루션을 제공한다.,2.93
+modulate,v.,"조절하다, 변조하다",The device can modulate the frequency of the radio waves.,그 장치는 전파의 주파수를 변조할 수 있다.,2.74
+synthesize,v.,합성하다,Chemists managed to synthesize the rare compound in the laboratory.,화학자들은 실험실에서 그 희귀한 화합물을 합성해 냈다.,2.94
+corrosion,n.,부식,The metal pipes were treated with a special coating to prevent corrosion.,금속 파이프는 부식을 방지하기 위해 특수 코팅 처리되었다.,3.48
+infrastructure,n.,사회 기반 시설,The government invested billions in upgrading the country's aging infrastructure.,정부는 국가의 노후화된 기반 시설을 개선하는 데 수십억 달러를 투자했다.,4.46
+hydraulic,adj.,"수압의, 유압식의",The excavator uses a powerful hydraulic system to lift heavy debris.,굴착기는 무거운 잔해를 들어 올리기 위해 강력한 유압 시스템을 사용한다.,3.72
+pneumatic,adj.,공기 압축에 의한,Pneumatic drills are commonly used in construction and mining.,공압 드릴은 건설 및 광업에서 흔히 사용된다.,3.11
+combustion,n.,연소,The internal combustion engine powered the majority of vehicles in the 20th century.,내연 기관은 20세기에 대부분의 차량에 동력을 공급했다.,3.57
+aerodynamics,n.,공기 역학,The sports car was designed with aerodynamics in mind to reduce drag.,그 스포츠카는 항력을 줄이기 위해 공기 역학을 염두에 두고 설계되었다.,2.93
+friction,n.,마찰(력),Engine oil is used to reduce friction between the moving metal parts.,엔진 오일은 움직이는 금속 부품들 사이의 마찰을 줄이기 위해 사용된다.,3.71
+lubrication,n.,윤활 (작용),Proper lubrication extends the lifespan of industrial machinery.,적절한 윤활은 산업 기계의 수명을 연장한다.,2.97
+chassis,n.,"새시, (자동차의) 차대",The car's chassis is made of lightweight aluminum to improve fuel efficiency.,자동차의 섀시는 연비 향상을 위해 가벼운 알루미늄으로 만들어졌다.,3.54
+turbine,n.,터빈,Wind turbines convert the kinetic energy of the wind into electrical power.,풍력 터빈은 바람의 운동 에너지를 전력으로 변환한다.,3.63
+pulley,n.,도르래,They used a simple pulley system to lift the heavy piano to the second floor.,그들은 무거운 피아노를 2층으로 끌어올리기 위해 간단한 도르래 장치를 사용했다.,2.92
+lever,n.,"지레, 레버",A lever allows you to move a heavy object with less effort.,지레는 적은 힘으로 무거운 물체를 옮길 수 있게 해준다.,3.64
+gear,n.,"기어, 톱니바퀴",The bicycle has a 21-speed gear system for climbing steep hills.,그 자전거는 가파른 언덕을 오르기 위한 21단 기어 시스템을 갖추고 있다.,4.46
+excavate,v.,"파내다, 굴착하다",The construction crew will excavate the site before laying the foundation.,건설 작업반은 기초를 놓기 전에 현장을 굴착할 것이다.,2.66
+drill,v.,구멍을 뚫다 / n. 드릴,The engineers had to drill through solid rock to build the tunnel.,엔지니어들은 터널을 뚫기 위해 단단한 암석을 파내야 했다.,4.09
+weld,v.,용접하다,Robots are often used to weld car parts together on the assembly line.,로봇은 조립 라인에서 자동차 부품들을 용접하는 데 종종 사용된다.,3.33
+rivet,n.,"대갈못, 리벳 / v. 리벳으로 고정하다",Millions of steel rivets were used to construct the Eiffel Tower.,에펠탑을 짓는 데 수백만 개의 강철 리벳이 사용되었다.,2.69
+suspension,n.,"현탁액, 서스펜션(완충 장치)",The car's suspension system absorbs shocks from rough roads.,자동차의 완충 장치는 거친 도로의 충격을 흡수한다.,4.24
+cantilever,n.,"외팔보, 캔틸레버",The architect designed a stunning cantilever roof that extends over the patio.,건축가는 파티오 위로 뻗어 있는 멋진 외팔보 지붕을 설계했다.,2.72
+masonry,n.,"석조 공사, 벽돌쌓기",The old church features beautiful brick masonry.,그 오래된 교회는 아름다운 벽돌 석조 공사를 특징으로 한다.,3.35
+insulation,n.,"단열, 절연",Proper insulation in the walls keeps the house warm in winter.,벽의 적절한 단열재는 겨울에 집을 따뜻하게 유지해 준다.,3.67
+generator,n.,발전기,A backup generator immediately started working when the power went out.,정전이 되자 백업 발전기가 즉시 작동하기 시작했다.,3.94
+transformer,n.,변압기,The transformer decreases the high voltage from the power lines for safe home use.,변압기는 안전한 가정용 사용을 위해 전력선의 고전압을 낮춘다.,3.37
+grid,n.,"전력망, 그리드",The storm caused a massive failure in the national power grid.,폭풍으로 인해 국가 전력망에 대규모 장애가 발생했다.,4.18
+renewable,adj.,재생 가능한,Solar and wind are popular forms of renewable energy.,태양열과 풍력은 인기 있는 형태의 재생 가능 에너지이다.,3.91
+sustainable,adj.,지속 가능한,The company is committed to sustainable manufacturing practices.,그 회사는 지속 가능한 제조 관행에 전념하고 있다.,4.19
+photovoltaic,adj.,"광전성의, 태양광 발전의",Photovoltaic cells convert sunlight directly into electricity.,광전지는 햇빛을 직접 전기로 변환한다.,3.02
+geothermal,adj.,지열의,Iceland relies heavily on geothermal energy for heating and power.,아이슬란드는 난방과 전력을 위해 지열 에너지에 크게 의존한다.,3.18
+hydroelectric,adj.,수력 발전의,The massive dam produces hydroelectric power for the entire region.,거대한 댐은 전체 지역을 위한 수력 발전을 생산한다.,3.11
+biomass,n.,"생물량, 바이오매스",Burning biomass for energy can reduce dependence on fossil fuels.,에너지를 위해 바이오매스를 태우는 것은 화석 연료에 대한 의존을 줄일 수 있다.,3.38
+reactor,n.,원자로,Engineers are continuously monitoring the core temperature of the nuclear reactor.,엔지니어들은 원자로의 노심 온도를 지속적으로 모니터링하고 있다.,3.83
+fossil fuel,n.,화석 연료,"Coal, oil, and natural gas are all examples of fossil fuels.","석탄, 석유, 천연가스는 모두 화석 연료의 예이다.",
+emission,n.,"배출, 배기가스",Strict regulations have been introduced to cut vehicle emissions.,차량 배기가스를 줄이기 위해 엄격한 규제가 도입되었다.,3.7
+capacity,n.,"용량, 수용력",The new battery factory will have an annual production capacity of 10 gigawatts.,새 배터리 공장은 연간 10기가와트의 생산 용량을 갖출 것이다.,4.71
+voltage,n.,전압,You must use an adapter because the electrical voltage is different in this country.,이 나라는 전압이 다르기 때문에 어댑터를 사용해야 한다.,4.02
+wattage,n.,전력(량),Check the wattage of the lightbulb before installing it.,설치하기 전에 전구의 전력량을 확인하시오.,2.65
+efficiency,n.,효율성,LED lights are favored for their high energy efficiency.,LED 조명은 높은 에너지 효율성으로 선호된다.,4.38
+conserve,v.,"보존하다, 절약하다",Please turn off your computers at night to conserve electricity.,전기를 절약하기 위해 밤에는 컴퓨터를 꺼 주시기 바랍니다.,3.37
+dissipate,v.,"소산되다, 흩어지다",Heat sinks are used in computers to dissipate heat safely.,방열판은 열을 안전하게 소산시키기 위해 컴퓨터에 사용된다.,2.95
+kinetic,adj.,"운동의, 운동에 의해 생기는",The braking system converts the car's kinetic energy into heat.,제동 장치는 자동차의 운동 에너지를 열로 변환한다.,3.44
+harness,v.,"이용하다, 동력화하다",Engineers are finding new ways to harness the power of ocean tides.,엔지니어들은 바다 조수의 힘을 이용하는 새로운 방법을 찾고 있다.,3.67
+manufacture,v.,"제조하다, 생산하다",The company uses automated machines to manufacture these auto parts.,그 회사는 이 자동차 부품들을 제조하기 위해 자동화된 기계를 사용한다.,3.98
+assembly,n.,"조립, 집회",Henry Ford revolutionized the automotive industry with the assembly line.,헨리 포드는 조립 라인으로 자동차 산업에 혁명을 일으켰다.,4.61
+automation,n.,자동화,Factory automation has significantly increased production speed and accuracy.,공장 자동화는 생산 속도와 정확성을 크게 향상시켰다.,3.8
+robotics,n.,로봇 공학,Advancements in robotics have transformed modern manufacturing floors.,로봇 공학의 발전은 현대 제조 현장을 변화시켰다.,3.53
+sensor,n.,"센서, 감지기",The temperature sensor will automatically shut off the machine if it overheats.,온도 센서는 기계가 과열되면 자동으로 기계를 차단한다.,3.92
+refine,v.,"정제하다, 개선하다",Crude oil must be refined to produce gasoline and diesel.,원유는 휘발유와 경유를 생산하기 위해 정제되어야 한다.,3.28
+distill,v.,증류하다,The plant distills seawater to provide fresh drinking water for the island.,그 공장은 섬에 깨끗한 식수를 제공하기 위해 바닷물을 증류한다.,2.47
+extract,v.,추출하다,Chemical processes are used to extract precious metals from electronic waste.,전자 폐기물에서 귀금속을 추출하기 위해 화학 공정이 사용된다.,4.02
+yield,n.,"산출량, 수확량 / v. 산출하다",The new agricultural technique dramatically increased the crop yield.,새로운 농업 기술은 농작물 수확량을 극적으로 증가시켰다.,4.16
+streamline,v.,"유선형으로 하다, 간소화하다",The software helps to streamline the supply chain process.,그 소프트웨어는 공급망 프로세스를 간소화하는 데 도움을 준다.,3.18
+logistics,n.,"물류, 병참",Managing the logistics of a global delivery network is highly complex.,글로벌 배송 네트워크의 물류를 관리하는 것은 매우 복잡하다.,3.86
+inventory,n.,재고(품),The store takes a complete inventory of its goods at the end of each month.,그 상점은 매월 말에 상품의 전체 재고 조사를 한다.,4.14
+maintenance,n.,"유지 보수, 정비",Regular maintenance is crucial to keep the machinery running smoothly.,기계를 원활하게 작동시키려면 정기적인 유지 보수가 중요하다.,4.55
+calibrate,v.,"눈금을 매기다, 영점을 맞추다",The testing equipment must be calibrated daily to ensure precise results.,정확한 결과를 보장하기 위해 테스트 장비는 매일 영점을 맞춰야 한다.,2.79
+defect,n.,결함,Every product undergoes strict quality control to catch any manufacturing defects.,모든 제품은 제조상의 결함을 잡기 위해 엄격한 품질 관리를 거친다.,3.68
+standardized,adj.,표준화된,Standardized parts make it easier and cheaper to repair machines.,표준화된 부품은 기계를 수리하는 것을 더 쉽고 저렴하게 만든다.,3.64
+fabricate,v.,"제작하다, 조립하다",The metal workshop can fabricate custom parts based on your specifications.,금속 작업장은 귀하의 사양에 따라 맞춤형 부품을 제작할 수 있습니다.,2.89
+synthetic,adj.,"합성의, 인조의",Synthetic rubber is widely used in the production of car tires.,합성 고무는 자동차 타이어 생산에 널리 사용된다.,3.95
+byproduct,n.,부산물,"Molasses is a sweet, sticky byproduct of refining sugar cane.",당밀은 사탕수수를 정제할 때 나오는 달콤하고 끈적끈적한 부산물이다.,3.03
+tolerance,n.,"공차, 내성",The machine cuts metal with a tolerance of less than one millimeter.,그 기계는 1밀리미터 미만의 공차로 금속을 자른다.,4.06
