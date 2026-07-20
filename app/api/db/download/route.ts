@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       .from('words')
       .select('*')
       .eq('list_id', listId)
-      .limit(5000);
+      .limit(15000);
 
     if (wordsError) {
       console.error("Fetch Words Error:", wordsError);
