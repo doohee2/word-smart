@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
       expectedTotal = (totalWordsCount || 0) - (existingListWordsCount || 0) + words.length;
     }
 
-    if (expectedTotal > 5000) {
-      return NextResponse.json({ error: "계정당 단어는 총 5,000개까지만 저장할 수 있습니다. 불필요한 단어장을 삭제 후 시도해주세요." }, { status: 403 });
+    if (expectedTotal > 15000) {
+      return NextResponse.json({ error: "계정당 단어는 총 15,000개까지만 저장할 수 있습니다. 불필요한 단어장을 삭제 후 시도해주세요." }, { status: 403 });
     }
 
     // 1. Get or Create Word List (unique by title)

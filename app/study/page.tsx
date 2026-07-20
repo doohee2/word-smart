@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { highlightExampleSentence } from "@/lib/textUtils";
+import { ZipfBadge } from "@/components/ZipfBadge";
 
 export default function StudyPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -322,11 +323,7 @@ export default function StudyPage() {
                 )}
                 onClick={() => !isRevealed && setIsRevealed(true)}
               >
-                {currentWord?.zipfScore !== undefined && currentWord?.zipfScore !== null && currentWord?.zipfScore > 0 && (
-                  <div className="absolute top-6 left-6 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-bold shadow-sm">
-                    Zipf {currentWord.zipfScore.toFixed(1)}
-                  </div>
-                )}
+                <ZipfBadge score={currentWord?.zipfScore} className="absolute top-6 left-6" />
                 
                 <button 
                   onClick={(e) => { e.stopPropagation(); playAudio(); }}

@@ -8,16 +8,36 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useStudySession } from "@/providers/StudySessionProvider";
+import { ConfirmModal } from "./ConfirmModal";
 import { Logo } from "./Logo";
 
 export function Header() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { isActiveSession, setIsActiveSession } = useStudySession();
+  const [modalConfig, setModalConfig] = useState<{isOpen: boolean, targetHref: string}>({isOpen: false, targetHref: ''});
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLinkClick = (e: React.MouseEvent, href: string) => {
+    if (isActiveSession && pathname !== href) {
+      e.preventDefault();
+      setModalConfig({isOpen: true, targetHref: href});
+    }
+  };
+
+  const confirmNavigation = () => {
+    setIsActiveSession(false);
+    setModalConfig(prev => ({...prev, isOpen: false}));
+    router.push(modalConfig.targetHref);
+  };
 
   return (
     <header className="bg-surface docked full-width top-0 shadow-sm z-40 sticky">
@@ -38,7 +58,7 @@ export function Header() {
             </button>
           )}
 
-          <Link href="/settings" aria-label="설정" className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+          <Link href="/settings" onClick={(e) => handleLinkClick(e, "/settings")} aria-label="설정" className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
             <Settings size={24} />
           </Link>
           <FileOpenButton />
@@ -79,6 +99,17 @@ export function Header() {
           )}
         </div>
       </div>
+
+      <ConfirmModal 
+        isOpen={modalConfig.isOpen}
+        title="학습 중단"
+        message="학습 진행 상태가 초기화됩니다. 정말 이동하시겠습니까?"
+        confirmText="이동하기"
+        cancelText="취소"
+        onConfirm={confirmNavigation}
+        onCancel={() => setModalConfig(prev => ({...prev, isOpen: false}))}
+        isDestructive={true}
+      />
     </header>
   );
 }

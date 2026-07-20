@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { maskExampleHtml } from "@/lib/textUtils";
+import { ZipfBadge } from "@/components/ZipfBadge";
 
 interface TestWord {
   wordData: Word;
@@ -384,11 +385,7 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  {currentWord?.zipfScore !== undefined && currentWord?.zipfScore !== null && currentWord?.zipfScore > 0 && (
-                    <span className="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-bold shadow-sm">
-                      Zipf {currentWord.zipfScore.toFixed(1)}
-                    </span>
-                  )}
+                  <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-on-surface mb-2 tracking-tight break-words">
                   {currentWord.word}
@@ -446,11 +443,7 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  {currentWord?.zipfScore !== undefined && currentWord?.zipfScore !== null && currentWord?.zipfScore > 0 && (
-                    <span className="inline-block px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-sm font-bold shadow-sm">
-                      Zipf {currentWord.zipfScore.toFixed(1)}
-                    </span>
-                  )}
+                  <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
                   {currentWord.meaningKo}

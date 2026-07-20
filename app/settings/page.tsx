@@ -61,7 +61,8 @@ function WordListItem({
       "Part of Speech": w.partOfSpeech,
       "Korean Meaning": w.meaningKo,
       "Example Sentence": w.exampleEn,
-      "Korean Translation": w.exampleKo
+      "Korean Translation": w.exampleKo,
+      "zipf_score": w.zipfScore !== undefined && w.zipfScore !== null ? w.zipfScore : ""
     }));
     
     const csvStr = Papa.unparse(csvData);
