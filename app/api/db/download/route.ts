@@ -29,7 +29,8 @@ export async function GET(request: NextRequest) {
     const { data: wordsData, error: wordsError } = await supabase
       .from('words')
       .select('*')
-      .eq('list_id', listId);
+      .eq('list_id', listId)
+      .limit(5000);
 
     if (wordsError) {
       console.error("Fetch Words Error:", wordsError);
