@@ -107,8 +107,7 @@ export function Header() {
         confirmText="이동하기"
         cancelText="취소"
         onConfirm={confirmNavigation}
-        onCancel={() => setModalConfig(prev => ({...prev, isOpen: false}))}
-        isDestructive={true}
+        onClose={() => setModalConfig(prev => ({...prev, isOpen: false}))}
       />
     </header>
   );
