@@ -87,7 +87,7 @@ export default function TestPage() {
 
   useEffect(() => {
     if (isStarted && testQueue[currentIndex] && activeLists) {
-      const currentList = activeLists.find(l => l.id === testQueue[currentIndex].word.listId);
+      const currentList = activeLists.find(l => l.id === testQueue[currentIndex].wordData.listId);
       setCurrentListTitle(currentList?.title || null);
     } else {
       setCurrentListTitle(null);
