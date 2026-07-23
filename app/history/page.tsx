@@ -193,18 +193,18 @@ export default function HistoryPage() {
               <div key={history.id} className="bg-surface-container-lowest rounded-2xl border border-surface-variant overflow-hidden shadow-sm">
                 <button 
                   onClick={() => setExpandedId(isExpanded ? null : history.id!)}
-                  className="w-full flex items-center justify-between p-4 hover:bg-surface-container transition-colors text-left focus:outline-none"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-surface-container transition-colors text-left focus:outline-none"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <div className={clsx(
-                      "w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold shrink-0 shadow-sm",
+                      "w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold shrink-0 shadow-sm",
                       history.type === 'study' ? "bg-emerald-500" : "bg-blue-500"
                     )}>
                       {history.type === 'study' ? <BookOpen size={20} /> : <PlaySquare size={20} />}
                     </div>
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-body-lg font-bold text-on-surface">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-body-md font-bold text-on-surface">
                           {history.type === 'study' ? '단어 학습' : '단어 테스트'}
                         </span>
                         {!history.isSynced && (
@@ -213,7 +213,7 @@ export default function HistoryPage() {
                           </span>
                         )}
                       </div>
-                      <div className="text-label-md text-on-surface-variant flex items-center gap-2">
+                      <div className="text-xs text-on-surface-variant flex items-center gap-2">
                         <span>{dateStr}</span>
                         <span>•</span>
                         <span>{history.completedCount} / {history.totalCount} 단어 완료</span>
@@ -235,15 +235,15 @@ export default function HistoryPage() {
                 </button>
                 
                 {isExpanded && (
-                  <div className="p-4 pt-0 border-t border-surface-variant bg-surface-container-lowest">
-                    <div className="mt-4 flex flex-col gap-4">
+                  <div className="px-4 pb-3 pt-0 border-t border-surface-variant bg-surface-container-lowest">
+                    <div className="mt-2 flex flex-col gap-3">
                       {history.incompleteWords && (
                         <div>
-                          <h4 className="text-label-sm font-bold text-error mb-2 flex items-center gap-1">
+                          <h4 className="text-label-sm font-bold text-error mb-1 flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-error inline-block" />
                             {history.type === 'study' ? '미완료 단어' : '오답 단어'}
                           </h4>
-                          <p className="text-body-sm text-on-surface-variant bg-error-container/10 p-3 rounded-xl border border-error-container/30">
+                          <p className="text-xs leading-relaxed text-on-surface-variant bg-error-container/10 p-2 rounded-xl border border-error-container/30">
                             {history.incompleteWords}
                           </p>
                         </div>
@@ -251,11 +251,11 @@ export default function HistoryPage() {
                       
                       {history.completeWords && (
                         <div>
-                          <h4 className="text-label-sm font-bold text-primary mb-2 flex items-center gap-1">
+                          <h4 className="text-label-sm font-bold text-primary mb-1 flex items-center gap-1">
                             <span className="w-2 h-2 rounded-full bg-primary inline-block" />
                             {history.type === 'study' ? '완료 단어' : '정답 단어'}
                           </h4>
-                          <p className="text-body-sm text-on-surface-variant bg-primary-container/10 p-3 rounded-xl border border-primary-container/30">
+                          <p className="text-xs leading-relaxed text-on-surface-variant bg-primary-container/10 p-2 rounded-xl border border-primary-container/30">
                             {history.completeWords}
                           </p>
                         </div>
