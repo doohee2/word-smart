@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { BookOpen, PlaySquare, Calendar, ChevronDown, ChevronUp } from "lucide-react";
+import { BookOpen, PlaySquare, Calendar, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
 import clsx from "clsx";
 
 export default function HistoryPage() {
@@ -14,8 +14,43 @@ export default function HistoryPage() {
   const currentMonthStr = new Date().toISOString().slice(0, 7);
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonthStr);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const rawHistory = useLiveQuery(() => db.history.toArray());
+
+  useEffect(() => {
+    if (!session?.user?.email) return;
+    
+    setIsSyncing(true);
+    fetch('/api/history?limit=1000') // fetch recent 1000
+      .then(res => res.json())
+      .then(async data => {
+        if (data.history && data.history.length > 0) {
+          const localItems = await db.history.toArray();
+          const localKeys = new Set(localItems.map(h => `${new Date(h.createdAt).getTime()}_${h.type}`));
+          
+          const newRecords = data.history.filter((h: any) => {
+            const key = `${new Date(h.created_at).getTime()}_${h.type}`;
+            return !localKeys.has(key);
+          }).map((h: any) => ({
+            userEmail: h.user_email,
+            createdAt: new Date(h.created_at),
+            type: h.type,
+            totalCount: h.total_count,
+            completedCount: h.completed_count,
+            incompleteWords: h.incomplete_words,
+            completeWords: h.complete_words,
+            isSynced: true
+          }));
+
+          if (newRecords.length > 0) {
+            await db.history.bulkAdd(newRecords);
+          }
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsSyncing(false));
+  }, [session?.user?.email]);
 
   const userHistory = useMemo(() => {
     if (!rawHistory || !session?.user?.email) return [];
@@ -65,7 +100,15 @@ export default function HistoryPage() {
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col pt-8 pb-32 md:pb-8 px-4 h-[calc(100vh-80px)] overflow-y-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-display-sm font-bold text-on-surface">학습 기록</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-display-sm font-bold text-on-surface">학습 기록</h1>
+          {isSyncing && (
+            <div className="flex items-center gap-1.5 text-label-sm text-primary bg-primary-container/20 px-2.5 py-1 rounded-full animate-pulse border border-primary/20">
+              <RefreshCw size={14} className="animate-spin" />
+              <span>동기화 중...</span>
+            </div>
+          )}
+        </div>
         <div className="relative">
           <select 
             value={selectedMonth}
