@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, CacheFirst, StaleWhileRevalidate, ExpirationPlugin } from "serwist";
+import { Serwist, CacheFirst, StaleWhileRevalidate, NetworkFirst, ExpirationPlugin } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -14,15 +14,16 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
-  navigationPreload: true,
+  navigationPreload: false,
   runtimeCaching: [
     {
-      // HTML 문서 캐싱 (새 탭/창 진입 시 0.1초 컷을 위해 SWR 전략 사용)
+      // HTML 문서 캐싱 (iOS Safari 오프라인 진입 버그 해결을 위해 NetworkFirst 권장)
       matcher({ request }) {
         return request.mode === "navigate";
       },
-      handler: new StaleWhileRevalidate({
+      handler: new NetworkFirst({
         cacheName: "pages-cache",
+        networkTimeoutSeconds: 3,
         plugins: [
           new ExpirationPlugin({ maxEntries: 50 }),
         ],
