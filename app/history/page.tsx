@@ -19,38 +19,52 @@ export default function HistoryPage() {
   const rawHistory = useLiveQuery(() => db.history.toArray());
 
   useEffect(() => {
-    if (!session?.user?.email) return;
+    if (!session?.user?.email || !selectedMonth) return;
     
     setIsSyncing(true);
-    fetch('/api/history?limit=1000') // fetch recent 1000
+    // 1. Fetch keys (id, created_at, type) for the selected month
+    fetch(`/api/history?month=${selectedMonth}&keysOnly=true`)
       .then(res => res.json())
       .then(async data => {
         if (data.history && data.history.length > 0) {
           const localItems = await db.history.toArray();
           const localKeys = new Set(localItems.map(h => `${new Date(h.createdAt).getTime()}_${h.type}`));
           
-          const newRecords = data.history.filter((h: any) => {
+          // Find records we don't have locally
+          const missingIds = data.history.filter((h: any) => {
             const key = `${new Date(h.created_at).getTime()}_${h.type}`;
             return !localKeys.has(key);
-          }).map((h: any) => ({
-            userEmail: h.user_email,
-            createdAt: new Date(h.created_at),
-            type: h.type,
-            totalCount: h.total_count,
-            completedCount: h.completed_count,
-            incompleteWords: h.incomplete_words,
-            completeWords: h.complete_words,
-            isSynced: true
-          }));
+          }).map((h: any) => h.id);
 
-          if (newRecords.length > 0) {
-            await db.history.bulkAdd(newRecords);
+          if (missingIds.length > 0) {
+            // 2. Fetch full records for missing IDs
+            const fetchRes = await fetch('/api/history', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'fetch', ids: missingIds })
+            });
+            const fetchData = await fetchRes.json();
+            
+            if (fetchData.history && fetchData.history.length > 0) {
+              const newRecords = fetchData.history.map((h: any) => ({
+                userEmail: h.user_email,
+                createdAt: new Date(h.created_at),
+                type: h.type,
+                totalCount: h.total_count,
+                completedCount: h.completed_count,
+                incompleteWords: h.incomplete_words,
+                completeWords: h.complete_words,
+                isSynced: true
+              }));
+
+              await db.history.bulkAdd(newRecords);
+            }
           }
         }
       })
       .catch(console.error)
       .finally(() => setIsSyncing(false));
-  }, [session?.user?.email]);
+  }, [session?.user?.email, selectedMonth]);
 
   const userHistory = useMemo(() => {
     if (!rawHistory || !session?.user?.email) return [];
