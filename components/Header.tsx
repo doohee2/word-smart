@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable react-hooks/set-state-in-effect */
 
-import { Settings, User, LogOut, Moon, Sun } from "lucide-react";
+import { Settings, User, LogOut, Moon, Sun, CloudOff } from "lucide-react";
 import { FileOpenButton } from "./FileOpenButton";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
@@ -12,6 +12,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "./ConfirmModal";
 import { Logo } from "./Logo";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useDataSync } from "@/hooks/useDataSync";
 
 export function Header() {
   const { data: session } = useSession();
@@ -21,6 +23,8 @@ export function Header() {
   const router = useRouter();
   const { isActiveSession, setIsActiveSession } = useStudySession();
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, targetHref: string}>({isOpen: false, targetHref: ''});
+  const isOnline = useNetworkStatus();
+  useDataSync();
 
   useEffect(() => {
     setMounted(true);
@@ -56,6 +60,13 @@ export function Header() {
             >
               {theme === "dark" ? <Sun size={24} /> : <Moon size={24} />}
             </button>
+          )}
+
+          {!isOnline && (
+            <div className="flex items-center gap-1 bg-error-container/20 text-error px-2 py-1 rounded-lg mr-2" title="오프라인 상태">
+              <CloudOff size={18} />
+              <span className="text-label-sm font-bold hidden sm:inline">오프라인</span>
+            </div>
           )}
 
           <Link href="/settings" onClick={(e) => handleLinkClick(e, "/settings")} aria-label="설정" className="p-1.5 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">

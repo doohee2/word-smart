@@ -1,6 +1,7 @@
-import { X } from "lucide-react";
+import { X, RefreshCw } from "lucide-react";
 import { APP_INFO_MESSAGE, APP_VERSION } from "@/lib/constants";
 import { Logo } from "@/components/Logo";
+import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -8,7 +9,27 @@ interface InfoModalProps {
 }
 
 export function InfoModal({ isOpen, onClose }: InfoModalProps) {
+  const isOnline = useNetworkStatus();
+
   if (!isOpen) return null;
+
+  const handleForceUpdate = async () => {
+    if (!isOnline) return;
+    try {
+      if ('serviceWorker' in navigator) {
+        const registrations = await navigator.serviceWorker.getRegistrations();
+        for (const registration of registrations) {
+          await registration.unregister();
+        }
+      }
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+      window.location.reload();
+    } catch (e) {
+      console.error('Failed to force update app', e);
+      window.location.reload(); // fallback
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -25,9 +46,22 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
         <p className="text-body-md text-on-surface-variant leading-relaxed break-all text-left">
           {APP_INFO_MESSAGE}
         </p>
-        <p className="text-label-sm text-on-surface-variant font-medium mt-2 text-right">
-          {APP_VERSION}
-        </p>
+        <div className="flex items-center justify-between mt-2">
+          {isOnline ? (
+            <button
+              onClick={handleForceUpdate}
+              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-3 py-1.5 rounded-full"
+            >
+              <RefreshCw size={14} />
+              <span>최신 버전 업데이트</span>
+            </button>
+          ) : (
+            <div /> // empty placeholder for layout
+          )}
+          <p className="text-label-sm text-on-surface-variant font-medium text-right">
+            {APP_VERSION}
+          </p>
+        </div>
       </div>
     </div>
   );
