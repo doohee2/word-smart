@@ -18,12 +18,42 @@ export function useDataSync() {
       
       if (data.history && data.history.length > 0) {
         const localItems = await db.history.toArray();
-        const localKeys = new Set(localItems.map(h => `${new Date(h.createdAt).getTime()}_${h.type}`));
+        const localKeysMap = new Map(localItems.map(h => [
+          `${new Date(h.createdAt).getTime()}_${h.type}`,
+          h
+        ]));
         
-        const missingIds = data.history.filter((h: any) => {
+        const missingIds: any[] = [];
+        
+        // 1. Downstream: sync deletions and find missing
+        for (const h of data.history) {
           const key = `${new Date(h.created_at).getTime()}_${h.type}`;
-          return !localKeys.has(key);
-        }).map((h: any) => h.id);
+          const localItem = localKeysMap.get(key);
+          
+          if (localItem) {
+            if (h.is_deleted && !localItem.isDeleted) {
+               await db.history.update(localItem.id!, { isDeleted: true, deletedAt: new Date() });
+            }
+          } else if (!h.is_deleted) {
+            missingIds.push(h.id);
+          }
+        }
+
+        // 2. Upstream: Push local deletions
+        const localDeletions = localItems.filter(h => h.isDeleted && !h.isSynced);
+        if (localDeletions.length > 0) {
+          const keys = localDeletions.map(h => new Date(h.createdAt).toISOString());
+          const delRes = await fetch('/api/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', keys })
+          });
+          if (delRes.ok) {
+            for (const h of localDeletions) {
+              if (h.id) await db.history.update(h.id, { isSynced: true });
+            }
+          }
+        }
 
         if (missingIds.length > 0) {
           const fetchRes = await fetch('/api/history', {

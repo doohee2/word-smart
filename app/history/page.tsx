@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
-import { BookOpen, PlaySquare, Calendar, ChevronDown, ChevronUp, RefreshCw } from "lucide-react";
+import { BookOpen, PlaySquare, Calendar, ChevronDown, ChevronUp, RefreshCw, Trash2 } from "lucide-react";
 import clsx from "clsx";
 
 export default function HistoryPage() {
@@ -70,7 +70,7 @@ export default function HistoryPage() {
     if (!rawHistory || !session?.user?.email) return [];
     
     const sorted = rawHistory
-      .filter(h => h.userEmail === session.user?.email)
+      .filter(h => h.userEmail === session.user?.email && !h.isDeleted)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const deduped: typeof sorted = [];
@@ -114,6 +114,13 @@ export default function HistoryPage() {
 
     return { studySessions, testSessions, totalWords };
   }, [filteredHistory]);
+
+  const handleDelete = async (e: React.MouseEvent, id: number) => {
+    e.stopPropagation();
+    if (confirm("이 기록을 삭제하시겠습니까?")) {
+      await db.history.update(id, { isDeleted: true, deletedAt: new Date(), isSynced: false });
+    }
+  };
 
   if (!session) {
     return (
@@ -213,8 +220,17 @@ export default function HistoryPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-on-surface-variant p-2">
-                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={(e) => handleDelete(e, history.id!)}
+                      className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-colors focus:outline-none"
+                      title="기록 삭제"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                    <div className="text-on-surface-variant p-2">
+                      {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </div>
                   </div>
                 </button>
                 

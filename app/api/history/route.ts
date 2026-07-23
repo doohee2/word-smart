@@ -13,6 +13,22 @@ export async function POST(request: NextRequest) {
     const userEmail = session.user.email;
     const body = await request.json();
 
+    if (body.action === 'delete' && Array.isArray(body.keys)) {
+      if (body.keys.length === 0) return NextResponse.json({ success: true });
+      
+      const { error } = await supabase
+        .from('study_history')
+        .update({ is_deleted: true, deleted_at: new Date().toISOString() })
+        .eq('user_email', userEmail)
+        .in('created_at', body.keys);
+
+      if (error) {
+        console.error("Delete History Error:", error);
+        return NextResponse.json({ error: "Failed to delete history" }, { status: 500 });
+      }
+      return NextResponse.json({ success: true });
+    }
+
     if (body.action === 'fetch' && Array.isArray(body.ids)) {
       if (body.ids.length === 0) return NextResponse.json({ history: [] });
       
@@ -74,9 +90,19 @@ export async function GET(request: NextRequest) {
     const month = searchParams.get("month");
     const keysOnly = searchParams.get("keysOnly") === 'true';
 
+    // Hard delete records older than 30 days
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    await supabase
+      .from('study_history')
+      .delete()
+      .eq('is_deleted', true)
+      .lt('deleted_at', thirtyDaysAgo.toISOString());
+
     let query = supabase
       .from('study_history')
-      .select(keysOnly ? 'id, type, created_at' : '*')
+      .select(keysOnly ? 'id, type, created_at, is_deleted' : '*')
       .eq('user_email', userEmail)
       .order('created_at', { ascending: false });
 

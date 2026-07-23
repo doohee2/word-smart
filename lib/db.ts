@@ -31,6 +31,8 @@ export interface StudyHistory {
   incompleteWords: string;
   completeWords: string;
   isSynced: boolean;
+  isDeleted?: boolean;
+  deletedAt?: Date;
 }
 
 export class WordSmartDB extends Dexie {
@@ -46,6 +48,15 @@ export class WordSmartDB extends Dexie {
     });
     this.version(2).stores({
       history: '++id, userEmail, createdAt, type, isSynced'
+    });
+    this.version(3).stores({
+      history: '++id, userEmail, createdAt, type, isSynced, isDeleted'
+    }).upgrade(tx => {
+      return tx.table('history').toCollection().modify(h => {
+        if (h.isDeleted === undefined) {
+          h.isDeleted = false;
+        }
+      });
     });
   }
 }
