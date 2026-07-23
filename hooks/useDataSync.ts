@@ -8,12 +8,15 @@ export function useDataSync() {
   const isOnline = useNetworkStatus();
 
   const syncHistory = useCallback(async () => {
-    if (!session?.user?.email) return;
+    if (!session?.user?.email || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
 
     try {
       // 1. Fetch keys (id, created_at, type) for the current month as a default sync
       const currentMonthStr = new Date().toISOString().slice(0, 7);
-      const res = await fetch(`/api/history?month=${currentMonthStr}&keysOnly=true`);
+      const res = await fetch(`/api/history?month=${currentMonthStr}&keysOnly=true`, {
+        signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
+      });
+      if (!res.ok) return;
       const data = await res.json();
       
       if (data.history) {
@@ -52,8 +55,10 @@ export function useDataSync() {
           const syncRes = await fetch('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'sync_offline', records: offlineRecords })
+            body: JSON.stringify({ action: 'sync_offline', records: offlineRecords }),
+            signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
           });
+          if (!syncRes.ok) return;
           const syncData = await syncRes.json();
           if (syncData.success && syncData.history) {
             for (const serverRow of syncData.history) {
@@ -72,7 +77,8 @@ export function useDataSync() {
           const delRes = await fetch('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'delete', keys })
+            body: JSON.stringify({ action: 'delete', keys }),
+            signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
           });
           if (delRes.ok) {
             for (const h of localDeletions) {
@@ -86,8 +92,10 @@ export function useDataSync() {
           const fetchRes = await fetch('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'fetch', ids: missingIds })
+            body: JSON.stringify({ action: 'fetch', ids: missingIds }),
+            signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
           });
+          if (!fetchRes.ok) return;
           const fetchData = await fetchRes.json();
           
           if (fetchData.history && fetchData.history.length > 0) {
@@ -108,15 +116,19 @@ export function useDataSync() {
         }
       }
     } catch (error) {
-      console.error("Background sync error (history):", error);
+      // Silently ignore network or timeout errors in background sync
+      // console.error("Background sync error (history):", error);
     }
   }, [session?.user?.email]);
 
   const syncWordLists = useCallback(async () => {
-    if (!session?.user?.email) return;
+    if (!session?.user?.email || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
 
     try {
-      const res = await fetch('/api/db/list');
+      const res = await fetch('/api/db/list', {
+        signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
+      });
+      if (!res.ok) return;
       const data = await res.json();
       
       if (data.lists && data.lists.length > 0) {
@@ -137,7 +149,8 @@ export function useDataSync() {
         }
       }
     } catch (error) {
-      console.error("Background sync error (lists):", error);
+      // Silently ignore network or timeout errors
+      // console.error("Background sync error (lists):", error);
     }
   }, [session?.user?.email]);
 

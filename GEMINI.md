@@ -95,6 +95,11 @@ word-smart/
 * **백그라운드 동기화 훅 (`hooks/useDataSync.ts`, `hooks/useNetworkStatus.ts`):**
   * 앱 마운트 시 무조건 로컬 Dexie.js 데이터를 우선 표시하고, 네트워크가 연결된(online) 상태일 경우 백그라운드에서 `/api/history` 등을 Fetch하여 로컬 DB를 업데이트합니다.
   * 오프라인 시 `Header.tsx`에 시각적 뱃지(빗금친 구름 아이콘)를 표시하며, `InfoModal`을 통해 사용자가 캐시를 초기화하고 최신 앱 버전을 강제로 불러오는 수동 업데이트 버튼을 지원합니다.
+* **iOS Safari 오프라인 진입 최적화 (렌더링 블로킹 방지):**
+  * **SessionProvider 의존성 제거**: 앱 초기화 시 NextAuth의 `SessionProvider`가 네트워크에 의존하여 렌더링을 막는 현상을 방지하기 위해 `refetchInterval={0}`, `refetchOnWindowFocus={false}` 속성을 적용했습니다.
+  * **네트워크 Timeout 및 방어 로직**: iOS Safari는 오프라인 상태에서도 간헐적으로 `navigator.onLine`이 `true`를 반환합니다. 이를 막기 위해 `useDataSync` 내 모든 API Fetch 요청에 `AbortSignal.timeout(5000)`을 적용하고, 실패 시 조용히 무시(silent fail)하도록 예외 처리를 강화했습니다.
+  * **오프라인 폴백 페이지 캐싱**: `next.config.ts`의 `additionalPrecacheEntries`에 `url: '/~offline'`을 명시적으로 추가하여, 오프라인 시 대체 페이지가 확실하게 동작하도록 보장했습니다.
+  * **네비게이션 프리로드 해제**: Safari의 Service Worker와 충돌하는 `navigationPreload` 속성을 `false`로 비활성화하여 오프라인 앱 진입 안정성을 극대화했습니다.
 * **학습 이력 동기화 및 관리 (`app/history/page.tsx`, `app/api/history/route.ts`):**
   * **1:1 완벽 매핑 (Server ID)**: 기존 `createdAt` 시간 기반 매핑의 한계를 극복하기 위해, 서버 통신 시 응답받은 고유 UUID를 로컬 DB에 `serverId`로 저장하여 기기간 완벽한 1:1 매핑 동기화를 구현했습니다.
   * **오프라인 일괄 업로드(Batch Sync)**: 네트워크가 없는 상태에서 여러 번 학습한 기록(`isSynced=false`, `serverId=undefined`)을 모아 두었다가, 온라인 전환 시 `/api/history`에 일괄 전송하고 각각의 `serverId`를 매핑받아오는 지연 동기화를 지원합니다.
@@ -118,4 +123,5 @@ word-smart/
 > 2. `layout.tsx`에 `appleWebApp` 메타데이터를 추가해 아이폰(iOS) Safari에서도 Standalone 앱처럼 동작하게 만들어줘.
 > 3. IndexedDB(Dexie.js)를 Local Source of Truth로 사용하여, 앱이 켜질 땐 로컬 DB로 화면을 즉시 그리고, 백그라운드에서 `useDataSync` 훅을 통해 서버 DB를 Fetch한 뒤 로컬 DB를 갱신하는 SWR(Stale-While-Revalidate) 방식의 데이터 동기화를 구현해 줘.
 > 4. `window.addEventListener`를 활용해 online/offline 상태를 감지하는 `useNetworkStatus` 커스텀 훅을 만들고, 오프라인 시 UI 상단에 시각적 뱃지를 표시해 줘.
-> 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘."
+> 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘.
+> 6. iOS Safari PWA 오프라인 렌더링 블로킹 방지를 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하고, 동기화 Fetch 요청에는 `AbortSignal.timeout(5000)` 및 `!navigator.onLine` 이중 체크 방어 로직을 적용해 줘. `sw.ts` 에서는 `navigationPreload: false`로 설정해 줘."

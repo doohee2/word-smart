@@ -17,13 +17,13 @@ const serwist = new Serwist({
   navigationPreload: false,
   runtimeCaching: [
     {
-      // HTML 문서 캐싱 (iOS Safari 오프라인 진입 버그 해결을 위해 NetworkFirst 권장)
+      // HTML 문서 캐싱 (iOS Safari 오프라인 진입 버그 해결을 위해 StaleWhileRevalidate 유지)
+      // SessionProvider 타임아웃 문제 해결로 오프라인 진입 속도 확보됨
       matcher({ request }) {
         return request.mode === "navigate";
       },
-      handler: new NetworkFirst({
+      handler: new StaleWhileRevalidate({
         cacheName: "pages-cache",
-        networkTimeoutSeconds: 3,
         plugins: [
           new ExpirationPlugin({ maxEntries: 50 }),
         ],

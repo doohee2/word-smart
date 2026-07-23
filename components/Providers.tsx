@@ -8,7 +8,7 @@ import { StudySessionProvider } from "@/providers/StudySessionProvider";
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-      <SessionProvider>
+      <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
         <StudySessionProvider>
           {children}
         </StudySessionProvider>

@@ -5,6 +5,7 @@ const withSerwist = withSerwistInit({
   swSrc: "app/sw.ts",
   swDest: "public/sw.js",
   disable: process.env.NODE_ENV !== "production",
+  additionalPrecacheEntries: [{ url: '/~offline', revision: null }],
 });
 
 const nextConfig: NextConfig = {
