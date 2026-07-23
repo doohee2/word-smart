@@ -70,7 +70,32 @@ const serwist = new Serwist({
         ],
       }),
     },
-    ...defaultCache,
+    {
+      // Google 폰트 캐싱
+      matcher: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+      handler: new CacheFirst({
+        cacheName: "google-fonts",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 20,
+            maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
+          }),
+        ],
+      }),
+    },
+    {
+      // 그 외 모든 요청에 대한 안전한 캐치올 (NetworkOnly 대신 SWR 사용)
+      matcher: /.*/i,
+      handler: new StaleWhileRevalidate({
+        cacheName: "catchall-cache",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 200,
+            maxAgeSeconds: 24 * 60 * 60, // 1 day
+          }),
+        ],
+      }),
+    },
   ],
   fallbacks: {
     entries: [

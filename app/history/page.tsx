@@ -23,7 +23,9 @@ export default function HistoryPage() {
     
     setIsSyncing(true);
     // 1. Fetch keys (id, created_at, type) for the selected month
-    fetch(`/api/history?month=${selectedMonth}&keysOnly=true`)
+    fetch(`/api/history?month=${selectedMonth}&keysOnly=true`, {
+      signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
+    })
       .then(res => res.json())
       .then(async data => {
         if (data.history && data.history.length > 0) {
@@ -56,8 +58,10 @@ export default function HistoryPage() {
             const fetchRes = await fetch('/api/history', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'fetch', ids: missingIds })
+              body: JSON.stringify({ action: 'fetch', ids: missingIds }),
+              signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
             });
+            if (!fetchRes.ok) return;
             const fetchData = await fetchRes.json();
             
             if (fetchData.history && fetchData.history.length > 0) {

@@ -98,6 +98,7 @@ word-smart/
 * **iOS Safari 오프라인 진입 최적화 (렌더링 블로킹 방지):**
   * **SessionProvider 의존성 제거**: 앱 초기화 시 NextAuth의 `SessionProvider`가 네트워크에 의존하여 렌더링을 막는 현상을 방지하기 위해 `refetchInterval={0}`, `refetchOnWindowFocus={false}` 속성을 적용했습니다.
   * **네트워크 Timeout 및 방어 로직**: iOS Safari는 오프라인 상태에서도 간헐적으로 `navigator.onLine`이 `true`를 반환합니다. 이를 막기 위해 `useDataSync` 내 모든 API Fetch 요청에 `AbortSignal.timeout(5000)`을 적용하고, 실패 시 조용히 무시(silent fail)하도록 예외 처리를 강화했습니다.
+  * **Serwist defaultCache 함정 극복**: 기본 제공되는 `...defaultCache` 내부의 캐치올(catch-all) 규칙이 `NetworkOnly`로 설정되어 있어, 오프라인 시 미매칭된 모든 요청(Next.js 내부 청크, 구글 폰트 등)을 강제 실패시키는 치명적 버그가 있었습니다. 이를 제거하고 **`/.*/i`에 대한 `StaleWhileRevalidate` 커스텀 캐치올** 규칙과 **구글 폰트 전용 `CacheFirst`** 규칙을 명시적으로 추가하여 완전한 오프라인 독립성을 확보했습니다.
   * **오프라인 폴백 페이지 캐싱**: `next.config.ts`의 `additionalPrecacheEntries`에 `url: '/~offline'`을 명시적으로 추가하여, 오프라인 시 대체 페이지가 확실하게 동작하도록 보장했습니다.
   * **네비게이션 프리로드 해제**: Safari의 Service Worker와 충돌하는 `navigationPreload` 속성을 `false`로 비활성화하여 오프라인 앱 진입 안정성을 극대화했습니다.
 * **학습 이력 동기화 및 관리 (`app/history/page.tsx`, `app/api/history/route.ts`):**
@@ -124,4 +125,5 @@ word-smart/
 > 3. IndexedDB(Dexie.js)를 Local Source of Truth로 사용하여, 앱이 켜질 땐 로컬 DB로 화면을 즉시 그리고, 백그라운드에서 `useDataSync` 훅을 통해 서버 DB를 Fetch한 뒤 로컬 DB를 갱신하는 SWR(Stale-While-Revalidate) 방식의 데이터 동기화를 구현해 줘.
 > 4. `window.addEventListener`를 활용해 online/offline 상태를 감지하는 `useNetworkStatus` 커스텀 훅을 만들고, 오프라인 시 UI 상단에 시각적 뱃지를 표시해 줘.
 > 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘.
-> 6. iOS Safari PWA 오프라인 렌더링 블로킹 방지를 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하고, 동기화 Fetch 요청에는 `AbortSignal.timeout(5000)` 및 `!navigator.onLine` 이중 체크 방어 로직을 적용해 줘. `sw.ts` 에서는 `navigationPreload: false`로 설정해 줘."
+> 6. iOS Safari PWA 오프라인 렌더링 블로킹 방지를 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하고, 동기화 Fetch 요청에는 `AbortSignal.timeout(5000)` 및 `!navigator.onLine` 이중 체크 방어 로직을 적용해 줘. `sw.ts` 에서는 `navigationPreload: false`로 설정해 줘.
+> 7. 가장 중요하게, Serwist의 `...defaultCache`는 내부에 모든 요청(`/.*/i`)을 `NetworkOnly`로 강제하는 치명적 규칙을 포함하고 있으므로 **절대 사용하지 말고**, 그 대신 `/.*/i`에 대해 `StaleWhileRevalidate`를 적용하는 커스텀 캐치올(catch-all) 규칙과 `https://fonts.googleapis.com` 등을 위한 캐시 규칙을 직접 작성해서 오프라인 시 Next.js 에셋과 폰트 로딩이 실패하지 않도록 보장해 줘."
