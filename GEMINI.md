@@ -96,8 +96,9 @@ word-smart/
   * 앱 마운트 시 무조건 로컬 Dexie.js 데이터를 우선 표시하고, 네트워크가 연결된(online) 상태일 경우 백그라운드에서 `/api/history` 등을 Fetch하여 로컬 DB를 업데이트합니다.
   * 오프라인 시 `Header.tsx`에 시각적 뱃지(빗금친 구름 아이콘)를 표시하며, `InfoModal`을 통해 사용자가 캐시를 초기화하고 최신 앱 버전을 강제로 불러오는 수동 업데이트 버튼을 지원합니다.
 * **학습 이력 동기화 및 관리 (`app/history/page.tsx`, `app/api/history/route.ts`):**
-  * **중복 방지**: 로컬 시간(`createdAt`)을 기준으로 서버에 데이터를 Insert하여 타임스탬프 불일치를 없애고, 1분 이내 동일 유형/개수 데이터는 렌더링 시 UI 단에서 하나로 병합(Deduplication)합니다.
-  * **논리적 삭제(Soft Delete) 양방향 동기화**: 사용자가 화면에서 휴지통 아이콘을 누르면 로컬 DB에서 즉시 숨겨지고(`isDeleted = true`), 백그라운드에서 서버로 삭제 상태를 Push합니다. 반대로 다른 기기에서 지운 데이터도 서버 Fetch 시 즉시 로컬에 반영되어 가려집니다.
+  * **1:1 완벽 매핑 (Server ID)**: 기존 `createdAt` 시간 기반 매핑의 한계를 극복하기 위해, 서버 통신 시 응답받은 고유 UUID를 로컬 DB에 `serverId`로 저장하여 기기간 완벽한 1:1 매핑 동기화를 구현했습니다.
+  * **오프라인 일괄 업로드(Batch Sync)**: 네트워크가 없는 상태에서 여러 번 학습한 기록(`isSynced=false`, `serverId=undefined`)을 모아 두었다가, 온라인 전환 시 `/api/history`에 일괄 전송하고 각각의 `serverId`를 매핑받아오는 지연 동기화를 지원합니다.
+  * **논리적 삭제(Soft Delete) 양방향 동기화**: 사용자가 화면에서 삭제 버튼을 누르면 로컬 DB에서 즉시 숨겨지고(`isDeleted = true`), 해당 데이터의 `serverId`를 기준으로 서버에 즉각적인 삭제 상태(DELETE API)를 Push합니다. 반대로 다른 기기에서 지운 데이터도 서버 Fetch 시 로컬에 실시간 반영되어 가려집니다.
   * **영구 삭제(Hard Delete) 자동화**: 서버 용량 최적화를 위해 앱 구동 후 첫 서버 동기화 시점에, 지워진 지 30일이 넘은 휴지통 데이터(`deleted_at < now() - 30 days`)는 `DELETE` 쿼리를 통해 자동으로 완전히 소멸됩니다.
 
 ## 5. 개선 필요사항 및 퓨처 워크 (Future Work)

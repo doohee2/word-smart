@@ -28,12 +28,27 @@ export default function HistoryPage() {
       .then(async data => {
         if (data.history && data.history.length > 0) {
           const localItems = await db.history.toArray();
+          const localServerIds = new Set(localItems.map(h => h.serverId).filter(Boolean));
           const localKeys = new Set(localItems.map(h => `${new Date(h.createdAt).getTime()}_${h.type}`));
           
+          // Attach serverId to legacy records if missing
+          for (const h of data.history) {
+            if (!localServerIds.has(h.id)) {
+              const key = `${new Date(h.created_at).getTime()}_${h.type}`;
+              const localItem = localItems.find(item => `${new Date(item.createdAt).getTime()}_${item.type}` === key);
+              if (localItem && !localItem.serverId) {
+                await db.history.update(localItem.id!, { serverId: h.id });
+                localServerIds.add(h.id);
+              }
+            }
+          }
+
           // Find records we don't have locally
           const missingIds = data.history.filter((h: any) => {
+            if (localServerIds.has(h.id)) return false;
             const key = `${new Date(h.created_at).getTime()}_${h.type}`;
-            return !localKeys.has(key);
+            if (localKeys.has(key)) return false;
+            return true;
           }).map((h: any) => h.id);
 
           if (missingIds.length > 0) {
@@ -47,6 +62,7 @@ export default function HistoryPage() {
             
             if (fetchData.history && fetchData.history.length > 0) {
               const newRecords = fetchData.history.map((h: any) => ({
+                serverId: h.id,
                 userEmail: h.user_email,
                 createdAt: new Date(h.created_at),
                 type: h.type,
@@ -118,7 +134,22 @@ export default function HistoryPage() {
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     if (confirm("이 기록을 삭제하시겠습니까?")) {
+      const record = await db.history.get(id);
+      if (!record) return;
+
       await db.history.update(id, { isDeleted: true, deletedAt: new Date(), isSynced: false });
+      
+      if (record.serverId) {
+        fetch('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'delete', keys: [record.serverId] })
+        }).then(res => {
+          if (res.ok) {
+            db.history.update(id, { isSynced: true });
+          }
+        }).catch(console.error);
+      }
     }
   };
 
