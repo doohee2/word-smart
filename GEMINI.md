@@ -126,4 +126,5 @@ word-smart/
 > 4. `window.addEventListener`를 활용해 online/offline 상태를 감지하는 `useNetworkStatus` 커스텀 훅을 만들고, 오프라인 시 UI 상단에 시각적 뱃지를 표시해 줘.
 > 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘.
 > 6. iOS Safari PWA 오프라인 렌더링 블로킹 방지를 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하고, 동기화 Fetch 요청에는 `AbortSignal.timeout(5000)` 및 `!navigator.onLine` 이중 체크 방어 로직을 적용해 줘. `sw.ts` 에서는 `navigationPreload: false`로 설정해 줘.
-> 7. 가장 중요하게, Serwist의 `...defaultCache`는 내부에 모든 요청(`/.*/i`)을 `NetworkOnly`로 강제하는 치명적 규칙을 포함하고 있으므로 **절대 사용하지 말고**, 그 대신 `/.*/i`에 대해 `StaleWhileRevalidate`를 적용하는 커스텀 캐치올(catch-all) 규칙과 `https://fonts.googleapis.com` 등을 위한 캐시 규칙을 직접 작성해서 오프라인 시 Next.js 에셋과 폰트 로딩이 실패하지 않도록 보장해 줘."
+> 7. 가장 중요하게, Serwist의 `...defaultCache`는 내부에 모든 요청(`/.*/i`)을 `NetworkOnly`로 강제하는 치명적 규칙을 포함하고 있으므로 **절대 사용하지 말고**, 그 대신 `/.*/i`에 대해 `StaleWhileRevalidate`를 적용하는 커스텀 캐치올(catch-all) 규칙과 `https://fonts.googleapis.com` 등을 위한 캐시 규칙을 직접 작성해서 오프라인 시 Next.js 에셋과 폰트 로딩이 실패하지 않도록 보장해 줘.
+> 8. **Next.js 16+ Turbopack 호환성 문제**: `@serwist/next` 플러그인은 Webpack 기반이므로 Next.js의 기본 설정인 Turbopack 환경에서는 `public/sw.js` 파일을 아예 생성하지 못하는 버그가 있어 오프라인 캐싱이 원천 차단됩니다. 반드시 `package.json`의 build 스크립트를 `"build": "next build --webpack"`으로 수정하여 프로덕션 빌드 시 Webpack을 강제 사용하도록 설정해 줘."
