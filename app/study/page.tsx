@@ -213,8 +213,8 @@ export default function StudyPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           }).then(res => res.json()).then(data => {
-            if (data.success) {
-              db.history.update(id, { isSynced: true });
+            if (data.success && data.history?.id) {
+              db.history.update(id, { isSynced: true, serverId: data.history.id });
             }
           }).catch(err => console.error("History sync error:", err));
         }).catch(err => console.error("History local save error:", err));

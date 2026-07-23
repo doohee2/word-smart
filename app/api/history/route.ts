@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         .from('study_history')
         .update({ is_deleted: true, deleted_at: new Date().toISOString() })
         .eq('user_email', userEmail)
-        .in('created_at', body.keys);
+        .in('id', body.keys);
 
       if (error) {
         console.error("Delete History Error:", error);
@@ -43,6 +43,32 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Failed to fetch specific history" }, { status: 500 });
       }
       return NextResponse.json({ history: data });
+    }
+
+    if (body.action === 'sync_offline' && Array.isArray(body.records)) {
+      if (body.records.length === 0) return NextResponse.json({ success: true, history: [] });
+      
+      const insertData = body.records.map((r: any) => ({
+        user_email: userEmail,
+        type: r.type,
+        total_count: r.totalCount,
+        completed_count: r.completedCount,
+        incomplete_words: r.incompleteWords || "",
+        complete_words: r.completeWords || "",
+        created_at: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString()
+      }));
+
+      const { data, error } = await supabase
+        .from('study_history')
+        .insert(insertData)
+        .select();
+
+      if (error) {
+        console.error("Sync Offline History Error:", error);
+        return NextResponse.json({ error: "Failed to sync offline history" }, { status: 500 });
+      }
+      // data contains the newly inserted rows with their UUIDs
+      return NextResponse.json({ success: true, history: data });
     }
 
     const { type, totalCount, completedCount, incompleteWords, completeWords, createdAt } = body;

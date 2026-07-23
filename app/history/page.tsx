@@ -220,23 +220,23 @@ export default function HistoryPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button 
-                      onClick={(e) => handleDelete(e, history.id!)}
-                      className="p-2 text-on-surface-variant hover:text-error hover:bg-error-container/20 rounded-full transition-colors focus:outline-none"
-                      title="기록 삭제"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                    <div className="text-on-surface-variant p-2">
-                      {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                    </div>
+                  <div className="text-on-surface-variant p-2">
+                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
                 </button>
                 
                 {isExpanded && (
-                  <div className="px-4 pb-3 pt-0 border-t border-surface-variant bg-surface-container-lowest">
-                    <div className="mt-2 flex flex-col gap-3">
+                  <div className="px-4 pb-3 pt-3 border-t border-surface-variant bg-surface-container-lowest">
+                    <div className="flex justify-end mb-3">
+                      <button 
+                        onClick={(e) => handleDelete(e, history.id!)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-error bg-error-container/20 hover:bg-error-container/40 rounded-full transition-colors"
+                      >
+                        <Trash2 size={14} />
+                        기록 삭제
+                      </button>
+                    </div>
+                    <div className="flex flex-col gap-3">
                       {history.incompleteWords && (
                         <div>
                           <h4 className="text-label-sm font-bold text-error mb-1 flex items-center gap-1">

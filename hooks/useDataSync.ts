@@ -16,7 +16,7 @@ export function useDataSync() {
       const res = await fetch(`/api/history?month=${currentMonthStr}&keysOnly=true`);
       const data = await res.json();
       
-      if (data.history && data.history.length > 0) {
+      if (data.history) {
         const localItems = await db.history.toArray();
         const localKeysMap = new Map(localItems.map(h => [
           `${new Date(h.createdAt).getTime()}_${h.type}`,
@@ -25,10 +25,17 @@ export function useDataSync() {
         
         const missingIds: any[] = [];
         
-        // 1. Downstream: sync deletions and find missing
+        // 1. Downstream: sync deletions, update legacy records with serverId, and find missing
         for (const h of data.history) {
-          const key = `${new Date(h.created_at).getTime()}_${h.type}`;
-          const localItem = localKeysMap.get(key);
+          let localItem = localItems.find(item => item.serverId === h.id);
+          
+          if (!localItem) {
+             // Fallback to legacy composite key matching
+             localItem = localKeysMap.get(`${new Date(h.created_at).getTime()}_${h.type}`);
+             if (localItem && !localItem.serverId) {
+               await db.history.update(localItem.id!, { serverId: h.id, isSynced: true });
+             }
+          }
           
           if (localItem) {
             if (h.is_deleted && !localItem.isDeleted) {
@@ -39,10 +46,29 @@ export function useDataSync() {
           }
         }
 
-        // 2. Upstream: Push local deletions
-        const localDeletions = localItems.filter(h => h.isDeleted && !h.isSynced);
+        // 2. Upstream: Push new offline records
+        const offlineRecords = localItems.filter(h => !h.isSynced && !h.isDeleted && !h.serverId);
+        if (offlineRecords.length > 0) {
+          const syncRes = await fetch('/api/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'sync_offline', records: offlineRecords })
+          });
+          const syncData = await syncRes.json();
+          if (syncData.success && syncData.history) {
+            for (const serverRow of syncData.history) {
+               const match = offlineRecords.find(r => new Date(r.createdAt).toISOString() === serverRow.created_at);
+               if (match) {
+                 await db.history.update(match.id!, { serverId: serverRow.id, isSynced: true });
+               }
+            }
+          }
+        }
+
+        // 3. Upstream: Push local deletions (using serverId)
+        const localDeletions = localItems.filter(h => h.isDeleted && !h.isSynced && h.serverId);
         if (localDeletions.length > 0) {
-          const keys = localDeletions.map(h => new Date(h.createdAt).toISOString());
+          const keys = localDeletions.map(h => h.serverId!);
           const delRes = await fetch('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -55,6 +81,7 @@ export function useDataSync() {
           }
         }
 
+        // 4. Fetch full records for missing IDs
         if (missingIds.length > 0) {
           const fetchRes = await fetch('/api/history', {
             method: 'POST',
@@ -65,6 +92,7 @@ export function useDataSync() {
           
           if (fetchData.history && fetchData.history.length > 0) {
             const newRecords = fetchData.history.map((h: any) => ({
+              serverId: h.id,
               userEmail: h.user_email,
               createdAt: new Date(h.created_at),
               type: h.type,

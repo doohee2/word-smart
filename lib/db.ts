@@ -23,6 +23,7 @@ export interface Word {
 
 export interface StudyHistory {
   id?: number;
+  serverId?: string;
   userEmail: string;
   createdAt: Date;
   type: 'study' | 'test';
@@ -53,10 +54,11 @@ export class WordSmartDB extends Dexie {
       history: '++id, userEmail, createdAt, type, isSynced, isDeleted'
     }).upgrade(tx => {
       return tx.table('history').toCollection().modify(h => {
-        if (h.isDeleted === undefined) {
-          h.isDeleted = false;
-        }
+        if (h.isDeleted === undefined) h.isDeleted = false;
       });
+    });
+    this.version(4).stores({
+      history: '++id, serverId, userEmail, createdAt, type, isSynced, isDeleted'
     });
   }
 }
