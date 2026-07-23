@@ -17,11 +17,10 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
 
   const handleForceUpdate = async () => {
     if (!isOnline || isUpdating) return;
-    
+
     if (!window.confirm("앱 캐시를 초기화하고 최신 버전으로 업데이트합니다. 단어장 데이터와 학습 기록은 유지됩니다.")) {
       return;
     }
-    
     setIsUpdating(true);
     try {
       if ('serviceWorker' in navigator) {
@@ -32,7 +31,7 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
       }
       const keys = await caches.keys();
       await Promise.all(keys.map(key => caches.delete(key)));
-      
+
       setTimeout(() => {
         window.location.reload();
       }, 1000);
