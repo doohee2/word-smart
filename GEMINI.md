@@ -88,6 +88,16 @@ word-smart/
 * **jsPDF + AutoTable 디자인:**
   구글 폰트 CDN에서 나눔고딕을 다운받아 주입하며, Zebra striping(교차 배경색)이 적용된 깔끔한 표(Table)를 실시간 렌더링합니다.
 
+### Phase 6: 오프라인 우선(Offline-First) PWA 전환
+* **Serwist 기반 캐싱 전략 커스텀 (`app/sw.ts`):**
+  * HTML 문서 진입(`request.mode === 'navigate'`) 및 Next.js 클라이언트 라우팅 데이터(`_rsc`)를 `StaleWhileRevalidate` 전략으로 캐싱하여 네트워크 단절 시에도 0.1초 만에 캐시된 화면을 즉시 렌더링합니다.
+  * 아이폰(iOS) 등 다양한 환경에서 독립적인 앱으로 동작하도록 `layout.tsx`에 `appleWebApp` 메타데이터(Standalone 모드)를 추가했습니다.
+* **백그라운드 동기화 훅 (`hooks/useDataSync.ts`, `hooks/useNetworkStatus.ts`):**
+  * 앱 마운트 시 무조건 로컬 Dexie.js 데이터를 우선 표시하고, 네트워크가 연결된(online) 상태일 경우 백그라운드에서 `/api/history` 등을 Fetch하여 로컬 DB를 업데이트합니다.
+  * 오프라인 시 `Header.tsx`에 시각적 뱃지(빗금친 구름 아이콘)를 표시하며, `InfoModal`을 통해 사용자가 캐시를 초기화하고 최신 앱 버전을 강제로 불러오는 수동 업데이트 버튼을 지원합니다.
+* **학습 이력 중복 렌더링 방지 (`app/history/page.tsx`, `app/api/history/route.ts`):**
+  * 로컬 시간(`createdAt`)을 기준으로 서버(Supabase)에 데이터를 Insert하여 로컬-서버 간 타임스탬프 불일치를 없애고, UI 단에서 `useMemo`를 통해 1분 이내 동일 유형의 데이터가 중복 렌더링되지 않도록 방어 로직을 구축했습니다.
+
 ## 5. 개선 필요사항 및 퓨처 워크 (Future Work)
 
 1. **상태 동기화 자동화 (Auto Cloud Sync):**
@@ -96,3 +106,13 @@ word-smart/
    에빙하우스 망각 곡선이나 라이트너 시스템(Leitner System)에 기반한 복습 주기 알고리즘을 도입하면, `words.correctCount` 등의 DB 데이터를 활용해 개인화된 맞춤 학습 큐레이션이 가능해집니다.
 3. **오디오 (TTS) 오프라인 성능 보완:**
    현재 브라우저 내장 Web Speech API를 활용하므로 OS 및 기기별 발음 품질 편차가 존재합니다. 고품질 발음 파일을 사전에 생성해 캐싱하거나 Google Cloud TTS의 연동을 고려해 볼 수 있습니다.
+
+## 6. 개발 프롬프트 레퍼런스 (Development Prompt Reference)
+향후 다른 앱 개발 시 "오프라인 최우선(Offline-First) PWA" 환경을 구축할 때 아래 프롬프트를 참고할 수 있습니다:
+
+> "Next.js App Router와 Serwist(Workbox)를 활용해 0.1초 컷으로 화면이 뜨는 오프라인 우선(Offline-First) PWA를 구축해 줘.
+> 1. `sw.ts`에 정적 자산(JS/CSS)은 `CacheFirst`를 적용하되, HTML 문서(`request.mode === 'navigate'`)와 Next.js 데이터(`_rsc`)는 `StaleWhileRevalidate` 전략을 적용해 네트워크 없이도 멈춤 현상 없이 화면 전환이 가능하게 해줘.
+> 2. `layout.tsx`에 `appleWebApp` 메타데이터를 추가해 아이폰(iOS) Safari에서도 Standalone 앱처럼 동작하게 만들어줘.
+> 3. IndexedDB(Dexie.js)를 Local Source of Truth로 사용하여, 앱이 켜질 땐 로컬 DB로 화면을 즉시 그리고, 백그라운드에서 `useDataSync` 훅을 통해 서버 DB를 Fetch한 뒤 로컬 DB를 갱신하는 SWR(Stale-While-Revalidate) 방식의 데이터 동기화를 구현해 줘.
+> 4. `window.addEventListener`를 활용해 online/offline 상태를 감지하는 `useNetworkStatus` 커스텀 훅을 만들고, 오프라인 시 UI 상단에 시각적 뱃지를 표시해 줘.
+> 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘."

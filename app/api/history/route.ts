@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ history: data });
     }
 
-    const { type, totalCount, completedCount, incompleteWords, completeWords } = body;
+    const { type, totalCount, completedCount, incompleteWords, completeWords, createdAt } = body;
 
     if (!type || typeof totalCount !== 'number' || typeof completedCount !== 'number') {
       return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
@@ -43,7 +43,8 @@ export async function POST(request: NextRequest) {
         total_count: totalCount,
         completed_count: completedCount,
         incomplete_words: incompleteWords || "",
-        complete_words: completeWords || ""
+        complete_words: completeWords || "",
+        created_at: createdAt ? new Date(createdAt).toISOString() : new Date().toISOString()
       })
       .select()
       .single();

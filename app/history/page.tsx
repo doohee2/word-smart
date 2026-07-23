@@ -68,9 +68,24 @@ export default function HistoryPage() {
 
   const userHistory = useMemo(() => {
     if (!rawHistory || !session?.user?.email) return [];
-    return rawHistory
+    
+    const sorted = rawHistory
       .filter(h => h.userEmail === session.user?.email)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    const deduped: typeof sorted = [];
+    for (const record of sorted) {
+      const isDuplicate = deduped.some(d => 
+        d.type === record.type &&
+        d.totalCount === record.totalCount &&
+        d.completedCount === record.completedCount &&
+        Math.abs(new Date(d.createdAt).getTime() - new Date(record.createdAt).getTime()) < 60000 // 1분 이내 동일 유형/개수면 중복으로 간주
+      );
+      if (!isDuplicate) {
+        deduped.push(record);
+      }
+    }
+    return deduped;
   }, [rawHistory, session?.user?.email]);
 
   const availableMonths = useMemo(() => {
