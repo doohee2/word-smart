@@ -240,15 +240,17 @@ export default function TestPage() {
           };
           
           db.history.add(payload).then(id => {
-            fetch('/api/history', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            }).then(res => res.json()).then(data => {
-              if (data.success && data.history?.id) {
-                db.history.update(id, { isSynced: true, serverId: data.history.id });
-              }
-            }).catch(err => console.error("History sync error:", err));
+            if (typeof navigator !== 'undefined' && navigator.onLine) {
+              fetch('/api/history', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              }).then(res => res.json()).then(data => {
+                if (data.success && data.history?.id) {
+                  db.history.update(id, { isSynced: true, serverId: data.history.id });
+                }
+              }).catch(err => console.error("History sync error:", err));
+            }
           }).catch(err => console.error("History local save error:", err));
         }
 

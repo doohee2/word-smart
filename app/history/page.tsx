@@ -19,7 +19,7 @@ export default function HistoryPage() {
   const rawHistory = useLiveQuery(() => db.history.toArray());
 
   useEffect(() => {
-    if (!session?.user?.email || !selectedMonth) return;
+    if (!session?.user?.email || !selectedMonth || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
     
     setIsSyncing(true);
     // 1. Fetch keys (id, created_at, type) for the selected month
@@ -139,7 +139,7 @@ export default function HistoryPage() {
 
       await db.history.update(id, { isDeleted: true, deletedAt: new Date(), isSynced: false });
       
-      if (record.serverId) {
+      if (record.serverId && typeof navigator !== 'undefined' && navigator.onLine) {
         fetch('/api/history', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
