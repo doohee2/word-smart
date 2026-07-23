@@ -2,6 +2,7 @@ import { X, RefreshCw } from "lucide-react";
 import { APP_INFO_MESSAGE, APP_VERSION } from "@/lib/constants";
 import { Logo } from "@/components/Logo";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
+import { useState } from "react";
 
 interface InfoModalProps {
   isOpen: boolean;
@@ -10,11 +11,13 @@ interface InfoModalProps {
 
 export function InfoModal({ isOpen, onClose }: InfoModalProps) {
   const isOnline = useNetworkStatus();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   if (!isOpen) return null;
 
   const handleForceUpdate = async () => {
-    if (!isOnline) return;
+    if (!isOnline || isUpdating) return;
+    setIsUpdating(true);
     try {
       if ('serviceWorker' in navigator) {
         const registrations = await navigator.serviceWorker.getRegistrations();
@@ -24,10 +27,15 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
       }
       const keys = await caches.keys();
       await Promise.all(keys.map(key => caches.delete(key)));
-      window.location.reload();
+      
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (e) {
       console.error('Failed to force update app', e);
-      window.location.reload(); // fallback
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   };
 
@@ -50,10 +58,11 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
           {isOnline ? (
             <button
               onClick={handleForceUpdate}
-              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-3 py-1.5 rounded-full"
+              disabled={isUpdating}
+              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-3 py-1.5 rounded-full disabled:opacity-70 disabled:cursor-wait"
             >
-              <RefreshCw size={14} />
-              <span>최신 버전 업데이트</span>
+              <RefreshCw size={14} className={isUpdating ? "animate-spin" : ""} />
+              <span>{isUpdating ? "업데이트 확인 중..." : "최신 버전 업데이트"}</span>
             </button>
           ) : (
             <div /> // empty placeholder for layout
