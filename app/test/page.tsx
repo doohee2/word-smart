@@ -4,7 +4,8 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2 } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -20,6 +21,10 @@ interface TestWord {
 export default function TestPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const { data: session } = useSession();
+  const correctWordsRef = useRef<string[]>([]);
+  const incorrectWordsRef = useRef<string[]>([]);
+
   const rawWords = useLiveQuery(async () => {
     const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
     if (activeListIds.length === 0) return [];
@@ -155,6 +160,8 @@ export default function TestPage() {
     setCurrentIndex(0);
     setScore(0);
     setTotalTested(0);
+    correctWordsRef.current = [];
+    incorrectWordsRef.current = [];
     setIsStarted(true);
     setIsModalOpen(false);
   };
@@ -205,6 +212,12 @@ export default function TestPage() {
       correctCount: isCorrect ? currentWord.correctCount + 1 : currentWord.correctCount
     });
 
+    if (isCorrect) {
+      correctWordsRef.current.push(currentWord.word);
+    } else {
+      incorrectWordsRef.current.push(currentWord.word);
+    }
+
     setTotalTested(prev => prev + 1);
     if (isCorrect) setScore(prev => prev + 1);
 
@@ -213,6 +226,32 @@ export default function TestPage() {
       if (currentIndex < testQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
       } else {
+        // Save history
+        if (session?.user?.email) {
+          const payload = {
+            userEmail: session.user.email,
+            createdAt: new Date(),
+            type: 'test' as const,
+            totalCount: testQueue.length,
+            completedCount: isCorrect ? score + 1 : score,
+            incompleteWords: incorrectWordsRef.current.join(', '),
+            completeWords: correctWordsRef.current.join(', '),
+            isSynced: false
+          };
+          
+          db.history.add(payload).then(id => {
+            fetch('/api/history', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            }).then(res => res.json()).then(data => {
+              if (data.success) {
+                db.history.update(id, { isSynced: true });
+              }
+            }).catch(err => console.error("History sync error:", err));
+          }).catch(err => console.error("History local save error:", err));
+        }
+
         setAlertConfig({ 
           isOpen: true, 
           message: `테스트 완료!\n최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`, 
@@ -231,6 +270,14 @@ export default function TestPage() {
     setFeedback(isCorrect ? 'correct' : 'incorrect');
     setCorrectAnswer(currentWord.meaningKo);
     handleNextWord(isCorrect);
+  };
+
+  const playAudio = () => {
+    if (currentWord && 'speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(currentWord.word);
+      utterance.lang = 'en-US';
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   const handleSpellingSubmit = (e: React.FormEvent) => {
@@ -387,9 +434,18 @@ export default function TestPage() {
                   </span>
                   <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
-                <h3 className="text-display-word-mobile md:text-display-word font-bold text-on-surface mb-2 tracking-tight break-words">
-                  {currentWord.word}
-                </h3>
+                <div className="relative inline-block mb-2">
+                  <h3 className="text-display-word-mobile md:text-display-word font-bold text-on-surface tracking-tight break-words">
+                    {currentWord.word}
+                  </h3>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); playAudio(); }}
+                    aria-label="발음 듣기" 
+                    className="absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
+                  >
+                    <Volume2 size={20} />
+                  </button>
+                </div>
                 
                 {currentWord.exampleEn && (
                   <div className="mt-6 bg-surface-container p-4 rounded-xl text-left border border-surface-variant">
@@ -465,11 +521,19 @@ export default function TestPage() {
                       {renderSpellingHint()}
                     </div>
                   )}
+                  <button 
+                    onClick={(e) => { e.preventDefault(); playAudio(); }}
+                    type="button"
+                    aria-label="발음 듣기" 
+                    className="ml-3 shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
+                  >
+                    <Volume2 size={20} />
+                  </button>
                 </div>
 
                 {feedback && (
                   <div className={clsx("mt-4 font-bold text-headline-sm", feedback === 'correct' ? "text-primary" : "text-error")}>
-                    {feedback === 'correct' ? "정답입니다!" : "오답입니다."}
+                    {feedback === 'correct' ? "정답입니다!" : `오답입니다. 정답: ${correctAnswer}`}
                   </div>
                 )}
               </div>

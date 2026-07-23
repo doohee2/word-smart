@@ -21,15 +21,31 @@ export interface Word {
   zipfScore?: number;
 }
 
+export interface StudyHistory {
+  id?: number;
+  userEmail: string;
+  createdAt: Date;
+  type: 'study' | 'test';
+  totalCount: number;
+  completedCount: number;
+  incompleteWords: string;
+  completeWords: string;
+  isSynced: boolean;
+}
+
 export class WordSmartDB extends Dexie {
   wordLists!: Table<WordList, number>;
   words!: Table<Word, number>;
+  history!: Table<StudyHistory, number>;
 
   constructor() {
     super('WordSmartDB');
     this.version(1).stores({
       wordLists: '++id, title, createdAt, isActive',
       words: '++id, listId, word, isLearned, testCount, correctCount'
+    });
+    this.version(2).stores({
+      history: '++id, userEmail, createdAt, type, isSynced'
     });
   }
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { BookOpen, FileText, Settings, PlaySquare } from "lucide-react";
+import { BookOpen, FileText, Settings, PlaySquare, History } from "lucide-react";
 import clsx from "clsx";
 import { Logo } from "./Logo";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -31,6 +31,7 @@ export function Navigation() {
   const links = [
     { href: "/study", label: "학습", icon: BookOpen },
     { href: "/test", label: "테스트", icon: PlaySquare },
+    { href: "/history", label: "기록", icon: History },
     { href: "/pdf", label: "PDF 출력", icon: FileText },
     { href: "/settings", label: "설정", icon: Settings },
   ];

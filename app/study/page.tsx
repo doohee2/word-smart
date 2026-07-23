@@ -3,7 +3,8 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useSession } from "next-auth/react";
 import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +16,10 @@ import { ZipfBadge } from "@/components/ZipfBadge";
 export default function StudyPage() {
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const { data: session } = useSession();
+  const completedWordsRef = useRef<string[]>([]);
+  const incompleteWordsRef = useRef<string[]>([]);
+
   const rawWords = useLiveQuery(async () => {
     const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
     if (activeListIds.length === 0) return [];
@@ -156,6 +161,8 @@ export default function StudyPage() {
     setStudyQueue(queue);
     setCurrentIndex(0);
     setSessionLearnedCount(0);
+    completedWordsRef.current = [];
+    incompleteWordsRef.current = [];
     setIsStarted(true);
     setIsModalOpen(false);
   };
@@ -175,12 +182,44 @@ export default function StudyPage() {
 
     if (learned) setSessionLearnedCount(prev => prev + 1);
 
+    if (learned) {
+      completedWordsRef.current.push(currentWord.word);
+    } else {
+      incompleteWordsRef.current.push(currentWord.word);
+    }
+
     setShowKoSentence(false);
     setDirection(1);
     
     const isLast = currentIndex === studyQueue.length - 1;
 
     if (isLast) {
+      // Save history
+      if (session?.user?.email) {
+        const payload = {
+          userEmail: session.user.email,
+          createdAt: new Date(),
+          type: 'study' as const,
+          totalCount: studyQueue.length,
+          completedCount: learned ? sessionLearnedCount + 1 : sessionLearnedCount,
+          incompleteWords: incompleteWordsRef.current.join(', '),
+          completeWords: completedWordsRef.current.join(', '),
+          isSynced: false
+        };
+        
+        db.history.add(payload).then(id => {
+          fetch('/api/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).then(res => res.json()).then(data => {
+            if (data.success) {
+              db.history.update(id, { isSynced: true });
+            }
+          }).catch(err => console.error("History sync error:", err));
+        }).catch(err => console.error("History local save error:", err));
+      }
+
       setAlertConfig({ 
         isOpen: true, 
         message: `학습이 완료되었습니다!\n(세션 완료 단어: ${learned ? sessionLearnedCount + 1 : sessionLearnedCount} / ${studyQueue.length})`, 
