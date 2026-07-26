@@ -14,17 +14,22 @@ if (!fs.existsSync(outputDir)) {
 }
 
 const sizes = [192, 512];
+const scale = 1.2; // 로고 디자인 영역 20% 확대
 
 async function processIcons() {
   for (const [theme, inputFile] of Object.entries(inputFiles)) {
     for (const size of sizes) {
+      const zoomedSize = Math.round(size * scale);
+      const offset = Math.floor((zoomedSize - size) / 2);
+
       const radius = size * 0.225; // iOS-like rounding
       const roundedCorners = Buffer.from(
         `<svg><rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}"/></svg>`
       );
 
       await sharp(inputFile)
-        .resize(size, size)
+        .resize(zoomedSize, zoomedSize)
+        .extract({ left: offset, top: offset, width: size, height: size })
         .composite([{
           input: roundedCorners,
           blend: 'dest-in'
@@ -33,22 +38,24 @@ async function processIcons() {
     }
   }
   
-  // Create a default one
-  await sharp(inputFiles.light)
-    .resize(192, 192)
-    .composite([{
-      input: Buffer.from(`<svg><rect x="0" y="0" width="192" height="192" rx="43" ry="43"/></svg>`),
-      blend: 'dest-in'
-    }])
-    .toFile(path.join(outputDir, `icon-192x192.png`));
-    
-  await sharp(inputFiles.light)
-    .resize(512, 512)
-    .composite([{
-      input: Buffer.from(`<svg><rect x="0" y="0" width="512" height="512" rx="115" ry="115"/></svg>`),
-      blend: 'dest-in'
-    }])
-    .toFile(path.join(outputDir, `icon-512x512.png`));
+  // Create default icons
+  for (const size of [192, 512]) {
+    const zoomedSize = Math.round(size * scale);
+    const offset = Math.floor((zoomedSize - size) / 2);
+    const radius = size * 0.225;
+    const roundedCorners = Buffer.from(
+      `<svg><rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}"/></svg>`
+    );
+
+    await sharp(inputFiles.light)
+      .resize(zoomedSize, zoomedSize)
+      .extract({ left: offset, top: offset, width: size, height: size })
+      .composite([{
+        input: roundedCorners,
+        blend: 'dest-in'
+      }])
+      .toFile(path.join(outputDir, `icon-${size}x${size}.png`));
+  }
 }
 
-processIcons().then(() => console.log('Icons processed.')).catch(console.error);
+processIcons().then(() => console.log('Icons processed successfully with 20% zoom.')).catch(console.error);
