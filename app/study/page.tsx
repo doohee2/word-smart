@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus } from "lucide-react";
+import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -68,6 +68,8 @@ export default function StudyPage() {
   const [showKoSentence, setShowKoSentence] = useState(false);
   const [direction, setDirection] = useState(1);
   const [sessionLearnedCount, setSessionLearnedCount] = useState(0);
+  const [maxReachedIndex, setMaxReachedIndex] = useState(0);
+  const [sessionAnswers, setSessionAnswers] = useState<{ [index: number]: boolean }>({});
   const [isRevealed, setIsRevealed] = useState(false);
   const [primarySide, setPrimarySide] = useState<'english' | 'korean'>('english');
   const { setIsActiveSession } = useStudySession();
@@ -161,10 +163,26 @@ export default function StudyPage() {
     setStudyQueue(queue);
     setCurrentIndex(0);
     setSessionLearnedCount(0);
+    setMaxReachedIndex(0);
+    setSessionAnswers({});
     completedWordsRef.current = [];
     incompleteWordsRef.current = [];
     setIsStarted(true);
     setIsModalOpen(false);
+  };
+
+  const handleBack = () => {
+    if (currentIndex <= 0) return;
+    setShowKoSentence(false);
+    setDirection(-1);
+    setCurrentIndex(prev => prev - 1);
+  };
+
+  const handleForward = () => {
+    if (currentIndex >= maxReachedIndex || currentIndex >= studyQueue.length - 1) return;
+    setShowKoSentence(false);
+    setDirection(1);
+    setCurrentIndex(prev => prev + 1);
   };
 
   const handleNext = async (learned: boolean) => {
@@ -180,20 +198,52 @@ export default function StudyPage() {
       currentWord.isLearned = false;
     }
 
-    if (learned) setSessionLearnedCount(prev => prev + 1);
+    const updatedAnswers = { ...sessionAnswers, [currentIndex]: learned };
+    setSessionAnswers(updatedAnswers);
+
+    let totalLearned = 0;
+    for (const idx in updatedAnswers) {
+      if (updatedAnswers[idx] === true) totalLearned++;
+    }
+    setSessionLearnedCount(totalLearned);
 
     if (learned) {
-      completedWordsRef.current.push(currentWord.word);
+      if (!completedWordsRef.current.includes(currentWord.word)) {
+        completedWordsRef.current.push(currentWord.word);
+      }
+      incompleteWordsRef.current = incompleteWordsRef.current.filter(w => w !== currentWord.word);
     } else {
-      incompleteWordsRef.current.push(currentWord.word);
+      if (!incompleteWordsRef.current.includes(currentWord.word)) {
+        incompleteWordsRef.current.push(currentWord.word);
+      }
+      completedWordsRef.current = completedWordsRef.current.filter(w => w !== currentWord.word);
     }
 
     setShowKoSentence(false);
     setDirection(1);
     
+    const nextIndex = currentIndex + 1;
+    if (nextIndex > maxReachedIndex && nextIndex < studyQueue.length) {
+      setMaxReachedIndex(nextIndex);
+    }
+
     const isLast = currentIndex === studyQueue.length - 1;
 
     if (isLast) {
+      const finalCompleted: string[] = [];
+      const finalIncomplete: string[] = [];
+      studyQueue.forEach((w, idx) => {
+        const ans = (idx === currentIndex) ? learned : updatedAnswers[idx];
+        if (ans === true) {
+          finalCompleted.push(w.word);
+        } else {
+          finalIncomplete.push(w.word);
+        }
+      });
+
+      completedWordsRef.current = finalCompleted;
+      incompleteWordsRef.current = finalIncomplete;
+
       // Save history
       if (session?.user?.email) {
         const payload = {
@@ -201,9 +251,9 @@ export default function StudyPage() {
           createdAt: new Date(),
           type: 'study' as const,
           totalCount: studyQueue.length,
-          completedCount: learned ? sessionLearnedCount + 1 : sessionLearnedCount,
-          incompleteWords: incompleteWordsRef.current.join(', '),
-          completeWords: completedWordsRef.current.join(', '),
+          completedCount: finalCompleted.length,
+          incompleteWords: finalIncomplete.join(', '),
+          completeWords: finalCompleted.join(', '),
           isSynced: false
         };
         
@@ -224,14 +274,14 @@ export default function StudyPage() {
 
       setAlertConfig({ 
         isOpen: true, 
-        message: `학습이 완료되었습니다!\n(세션 완료 단어: ${learned ? sessionLearnedCount + 1 : sessionLearnedCount} / ${studyQueue.length})`, 
+        message: `학습이 완료되었습니다!\n(세션 완료 단어: ${finalCompleted.length} / ${studyQueue.length})`, 
         type: 'success', 
         title: '학습 완료',
         onCloseCallback: () => setIsStarted(false)
       });
       return;
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex(nextIndex);
     }
   };
 
@@ -349,6 +399,32 @@ export default function StudyPage() {
           </div>
 
           <div className="relative w-full flex-1 flex flex-col min-h-[420px] mb-8">
+            {currentIndex > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleBack();
+                }}
+                aria-label="이전 단어"
+                title="이전 단어로 이동 (오른쪽으로 스와이프)"
+                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-surface-container-high/90 hover:bg-surface-variant text-on-surface transition-all hover:scale-105 shadow-md border border-outline-variant active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <ChevronLeft size={26} />
+              </button>
+            )}
+            {currentIndex < maxReachedIndex && currentIndex < studyQueue.length - 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleForward();
+                }}
+                aria-label="다음 단어"
+                title="다음 단어로 이동 (왼쪽으로 스와이프)"
+                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-surface-container-high/90 hover:bg-surface-variant text-on-surface transition-all hover:scale-105 shadow-md border border-outline-variant active:scale-95 focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <ChevronRight size={26} />
+              </button>
+            )}
             <AnimatePresence initial={false} custom={direction} mode="wait">
               <motion.div
                 key={currentIndex}
@@ -357,6 +433,21 @@ export default function StudyPage() {
                 initial="enter"
                 animate="center"
                 exit="exit"
+                drag="x"
+                dragConstraints={{ left: 0, right: 0 }}
+                dragElastic={0.25}
+                onDragEnd={(_e, { offset, velocity }) => {
+                  const threshold = 50;
+                  if (offset.x > threshold || velocity.x > 500) {
+                    if (currentIndex > 0) {
+                      handleBack();
+                    }
+                  } else if (offset.x < -threshold || velocity.x < -500) {
+                    if (currentIndex < maxReachedIndex && currentIndex < studyQueue.length - 1) {
+                      handleForward();
+                    }
+                  }
+                }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className={clsx(
                   "absolute inset-0 bg-surface-container-lowest rounded-[32px] shadow-lg p-6 md:p-12 flex flex-col items-center text-center justify-center border border-surface-variant",
@@ -381,7 +472,7 @@ export default function StudyPage() {
                 </div>
                 
                 <h2 className={clsx(
-                  "text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-4 transition-all duration-300",
+                  "text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-10 md:px-16 transition-all duration-300",
                   (!isRevealed && primarySide === 'korean') ? "blur-md opacity-20 select-none text-transparent" : ""
                 )}>
                   {currentWord?.word}
@@ -390,7 +481,7 @@ export default function StudyPage() {
                 <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
                 
                 <div className={clsx(
-                  "text-headline-lg text-primary mb-8 font-bold transition-all duration-300",
+                  "text-headline-lg text-primary mb-8 font-bold px-10 md:px-16 transition-all duration-300",
                   (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : ""
                 )}>
                   {currentWord?.meaningKo}
@@ -443,17 +534,27 @@ export default function StudyPage() {
           <div className="w-full flex gap-4 mt-auto">
             <button 
               onClick={() => handleNext(false)}
-              className="flex-1 h-touch-target md:h-14 bg-surface-container hover:bg-surface-variant text-on-surface rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold transition-colors border border-outline-variant focus:ring-2 focus:ring-primary outline-none"
+              className={clsx(
+                "flex-1 h-touch-target md:h-14 rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold transition-all border outline-none focus:ring-2 focus:ring-primary",
+                sessionAnswers[currentIndex] === false
+                  ? "bg-surface-variant text-on-surface border-primary ring-2 ring-primary/50 font-extrabold shadow-md scale-[1.02]"
+                  : "bg-surface-container hover:bg-surface-variant text-on-surface border-outline-variant"
+              )}
             >
               <RotateCcw size={20} />
-              학습 중
+              <span>학습 중{sessionAnswers[currentIndex] === false && " (선택됨)"}</span>
             </button>
             <button 
               onClick={() => handleNext(true)}
-              className="flex-1 h-touch-target md:h-14 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary outline-none"
+              className={clsx(
+                "flex-1 h-touch-target md:h-14 rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95 focus:ring-2 focus:ring-offset-2 focus:ring-primary outline-none",
+                sessionAnswers[currentIndex] === true
+                  ? "bg-primary-container text-on-primary-container ring-2 ring-primary font-extrabold scale-[1.02]"
+                  : "bg-primary hover:bg-primary-container text-on-primary"
+              )}
             >
               <CheckCircle size={20} />
-              학습 완료
+              <span>학습 완료{sessionAnswers[currentIndex] === true && " (선택됨)"}</span>
             </button>
           </div>
 
