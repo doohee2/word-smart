@@ -2,20 +2,37 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+const uploadSchema = z.object({
+  title: z.string().min(1),
+  words: z.array(
+    z.object({
+      word: z.string().min(1),
+      partOfSpeech: z.string().optional().nullable(),
+      meaningKo: z.string(),
+      exampleEn: z.string().optional().nullable(),
+      exampleKo: z.string().optional().nullable(),
+      zipfScore: z.number().optional().nullable(),
+    })
+  ),
+});
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { title, words } = body;
+    const body = await request.json().catch(() => ({}));
+    const parseResult = uploadSchema.safeParse(body);
 
-    if (!title || !words || !Array.isArray(words)) {
-      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
     }
+
+    const { title, words } = parseResult.data;
 
     const { data: userLists } = await supabase
       .from('word_lists')
@@ -48,7 +65,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 1. Get or Create Word List (unique by title)
-    // We try to insert, and if it fails due to unique constraint, we select it.
     let listId;
     const { data: insertedList, error: insertError } = await supabase
       .from('word_lists')
@@ -58,20 +74,21 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       if (insertError.code === '23505') { // Unique violation
-        const { data: existingList, error: selectError } = await supabase
+        const { data: existing, error: selectError } = await supabase
           .from('word_lists')
           .select('id')
           .eq('title', title)
+          .eq('user_email', session.user.email)
           .single();
           
-        if (selectError) {
+        if (selectError || !existing) {
           console.error("Select Error:", selectError);
-          return NextResponse.json({ error: "Failed to fetch existing word list" }, { status: 500 });
+          return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
         }
-        listId = existingList.id;
+        listId = existing.id;
       } else {
         console.error("Insert List Error:", insertError);
-        return NextResponse.json({ error: "Failed to create word list" }, { status: 500 });
+        return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
       }
     } else {
       listId = insertedList.id;
@@ -95,12 +112,12 @@ export async function POST(request: NextRequest) {
 
     if (wordsError) {
       console.error("Insert Words Error:", wordsError);
-      return NextResponse.json({ error: "Failed to upload words" }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, listId });
   } catch (error) {
     console.error("Upload Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }

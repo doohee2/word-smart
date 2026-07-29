@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
+import { z } from "zod";
+
+const driveListSchema = z.object({
+  folderId: z.string().optional().default("root"),
+});
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,11 +13,17 @@ export async function GET(request: NextRequest) {
     const accessToken = session?.accessToken;
 
     if (!session || !accessToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
-    const folderId = searchParams.get("folderId") || "root";
+    const parseResult = driveListSchema.safeParse({ folderId: searchParams.get("folderId") || undefined });
+
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
+    }
+
+    const { folderId } = parseResult.data;
 
     const query = `'${folderId}' in parents and (mimeType='application/vnd.google-apps.folder' or mimeType='text/csv') and trashed=false`;
     const fields = "files(id, name, modifiedTime, size, mimeType)";
@@ -27,8 +38,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
+      console.error("Drive API list failed with status:", response.status);
       return NextResponse.json(
-        { error: "Failed to fetch files from Google Drive." },
+        { error: "요청을 처리할 수 없습니다." },
         { status: response.status }
       );
     }
@@ -37,6 +49,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error listing drive files:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }

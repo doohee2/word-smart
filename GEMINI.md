@@ -107,6 +107,21 @@ word-smart/
   * **논리적 삭제(Soft Delete) 양방향 동기화**: 사용자가 화면에서 삭제 버튼을 누르면 로컬 DB에서 즉시 숨겨지고(`isDeleted = true`), 해당 데이터의 `serverId`를 기준으로 서버에 즉각적인 삭제 상태(DELETE API)를 Push합니다. 반대로 다른 기기에서 지운 데이터도 서버 Fetch 시 로컬에 실시간 반영되어 가려집니다.
   * **영구 삭제(Hard Delete) 자동화**: 서버 용량 최적화를 위해 앱 구동 후 첫 서버 동기화 시점에, 지워진 지 30일이 넘은 휴지통 데이터(`deleted_at < now() - 30 days`)는 `DELETE` 쿼리를 통해 자동으로 완전히 소멸됩니다.
 
+### Phase 7: 서버리스 & PWA 아키텍처 보안 하드닝 (Security Hardening)
+* **엔드포인트 인가(Authorization) 및 Zod 스키마 검증 (`app/api/**`):**
+  * **철저한 소유권(Ownership) 검증**: 모든 DB 및 구글 드라이브 API 연동 라우트에서 클라이언트의 이메일이나 파라미터를 절대 무조건 신뢰하지 않고, 반드시 서버 사이드 `getServerSession`을 통한 인증된 사용자 식별자를 기준으로 데이터베이스 쿼리 및 CRUD 권한을 통제합니다.
+  * **Zod 입력 검증 도입**: `zod` 패키지를 적용하여 모든 API의 Body, Query Params 파라미터를 스키마로 엄격히 검증(`safeParse`)하며, 비정상 요청 발생 시 즉시 HTTP 400 오류를 리턴하도록 강제했습니다.
+  * **에러 위생화(Error Sanitization)**: DB 쿼리문이나 런타임 스택 트레이스 등의 민감 에러 내역은 오직 서버 콘솔(`console.error`)에만 남기고, 브라우저 클라이언트 응답에는 *"요청을 처리할 수 없습니다."*와 같은 위생화된 일반적인 메시지만 반환되도록 통일했습니다.
+* **환경 변수 및 비밀키 백엔드 격리 (Zero-Leak) (`lib/supabase.ts`, `.env.local`):**
+  * DB 자격 증명(Supabase URL, ANON KEY)이 클라이언트 브라우저 JS 번들에 노출되지 않도록 `NEXT_PUBLIC_` 접두사를 제거하고, 순수 백엔드 서버 핸들러(`app/api/**`)에서만 사용되는 서버 전용 환경 변수(`SUPABASE_URL`, `SUPABASE_ANON_KEY`)로 명칭 및 아키텍처 격리를 마쳤습니다. (Vercel 대시보드 환경변수 수정 필요).
+* **로그아웃 시 PWA 오프라인 캐시 스토리지 즉시 비우기 (Cache Purge) (`components/Header.tsx`):**
+  * 민감 정보인 OAuth Access Token과 NextAuth JWT는 쿠키(`HttpOnly`, `Secure`)를 통해서만 안전하게 보관됩니다.
+  * 공용 기기나 재배포 환경에서 잔여 캐시 접근 차단을 위해, 사용자가 상단 로그아웃 버튼을 클릭하면 `window.caches.delete`를 순회 호출하여 로컬 PWA 오프라인 서비스 워커 캐시 스토리지를 즉시 완벽히 비우고 클리어한 후 `signOut()`하는 래퍼 방어벽을 구축했습니다.
+* **Vercel 배포 전용 6대 강력 HTTP 보안 헤더 장착 (`next.config.ts`):**
+  * **Content-Security-Policy (CSP)**: Serwist 서비스 워커 구동(`worker-src 'self' blob:;`), 구글 프로필 및 OAuth(`img-src`), Supabase DB 통신 및 jsPDF 폰트 로드(`raw.githubusercontent.com`), 실시간 개발 환경이 원활히 동작하도록 최적화된 맞춤 화이트리스트 설정을 추가했습니다.
+  * **HSTS (`Strict-Transport-Security`)**: 무조건적인 HTTPS 접속 강제를 위해 `max-age=63072000; includeSubDomains; preload` 부여.
+  * **X-Frame-Options (`DENY`) & X-Content-Type-Options (`nosniff`) & Referrer-Policy (`strict-origin-when-cross-origin`) & Permissions-Policy (`camera=(), microphone=(), geolocation=()`)**을 통해 클릭재킹, MIME 스푸핑 및 불필요한 스마트폰 장치 권한 호출을 100% 차단합니다.
+
 ## 5. 개선 필요사항 및 퓨처 워크 (Future Work)
 
 1. **상태 동기화 자동화 (Auto Cloud Sync):**

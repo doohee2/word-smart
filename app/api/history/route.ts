@@ -2,18 +2,71 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+const deleteActionSchema = z.object({
+  action: z.literal("delete"),
+  keys: z.array(z.union([z.string(), z.number()])),
+});
+
+const fetchActionSchema = z.object({
+  action: z.literal("fetch"),
+  ids: z.array(z.union([z.string(), z.number()])),
+});
+
+const syncOfflineSchema = z.object({
+  action: z.literal("sync_offline"),
+  records: z.array(z.object({
+    type: z.string(),
+    totalCount: z.number(),
+    completedCount: z.number(),
+    incompleteWords: z.string().optional().default(""),
+    completeWords: z.string().optional().default(""),
+    createdAt: z.string().optional(),
+  })),
+});
+
+const insertSchema = z.object({
+  action: z.undefined().optional(),
+  type: z.string().min(1),
+  totalCount: z.number(),
+  completedCount: z.number(),
+  incompleteWords: z.string().optional().default(""),
+  completeWords: z.string().optional().default(""),
+  createdAt: z.string().optional(),
+});
+
+const postHistorySchema = z.union([
+  deleteActionSchema,
+  fetchActionSchema,
+  syncOfflineSchema,
+  insertSchema,
+]);
+
+const getHistorySchema = z.object({
+  limit: z.string().optional(),
+  month: z.string().optional(),
+  keysOnly: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user || !session.user.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
     const userEmail = session.user.email;
-    const body = await request.json();
+    const rawBody = await request.json().catch(() => ({}));
+    const parseResult = postHistorySchema.safeParse(rawBody);
 
-    if (body.action === 'delete' && Array.isArray(body.keys)) {
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
+    }
+
+    const body = parseResult.data;
+
+    if (body.action === 'delete') {
       if (body.keys.length === 0) return NextResponse.json({ success: true });
       
       const { error } = await supabase
@@ -24,12 +77,12 @@ export async function POST(request: NextRequest) {
 
       if (error) {
         console.error("Delete History Error:", error);
-        return NextResponse.json({ error: "Failed to delete history" }, { status: 500 });
+        return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
       }
       return NextResponse.json({ success: true });
     }
 
-    if (body.action === 'fetch' && Array.isArray(body.ids)) {
+    if (body.action === 'fetch') {
       if (body.ids.length === 0) return NextResponse.json({ history: [] });
       
       const { data, error } = await supabase
@@ -40,15 +93,15 @@ export async function POST(request: NextRequest) {
 
       if (error) {
         console.error("Fetch Specific History Error:", error);
-        return NextResponse.json({ error: "Failed to fetch specific history" }, { status: 500 });
+        return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
       }
       return NextResponse.json({ history: data });
     }
 
-    if (body.action === 'sync_offline' && Array.isArray(body.records)) {
+    if (body.action === 'sync_offline') {
       if (body.records.length === 0) return NextResponse.json({ success: true, history: [] });
       
-      const insertData = body.records.map((r: any) => ({
+      const insertData = body.records.map((r) => ({
         user_email: userEmail,
         type: r.type,
         total_count: r.totalCount,
@@ -65,17 +118,13 @@ export async function POST(request: NextRequest) {
 
       if (error) {
         console.error("Sync Offline History Error:", error);
-        return NextResponse.json({ error: "Failed to sync offline history" }, { status: 500 });
+        return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
       }
-      // data contains the newly inserted rows with their UUIDs
       return NextResponse.json({ success: true, history: data });
     }
 
+    // Normal insert
     const { type, totalCount, completedCount, incompleteWords, completeWords, createdAt } = body;
-
-    if (!type || typeof totalCount !== 'number' || typeof completedCount !== 'number') {
-      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
-    }
 
     const { data, error } = await supabase
       .from('study_history')
@@ -93,13 +142,13 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Supabase History Insert Error:", error);
-      return NextResponse.json({ error: "Failed to save history" }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, history: data });
   } catch (error) {
     console.error("History POST Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }
 
@@ -107,14 +156,26 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user || !session.user.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
     const userEmail = session.user.email;
     const { searchParams } = new URL(request.url);
-    const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : 100;
-    const month = searchParams.get("month");
-    const keysOnly = searchParams.get("keysOnly") === 'true';
+    
+    const queryParams = {
+      limit: searchParams.get("limit") || undefined,
+      month: searchParams.get("month") || undefined,
+      keysOnly: searchParams.get("keysOnly") || undefined,
+    };
+
+    const parseResult = getHistorySchema.safeParse(queryParams);
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
+    }
+
+    const { limit: limitStr, month, keysOnly: keysOnlyStr } = parseResult.data;
+    const limit = limitStr ? parseInt(limitStr, 10) : 100;
+    const keysOnly = keysOnlyStr === 'true';
 
     // Hard delete records older than 30 days
     const thirtyDaysAgo = new Date();
@@ -133,8 +194,6 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     if (month) {
-      // month is YYYY-MM
-      // Supabase between needs full timestamps. E.g., >= 2026-07-01T00:00:00Z and < 2026-08-01T00:00:00Z
       const startDate = new Date(`${month}-01T00:00:00Z`);
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + 1);
@@ -148,12 +207,12 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error("Fetch History Error:", error);
-      return NextResponse.json({ error: "Failed to fetch history" }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
     }
 
     return NextResponse.json({ history: data });
   } catch (error) {
     console.error("History GET Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }

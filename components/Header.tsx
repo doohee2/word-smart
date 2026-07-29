@@ -43,6 +43,21 @@ export function Header() {
     router.push(modalConfig.targetHref);
   };
 
+  const handleSignOut = async () => {
+    try {
+      if (typeof window !== "undefined" && "caches" in window) {
+        const cacheNames = await window.caches.keys();
+        await Promise.all(
+          cacheNames.map((cacheName) => window.caches.delete(cacheName))
+        );
+      }
+    } catch (error) {
+      console.error("Cache purge error on logout:", error);
+    } finally {
+      signOut();
+    }
+  };
+
   return (
     <header className="bg-surface docked full-width top-0 shadow-sm z-40 sticky">
       <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
@@ -63,9 +78,9 @@ export function Header() {
           )}
 
           {!isOnline && (
-            <div className="flex items-center gap-1 bg-error-container/20 text-error px-2 py-1 rounded-lg mr-2" title="오프라인 상태">
-              <CloudOff size={18} />
-              <span className="text-label-sm font-bold hidden sm:inline">오프라인</span>
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-error/10 text-error border border-error/20 font-medium text-xs shadow-xs ml-1 mr-0.5" title="현재 오프라인 상태입니다. 로컬 기기의 학습 기록은 다시 연결되면 서버에 저장됩니다.">
+              <CloudOff size={14} className="animate-pulse shrink-0 text-error/80" />
+              <span className="hidden sm:inline">오프라인 모드</span>
             </div>
           )}
 
@@ -77,7 +92,7 @@ export function Header() {
           {session?.user ? (
             <div className="flex items-center gap-1 ml-1">
               <button 
-                onClick={() => signOut()}
+                onClick={handleSignOut}
                 aria-label="로그아웃" 
                 className="p-1.5 text-on-surface-variant hover:bg-error-container hover:text-error rounded-full transition-colors"
                 title="로그아웃"

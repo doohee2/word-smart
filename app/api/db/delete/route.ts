@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+const deleteSchema = z.object({
+  listId: z.union([z.string(), z.number()]),
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,11 +16,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    const { listId } = await request.json();
+    const body = await request.json().catch(() => ({}));
+    const parseResult = deleteSchema.safeParse(body);
 
-    if (!listId) {
-      return NextResponse.json({ error: "단어장 ID가 누락되었습니다." }, { status: 400 });
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
     }
+
+    const { listId } = parseResult.data;
 
     // 1. Fetch the word list to check ownership
     const { data: wordList, error: fetchError } = await supabase
@@ -25,14 +33,14 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (fetchError || !wordList) {
-      return NextResponse.json({ error: "단어장을 찾을 수 없습니다." }, { status: 404 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 404 });
     }
 
     if (wordList.user_email !== session.user.email) {
-      return NextResponse.json({ error: "이 단어장을 삭제할 권한이 없습니다." }, { status: 403 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 403 });
     }
 
-    // 2. Delete the words associated with the list (to be safe, though foreign key CASCADE might handle it)
+    // 2. Delete the words associated with the list
     const { error: wordsDeleteError } = await supabase
       .from("words")
       .delete()
@@ -40,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     if (wordsDeleteError) {
       console.error("Words Delete Error:", wordsDeleteError);
-      return NextResponse.json({ error: "단어 삭제 중 오류가 발생했습니다." }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
     }
 
     // 3. Delete the word list itself
@@ -51,13 +59,13 @@ export async function POST(request: NextRequest) {
 
     if (listDeleteError) {
       console.error("List Delete Error:", listDeleteError);
-      return NextResponse.json({ error: "단어장 삭제 중 오류가 발생했습니다." }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: "단어장이 성공적으로 삭제되었습니다." });
 
   } catch (error) {
     console.error("Delete Word List Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }

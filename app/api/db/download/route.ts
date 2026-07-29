@@ -2,31 +2,46 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
 import { supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+const downloadQuerySchema = z.object({
+  listId: z.string().min(1, "단어장 ID가 필요합니다."),
+});
 
 export async function GET(request: NextRequest) {
   try {
-
-    const { searchParams } = new URL(request.url);
-    const listId = searchParams.get("listId");
-
-    if (!listId) {
-      return NextResponse.json({ error: "Missing listId" }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    // Fetch the list details
+    const { searchParams } = new URL(request.url);
+    const parseResult = downloadQuerySchema.safeParse({ listId: searchParams.get("listId") });
+
+    if (!parseResult.success) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
+    }
+
+    const { listId } = parseResult.data;
+
+    // Fetch the list details & verify ownership
     const { data: listData, error: listError } = await supabase
       .from('word_lists')
       .select('*')
       .eq('id', listId)
       .single();
 
-    if (listError) {
+    if (listError || !listData) {
       console.error("Fetch List Error:", listError);
-      return NextResponse.json({ error: "Failed to fetch word list" }, { status: 500 });
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 404 });
+    }
+
+    if (listData.user_email !== session.user.email) {
+      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 403 });
     }
 
     // Fetch all words for this list with pagination to bypass Supabase max-rows limit
-    let allWords: any[] = [];
+    let allWords: Record<string, unknown>[] = [];
     let page = 0;
     const pageSize = 1000;
     let hasMore = true;
@@ -40,7 +55,7 @@ export async function GET(request: NextRequest) {
 
       if (error) {
         console.error("Fetch Words Error:", error);
-        return NextResponse.json({ error: "Failed to fetch words" }, { status: 500 });
+        return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
       }
 
       if (data && data.length > 0) {
@@ -58,6 +73,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ list: listData, words: allWords });
   } catch (error) {
     console.error("Download Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 500 });
   }
 }
