@@ -13,7 +13,6 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { highlightExampleSentence } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
-import { LanguageToggle } from "@/components/LanguageToggle";
 
 export default function StudyPage() {
   const { langMode } = useLanguageMode();
@@ -356,14 +355,11 @@ export default function StudyPage() {
 
   if (activeLists.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-12 gap-6">
-        <LanguageToggle />
-        <div>
-          <h2 className="text-headline-lg font-bold text-on-surface mb-2">{isJa ? '선택된 일본어 단어장이 없습니다.' : '선택된 영어 단어장이 없습니다.'}</h2>
-          <p className="text-body-md text-on-surface-variant">
-            설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
-          </p>
-        </div>
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
+        <h2 className="text-headline-lg font-bold text-on-surface mb-4">{isJa ? '선택된 일본어 단어장이 없습니다.' : '선택된 영어 단어장이 없습니다.'}</h2>
+        <p className="text-body-md text-on-surface-variant">
+          설정 메뉴에서 학습할 단어장을 체크하거나 언어를 전환해주세요.
+        </p>
       </div>
     );
   }
@@ -376,7 +372,6 @@ export default function StudyPage() {
         // --- Pre-start Screen ---
         <div className="flex-1 flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
-            <LanguageToggle className="mb-6" />
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
               <Folder size={40} className="text-primary" />
             </div>
@@ -496,8 +491,8 @@ export default function StudyPage() {
                 <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
                 
                 <div className={clsx(
-                  "mb-8 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-1.5",
-                  isJa ? "text-title-lg md:text-headline-sm text-primary" : "text-headline-lg text-primary",
+                  "mb-8 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-2",
+                  isJa ? "text-headline-md md:text-headline-lg text-primary" : "text-headline-lg text-primary",
                   (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : ""
                 )}>
                   {(() => {
@@ -509,7 +504,7 @@ export default function StudyPage() {
                       return (
                         <>
                           <span>{mainMeaning}</span>
-                          <span className="text-xs md:text-sm text-on-surface-variant/90 font-medium break-all mt-1">{hanjaReading}</span>
+                          <span className="text-base md:text-lg text-on-surface-variant font-semibold break-all mt-1">{hanjaReading}</span>
                         </>
                       );
                     }
