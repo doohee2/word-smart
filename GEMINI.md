@@ -1,7 +1,7 @@
 # Word Smart (워드 스마트) - 개발 문서
 
 ## 1. 프로젝트 개요
-**Word Smart**는 CSV 형태의 단어장 데이터를 불러와 오프라인 환경에서도 동작하는 PWA(Progressive Web App) 기반의 영단어 학습 애플리케이션입니다.
+**Word Smart**는 CSV 형태의 단어장 데이터를 불러와 오프라인 환경에서도 동작하는 PWA(Progressive Web App) 기반의 영단어 및 일본어 한자 학습 애플리케이션입니다.
 사용자는 구글 드라이브나 로컬 디바이스에서 단어장 파일을 가져올 수 있으며, 학습(플래시카드), 테스트(객관식/주관식), 관리(단어장 통계), PDF 인쇄(학습지/시험지) 기능을 통해 체계적인 단어 학습을 진행할 수 있습니다.
 
 ## 2. 기술 프레임워크
@@ -38,12 +38,14 @@ word-smart/
 │   ├── FileOpenButton.tsx               # 로컬/드라이브 파일 파싱 로직 (중복 체크 포함)
 │   ├── Header.tsx                       # 상단 글로벌 앱 바 (테마 토글, 설정 등)
 │   ├── InfoModal.tsx                    # 앱 정보 안내 모달
+│   ├── LanguageToggle.tsx                 # 설정 창 전용 영어/일본어 모드 전환 라디오 뷰
 │   ├── Logo.tsx                         # 반응형 앱 타이틀 및 다크모드 지원 로고 컴포넌트
 │   ├── Navigation.tsx                   # MD3 스타일 네비게이션 (진행 중 이탈 방지 로직 적용)
 │   └── Providers.tsx                    # NextAuth, Theme, StudySession 프로바이더 래퍼
 ├── lib/
 │   └── db.ts                            # Dexie.js 데이터베이스 스키마 (`isActive`, `testCount` 등)
 ├── providers/
+│   ├── LanguageModeProvider.tsx         # 전역 언어 모드(영어/일본어) 상태 관리 훅
 │   └── StudySessionProvider.tsx         # 전역 학습 진행 상태 관리 훅 (앱 이탈 방지용)
 ├── public/
 │   ├── icons/                           # PWA 아이콘 모음 (192x192, 512x512)
@@ -121,6 +123,20 @@ word-smart/
   * **Content-Security-Policy (CSP)**: Serwist 서비스 워커 구동(`worker-src 'self' blob:;`), 구글 프로필 및 OAuth(`img-src`), Supabase DB 통신 및 jsPDF 폰트 로드(`raw.githubusercontent.com`), 실시간 개발 환경이 원활히 동작하도록 최적화된 맞춤 화이트리스트 설정을 추가했습니다.
   * **HSTS (`Strict-Transport-Security`)**: 무조건적인 HTTPS 접속 강제를 위해 `max-age=63072000; includeSubDomains; preload` 부여.
   * **X-Frame-Options (`DENY`) & X-Content-Type-Options (`nosniff`) & Referrer-Policy (`strict-origin-when-cross-origin`) & Permissions-Policy (`camera=(), microphone=(), geolocation=()`)**을 통해 클릭재킹, MIME 스푸핑 및 불필요한 스마트폰 장치 권한 호출을 100% 차단합니다.
+
+### Phase 8: 일본어 한자 단어장 확장 (Japanese Kanji Extension)
+* **단일 테이블 기반 언어 식별 및 하위 호환성 (`lib/db.ts`, `providers/LanguageModeProvider.tsx`):**
+  * **Dexie 스키마 및 DB 마이그레이션**: 로컬 IndexedDB 스키마(v5) 및 Supabase 서버 DB의 `word_lists` 테이블에 `lang?: 'en' | 'ja'` 속성을 부여했습니다.
+  * **하위 호환성 100% 보장**: 기존에 저장된 단어장이나 값이 없는 데이터는 `(!l.lang || l.lang === 'en')` 조건문을 통해 무조건 기본 영어 단어장(`'en'`)으로 간주하도록 설계하여, 기존 사용자의 DB 충돌이나 데이터 누락을 차단합니다.
+  * **설정창 중심 모던 라디오 버튼 전환 (`components/LanguageToggle.tsx`, `app/settings/page.tsx`)**: 화면마다 토글이 보이는 헷갈림을 없애기 위해 **오직 단어장 관리(설정) 화면**에서만 심플한 라디오 버튼으로 영어 모드와 일본어 모드를 전환하도록 변경했으며, 학습/테스트/인쇄 진입부는 선택된 언어 세트에 맞춰 반응합니다.
+* **CSV 스마트 파싱 및 Supabase Cloud 동기화 (`components/FileOpenButton.tsx`, `components/DBDownloadModal.tsx`, `app/api/db/**`):**
+  * **자동 감지 로직**: CSV 파일 오픈 시 헤더 컬럼명(`일본어한자`, `일본어발음` 등) 또는 첫 단어의 유니코드 문자 코드(한자/히라가на)를 자동 판독하여 일본어 단어장(`'ja'`)으로 분류하며 추가 즉시 해당 언어 뷰로 토글됩니다.
+  * **서버리스 Fallback 및 언어 뱃지 UI**: Supabase 업로드/조회 API에 `lang` 파라미터 검증을 보증했으며, 아직 서버 DB 컬럼 마이그레이션을 안 한 환경에서도 오류 없이 구버전 쿼리로 Fallback 동작하도록 구축했습니다. 다운로드 모달에서는 목록별 `ENG` 또는 `日/한자` 뱃지로 즉시 파악이 가능합니다.
+* **일본어 특화 학습 및 테스트 UX (`app/study/page.tsx`, `app/test/page.tsx`, `lib/textUtils.ts`):**
+  * **플래시카드 & 문제 화면 가독성 50% 향상**: 일본어 한자 암기의 편의를 위해 학습 카드 및 테스트 문제 카드 상단에 **히라гана 일본어 발음(`partOfSpeech`)**을 명시적인 알약 뱃지로 표시합니다. 또한 카드 중앙의 한글 뜻과 괄호 안 한자별 독음(`(先: 먼저 선, 生: 날 생)`) 글자 크기를 50% 확대하고, 8지선다 보기 버튼의 독음 글자는 시각 정합성을 위해 1~2포인트 작게 축소(`text-[10px] sm:text-[11px]`)하여 완벽한 UI 밸런스를 구현했습니다.
+  * **100% 객관식 출제 & TTS 로케일 연동**: 한자 스펠링 주관식 입력을 원천 방지하여 일본어 테스트 시에는 무조건 8지선다 객관식(MCQ)으로 출제되며, Web Speech API 발음 재생 시 `ja-JP` 로케일을 통해 히라가на 발음과 일본어 예문을 낭독합니다.
+  * **한자 어간 스마트 하이라이팅**: 일본어 예문 내에서 동사/형용사 활용형이 등장해도(`行く` ➡️ `行きます`), 핵심 한자 어간 부분(`行`)을 정확히 분리해 굵은 폰트(Bold)로 강조하는 하이라이팅 알고리즘을 추가했습니다.
+  * **PDF 인쇄 모드 분리 (`app/pdf/page.tsx`)**: 한글/영문 CDN 폰트 기반인 jsPDF 라이브러리의 한자·히라гана 렌더링 미지원 특성을 명쾌히 안내하고, 일본어 모드로 PDF 진입 시 사용을 제한하며 설정 메뉴에서 영어 모드로 전환할 것을 시각적으로 유도합니다.
 
 ## 5. 개선 필요사항 및 퓨처 워크 (Future Work)
 
