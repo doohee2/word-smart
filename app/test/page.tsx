@@ -12,6 +12,8 @@ import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { maskExampleHtml } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
+import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 interface TestWord {
   wordData: Word;
@@ -19,17 +21,23 @@ interface TestWord {
 }
 
 export default function TestPage() {
+  const { langMode } = useLanguageMode();
+  const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
-  const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const activeLists = useLiveQuery(async () => {
+    const all = await db.wordLists.filter(list => !!list.isActive).toArray();
+    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+  }, [langMode]);
   const { data: session } = useSession();
   const correctWordsRef = useRef<string[]>([]);
   const incorrectWordsRef = useRef<string[]>([]);
 
   const rawWords = useLiveQuery(async () => {
-    const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
+    const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
+    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
-  }, []);
+  }, [langMode]);
   const listMap = useMemo(() => {
     return new Map((activeLists || []).map(l => [l.id, l]));
   }, [activeLists]);
@@ -150,7 +158,8 @@ export default function TestPage() {
     
     const queue: TestWord[] = selectedWords.map(w => {
       let m: 'mcq' | 'spelling' = 'mcq';
-      if (questionType === 'english') m = 'mcq';
+      if (isJa) m = 'mcq';
+      else if (questionType === 'english') m = 'mcq';
       else if (questionType === 'korean') m = 'spelling';
       else m = Math.random() > 0.5 ? 'mcq' : 'spelling';
       return { wordData: w, testMode: m };
@@ -276,8 +285,9 @@ export default function TestPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(currentWord.word);
-      utterance.lang = 'en-US';
+      const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = isJa ? 'ja-JP' : 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -364,11 +374,14 @@ export default function TestPage() {
 
   if (activeLists.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">선택된 단어장이 없습니다.</h2>
-        <p className="text-body-md text-on-surface-variant">
-          설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
-        </p>
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-12 gap-6">
+        <LanguageToggle />
+        <div>
+          <h2 className="text-headline-lg font-bold text-on-surface mb-2">{isJa ? '선택된 일본어 단어장이 없습니다.' : '선택된 영어 단어장이 없습니다.'}</h2>
+          <p className="text-body-md text-on-surface-variant">
+            설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
+          </p>
+        </div>
       </div>
     );
   }
@@ -381,10 +394,11 @@ export default function TestPage() {
         // --- Pre-start Screen ---
         <div className="flex-1 flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <LanguageToggle className="mb-6" />
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
               <Folder size={40} className="text-primary" />
             </div>
-            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 단어장 {activeLists.length}개</h2>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
             <p className="text-body-md text-on-surface-variant">총 {rawWords.length}개의 단어가 있습니다.</p>
           </div>
           
@@ -471,21 +485,28 @@ export default function TestPage() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {options.map((opt, i) => (
-                  <button 
-                    key={i}
-                    onClick={() => handleMCQSelect(opt)}
-                    disabled={feedback !== null}
-                    className={clsx(
-                      "border-2 rounded-xl p-4 min-h-[80px] flex items-center justify-center text-body-md font-bold transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary",
-                      feedback && opt === correctAnswer ? "border-primary bg-primary-container text-on-primary-container" :
-                      feedback && opt !== correctAnswer ? "border-surface-variant bg-surface-container-lowest opacity-50" :
-                      "border-surface-variant bg-surface-container-lowest hover:border-primary-container hover:bg-surface-container text-on-surface"
-                    )}
-                  >
-                    {opt}
-                  </button>
-                ))}
+                {options.map((opt, i) => {
+                  const hasParen = isJa && opt.includes("(");
+                  const mainMeaning = hasParen ? opt.substring(0, opt.indexOf("(")).trim() : opt;
+                  const hanjaReading = hasParen ? opt.substring(opt.indexOf("(")).trim() : null;
+
+                  return (
+                    <button 
+                      key={i}
+                      onClick={() => handleMCQSelect(opt)}
+                      disabled={feedback !== null}
+                      className={clsx(
+                        "border-2 rounded-xl p-3 min-h-[80px] flex flex-col items-center justify-center text-body-md font-bold transition-all active:scale-95 outline-none focus:ring-2 focus:ring-primary text-center gap-1",
+                        feedback && opt === correctAnswer ? "border-primary bg-primary-container text-on-primary-container" :
+                        feedback && opt !== correctAnswer ? "border-surface-variant bg-surface-container-lowest opacity-50 text-on-surface" :
+                        "border-surface-variant bg-surface-container-lowest hover:border-primary-container hover:bg-surface-container text-on-surface"
+                      )}
+                    >
+                      <span>{mainMeaning}</span>
+                      {hanjaReading && <span className="text-xs font-normal opacity-80 mt-0.5 break-all">{hanjaReading}</span>}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -626,57 +647,68 @@ export default function TestPage() {
                 </label>
 
                 {/* 난이도 필터 (Zipf) */}
-                <div>
-                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
-                  <select 
-                    value={zipfFilter}
-                    onChange={(e) => setZipfFilter(e.target.value as 'all' | 'hard' | 'custom')}
-                    className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
-                  >
-                    <option value="all">전체 단어 (기본)</option>
-                    <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
-                    <option value="custom">직접 입력 (입력값 미만)</option>
-                  </select>
-                  
-                  {zipfFilter === 'custom' && (
-                    <div className="mt-3 flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl">
-                      <span className="text-body-sm font-bold text-on-surface">Zipf 스코어 기준:</span>
-                      <input 
-                        type="number"
-                        step="0.1"
-                        value={customZipf}
-                        onChange={(e) => setCustomZipf(e.target.value)}
-                        className="w-20 bg-transparent text-headline-sm font-bold text-primary outline-none border-b-2 border-outline focus:border-primary px-1 text-center"
-                      />
-                      <span className="text-body-sm text-on-surface-variant">미만</span>
-                    </div>
-                  )}
-                </div>
+                {!isJa && (
+                  <div>
+                    <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
+                    <select 
+                      value={zipfFilter}
+                      onChange={(e) => setZipfFilter(e.target.value as 'all' | 'hard' | 'custom')}
+                      className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                    >
+                      <option value="all">전체 단어 (기본)</option>
+                      <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
+                      <option value="custom">직접 입력 (입력값 미만)</option>
+                    </select>
+                    
+                    {zipfFilter === 'custom' && (
+                      <div className="mt-3 flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl">
+                        <span className="text-body-sm font-bold text-on-surface">Zipf 스코어 기준:</span>
+                        <input 
+                          type="number"
+                          step="0.1"
+                          value={customZipf}
+                          onChange={(e) => setCustomZipf(e.target.value)}
+                          className="w-20 bg-transparent text-headline-sm font-bold text-primary outline-none border-b-2 border-outline focus:border-primary px-1 text-center"
+                        />
+                        <span className="text-body-sm text-on-surface-variant">미만</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* 출제 유형 */}
-                <div>
-                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
-                  <div className="flex bg-surface-container rounded-xl p-1">
-                    <button 
-                      onClick={() => setQuestionType('english')}
-                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'english' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
-                    >
-                      영어만 (객관식)
-                    </button>
-                    <button 
-                      onClick={() => setQuestionType('korean')}
-                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'korean' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
-                    >
-                      한글만 (주관식)
-                    </button>
-                    <button 
-                      onClick={() => setQuestionType('random')}
-                      className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'random' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
-                    >
-                      무작위 섞어서
-                    </button>
+                {!isJa ? (
+                  <div>
+                    <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
+                    <div className="flex bg-surface-container rounded-xl p-1">
+                      <button 
+                        onClick={() => setQuestionType('english')}
+                        className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'english' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                      >
+                        영어만 (객관식)
+                      </button>
+                      <button 
+                        onClick={() => setQuestionType('korean')}
+                        className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'korean' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                      >
+                        한글만 (주관식)
+                      </button>
+                      <button 
+                        onClick={() => setQuestionType('random')}
+                        className={clsx("flex-1 py-2 text-label-sm font-bold rounded-lg transition-colors", questionType === 'random' ? "bg-primary text-on-primary shadow-sm" : "text-on-surface-variant hover:text-on-surface")}
+                      >
+                        무작위 섞어서
+                      </button>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
+                    <div className="p-4 bg-surface-container rounded-xl text-center text-body-md font-bold text-primary">
+                      일본어 한자 단어는 객관식 퀴즈(100%)로 출제됩니다.
+                    </div>
+                  </div>
+                )}
               </div>
 
               <button 

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 const uploadSchema = z.object({
   title: z.string().min(1),
+  lang: z.enum(['en', 'ja']).optional(),
   words: z.array(
     z.object({
       word: z.string().min(1),
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 400 });
     }
 
-    const { title, words } = parseResult.data;
+    const { title, lang = 'en', words } = parseResult.data;
 
     const { data: userLists } = await supabase
       .from('word_lists')
@@ -66,20 +67,43 @@ export async function POST(request: NextRequest) {
 
     // 1. Get or Create Word List (unique by title)
     let listId;
-    const { data: insertedList, error: insertError } = await supabase
+    let { data: insertedList, error: insertError } = await supabase
       .from('word_lists')
-      .insert({ user_email: session.user.email, title })
+      .insert({ user_email: session.user.email, title, lang })
       .select()
       .single();
 
+    // Fallback if lang column does not exist yet in Supabase schema (error 42703)
+    if (insertError && insertError.code === '42703') {
+      const fallback = await supabase
+        .from('word_lists')
+        .insert({ user_email: session.user.email, title })
+        .select()
+        .single();
+      insertedList = fallback.data;
+      insertError = fallback.error;
+    }
+
     if (insertError) {
       if (insertError.code === '23505') { // Unique violation
-        const { data: existing, error: selectError } = await supabase
+        let { data: existing, error: selectError } = await supabase
           .from('word_lists')
-          .select('id')
+          .update({ lang })
           .eq('title', title)
           .eq('user_email', session.user.email)
+          .select('id')
           .single();
+          
+        if (selectError && selectError.code === '42703') {
+          const fb = await supabase
+            .from('word_lists')
+            .select('id')
+            .eq('title', title)
+            .eq('user_email', session.user.email)
+            .single();
+          existing = fb.data;
+          selectError = fb.error;
+        }
           
         if (selectError || !existing) {
           console.error("Select Error:", selectError);

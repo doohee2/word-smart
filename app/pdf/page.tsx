@@ -11,15 +11,23 @@ import autoTable from "jspdf-autotable";
 import { motion, AnimatePresence } from "framer-motion";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { maskExampleSentence } from "@/lib/textUtils";
+import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export default function PDFPage() {
+  const { langMode } = useLanguageMode();
+  const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
-  const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const activeLists = useLiveQuery(async () => {
+    const all = await db.wordLists.filter(list => !!list.isActive).toArray();
+    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+  }, [langMode]);
   const rawWords = useLiveQuery(async () => {
-    const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
+    const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
+    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
-  }, []);
+  }, [langMode]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -191,6 +199,23 @@ export default function PDFPage() {
     return <div className="p-6 text-center text-on-surface-variant">로딩 중...</div>;
   }
 
+  if (isJa) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-12 gap-6">
+        <LanguageToggle />
+        <div className="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center">
+          <FileText size={36} className="text-on-surface-variant/50" />
+        </div>
+        <div>
+          <h2 className="text-headline-sm font-bold text-on-surface mb-2">일본어 한자 단어장은 PDF 인쇄를 지원하지 않습니다.</h2>
+          <p className="text-body-md text-on-surface-variant max-w-sm mx-auto leading-relaxed">
+            현재 일본어 한자 및 히라가나 폰트 렌더링 최적화 문제로 인해 일본어 모드에서는 PDF 인쇄 기능을 사용할 수 없습니다.<br />영어 모드로 전환하여 이용해주세요.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (lists.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
@@ -204,11 +229,14 @@ export default function PDFPage() {
 
   if (activeLists.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">선택된 단어장이 없습니다.</h2>
-        <p className="text-body-md text-on-surface-variant">
-          설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
-        </p>
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-12 gap-6">
+        <LanguageToggle />
+        <div>
+          <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 영어 단어장이 없습니다.</h2>
+          <p className="text-body-md text-on-surface-variant">
+            설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
+          </p>
+        </div>
       </div>
     );
   }
@@ -220,6 +248,7 @@ export default function PDFPage() {
       {!isPreviewMode ? (
         <div className="flex-1 flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <LanguageToggle className="mb-6" />
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
               <FileText size={40} className="text-primary" />
             </div>

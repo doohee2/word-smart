@@ -9,6 +9,7 @@ import clsx from "clsx";
 interface DBList {
   id: string;
   title: string;
+  lang?: 'en' | 'ja';
   user_email: string;
   created_at: string;
   count: number;
@@ -63,12 +64,23 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
       let localListId = list?.id;
       let isNewList = false;
 
+      let detectedLang: 'en' | 'ja' = data.list?.lang === 'ja' ? 'ja' : 'en';
+      if (detectedLang !== 'ja' && words.length > 0) {
+        const firstWord = String(words[0].word || "");
+        if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(firstWord)) {
+          detectedLang = 'ja';
+        }
+      }
+
       if (!localListId) {
         localListId = await db.wordLists.add({
           title: dbList.title,
           createdAt: new Date(),
+          lang: detectedLang,
         });
         isNewList = true;
+      } else if (list && list.lang !== detectedLang) {
+        await db.wordLists.update(localListId, { lang: detectedLang });
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -175,8 +187,16 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
                 return (
                   <div key={list.id} className="flex items-center justify-between p-4 bg-surface rounded-2xl border border-surface-variant hover:border-primary/30 transition-colors group">
                     <div className="flex-1 min-w-0 pr-4">
-                      <h3 className="text-label-lg font-bold text-on-surface truncate">{list.title}</h3>
-                      <p className="text-label-sm text-on-surface-variant truncate">단어 {list.count}개 • 업로더: {list.user_email}</p>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-label-lg font-bold text-on-surface truncate">{list.title}</h3>
+                        <span className={clsx(
+                          "px-2 py-0.5 rounded-full text-[10px] font-bold shrink-0 uppercase",
+                          list.lang === 'ja' ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container/60 text-on-primary-container"
+                        )}>
+                          {list.lang === 'ja' ? '日/한자' : 'ENG'}
+                        </span>
+                      </div>
+                      <p className="text-label-sm text-on-surface-variant truncate mt-0.5">단어 {list.count}개 • 업로더: {list.user_email}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {session?.user?.email === list.user_email && (

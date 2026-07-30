@@ -56,6 +56,21 @@ function getMatchRange(wordStr: string, exampleStr: string): { start: number, en
     return { start: match.index, end: match.index + match[0].length };
   }
 
+  // 1.5. Kanji stem match for Japanese vocabulary inflections (e.g. 行く -> 行います)
+  if (/[\u3400-\u4dbf\u4e00-\u9fff]/.test(wordStr)) {
+    const kanjiMatches = wordStr.match(/[\u3400-\u4dbf\u4e00-\u9fff]+/g);
+    if (kanjiMatches && kanjiMatches.length > 0) {
+      const longestKanji = kanjiMatches.reduce((a, b) => a.length >= b.length ? a : b);
+      if (longestKanji.length > 0) {
+        const kanjiRegex = new RegExp(longestKanji, 'g');
+        const m = kanjiRegex.exec(exampleStr);
+        if (m) {
+          return { start: m.index, end: m.index + m[0].length };
+        }
+      }
+    }
+  }
+
   // 2. Fuzzy match
   const rawWords = wordStr.split(/[\s-]+/).map(w => w.toLowerCase().replace(/[^a-z0-9]/g, ''));
   const searchTerms: string[] = [];

@@ -8,6 +8,8 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import Papa from "papaparse";
 import { useSession } from "next-auth/react";
 import { DBDownloadModal } from "@/components/DBDownloadModal";
+import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 function WordListItem({ 
   list, 
@@ -56,14 +58,21 @@ function WordListItem({
   const handleExportCSV = async () => {
     if (!list.id) return;
     const words = await db.words.where('listId').equals(list.id).toArray();
-    const csvData = words.map(w => ({
+    const isJa = list.lang === 'ja';
+    const csvData = words.map(w => isJa ? {
+      "일본어한자": w.word,
+      "일본어발음": w.partOfSpeech,
+      "한글 뜻과 한자별 한글독음": w.meaningKo,
+      "일본어예문": w.exampleEn,
+      "예문한글번역문": w.exampleKo,
+    } : {
       "Word": w.word,
       "Part of Speech": w.partOfSpeech,
       "Korean Meaning": w.meaningKo,
       "Example Sentence": w.exampleEn,
       "Korean Translation": w.exampleKo,
       "zipf_score": w.zipfScore !== undefined && w.zipfScore !== null ? w.zipfScore : ""
-    }));
+    });
     
     const csvStr = Papa.unparse(csvData);
     const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvStr], { type: "text/csv;charset=utf-8;" }); // BOM for Excel
@@ -189,7 +198,9 @@ function WordListItem({
 
 export default function SettingsPage() {
   const { status } = useSession();
-  const lists = useLiveQuery(() => db.wordLists.orderBy('title').toArray());
+  const { langMode } = useLanguageMode();
+  const allLists = useLiveQuery(() => db.wordLists.orderBy('title').toArray());
+  const lists = allLists?.filter(l => langMode === 'ja' ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, listToDelete: WordList | null}>({isOpen: false, listToDelete: null});
   const [uploadStatus, setUploadStatus] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', isUploading: boolean}>({isOpen: false, message: '', type: 'info', isUploading: false});
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
@@ -225,7 +236,7 @@ export default function SettingsPage() {
       const res = await fetch('/api/db/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: list.title, words })
+        body: JSON.stringify({ title: list.title, lang: list.lang || 'en', words })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed');
@@ -259,12 +270,16 @@ export default function SettingsPage() {
         </button>
       </div>
 
+      <div className="mb-5">
+        <LanguageToggle />
+      </div>
+
       <div className="grid grid-cols-1 gap-2">
         {lists === undefined ? (
           <p className="text-on-surface-variant">로딩 중...</p>
         ) : lists.length === 0 ? (
           <div className="text-center py-12 text-on-surface-variant border-2 border-dashed border-outline-variant rounded-2xl">
-            <p>등록된 단어장이 없습니다.</p>
+            <p>{langMode === 'ja' ? '등록된 일본어 한자 단어장이 없습니다.' : '등록된 영어 단어장이 없습니다.'}</p>
             <p className="text-sm mt-2">우측 상단의 폴더 아이콘을 눌러 CSV 파일을 불러오세요.</p>
           </div>
         ) : (

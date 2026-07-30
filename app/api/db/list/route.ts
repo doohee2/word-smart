@@ -11,11 +11,22 @@ export async function GET(_request: NextRequest) {
     }
 
     // 1. Fetch only word lists belonging to the authenticated user
-    const { data: lists, error: listsError } = await supabase
+    let { data: lists, error: listsError } = await supabase
       .from('word_lists')
-      .select('id, title, user_email, created_at')
+      .select('id, title, lang, user_email, created_at')
       .eq('user_email', session.user.email)
       .order('title', { ascending: true });
+
+    // Fallback if lang column does not exist in Supabase DB yet (Postgres error 42703)
+    if (listsError && listsError.code === '42703') {
+      const fallback = await supabase
+        .from('word_lists')
+        .select('id, title, user_email, created_at')
+        .eq('user_email', session.user.email)
+        .order('title', { ascending: true });
+      lists = fallback.data as any;
+      listsError = fallback.error;
+    }
 
     if (listsError) {
       console.error("Lists Error:", listsError);

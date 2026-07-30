@@ -12,19 +12,27 @@ import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { highlightExampleSentence } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
+import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { LanguageToggle } from "@/components/LanguageToggle";
 
 export default function StudyPage() {
+  const { langMode } = useLanguageMode();
+  const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
-  const activeLists = useLiveQuery(() => db.wordLists.filter(list => !!list.isActive).toArray());
+  const activeLists = useLiveQuery(async () => {
+    const all = await db.wordLists.filter(list => !!list.isActive).toArray();
+    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+  }, [langMode]);
   const { data: session } = useSession();
   const completedWordsRef = useRef<string[]>([]);
   const incompleteWordsRef = useRef<string[]>([]);
 
   const rawWords = useLiveQuery(async () => {
-    const activeListIds = (await db.wordLists.filter(l => !!l.isActive).toArray()).map(l => l.id!);
+    const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
+    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
-  }, []);
+  }, [langMode]);
   const listMap = useMemo(() => {
     return new Map((activeLists || []).map(l => [l.id, l]));
   }, [activeLists]);
@@ -307,8 +315,9 @@ export default function StudyPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(currentWord.word);
-      utterance.lang = 'en-US';
+      const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = isJa ? 'ja-JP' : 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -317,7 +326,7 @@ export default function StudyPage() {
     e.stopPropagation();
     if (currentWord?.exampleEn && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
-      utterance.lang = 'en-US';
+      utterance.lang = isJa ? 'ja-JP' : 'en-US';
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -347,11 +356,14 @@ export default function StudyPage() {
 
   if (activeLists.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">선택된 단어장이 없습니다.</h2>
-        <p className="text-body-md text-on-surface-variant">
-          설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
-        </p>
+      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-12 gap-6">
+        <LanguageToggle />
+        <div>
+          <h2 className="text-headline-lg font-bold text-on-surface mb-2">{isJa ? '선택된 일본어 단어장이 없습니다.' : '선택된 영어 단어장이 없습니다.'}</h2>
+          <p className="text-body-md text-on-surface-variant">
+            설정 메뉴에서 학습할 단어장의 좌측 체크박스를 선택해주세요.
+          </p>
+        </div>
       </div>
     );
   }
@@ -364,10 +376,11 @@ export default function StudyPage() {
         // --- Pre-start Screen ---
         <div className="flex-1 flex flex-col">
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
+            <LanguageToggle className="mb-6" />
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
               <Folder size={40} className="text-primary" />
             </div>
-            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 단어장 {activeLists.length}개</h2>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
             <p className="text-body-md text-on-surface-variant">총 {rawWords.length}개의 단어가 있습니다.</p>
           </div>
           
@@ -466,8 +479,10 @@ export default function StudyPage() {
                 </button>
                 
                 <div className="mb-2">
-                  <span className="text-label-sm text-outline tracking-widest uppercase font-bold">
-                    {currentWord?.partOfSpeech || "단어"}
+                  <span className={clsx(
+                    isJa ? "text-title-sm text-primary font-bold tracking-normal" : "text-label-sm text-outline tracking-widest uppercase font-bold"
+                  )}>
+                    {currentWord?.partOfSpeech || (isJa ? "일본어" : "단어")}
                   </span>
                 </div>
                 
@@ -481,10 +496,25 @@ export default function StudyPage() {
                 <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
                 
                 <div className={clsx(
-                  "text-headline-lg text-primary mb-8 font-bold px-10 md:px-16 transition-all duration-300",
+                  "mb-8 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-1.5",
+                  isJa ? "text-title-lg md:text-headline-sm text-primary" : "text-headline-lg text-primary",
                   (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : ""
                 )}>
-                  {currentWord?.meaningKo}
+                  {(() => {
+                    const text = currentWord?.meaningKo || "";
+                    if (isJa && text.includes("(")) {
+                      const idx = text.indexOf("(");
+                      const mainMeaning = text.substring(0, idx).trim();
+                      const hanjaReading = text.substring(idx).trim();
+                      return (
+                        <>
+                          <span>{mainMeaning}</span>
+                          <span className="text-xs md:text-sm text-on-surface-variant/90 font-medium break-all mt-1">{hanjaReading}</span>
+                        </>
+                      );
+                    }
+                    return <span>{text}</span>;
+                  })()}
                 </div>
 
                 {(currentWord?.exampleEn || currentWord?.exampleKo) && (
@@ -630,32 +660,34 @@ export default function StudyPage() {
                 </label>
 
                 {/* 난이도 필터 (Zipf) */}
-                <div>
-                  <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
-                  <select 
-                    value={zipfFilter}
-                    onChange={(e) => setZipfFilter(e.target.value as 'all' | 'hard' | 'custom')}
-                    className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
-                  >
-                    <option value="all">전체 단어 (기본)</option>
-                    <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
-                    <option value="custom">직접 입력 (입력값 미만)</option>
-                  </select>
-                  
-                  {zipfFilter === 'custom' && (
-                    <div className="mt-3 flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl">
-                      <span className="text-body-sm font-bold text-on-surface">Zipf 스코어 기준:</span>
-                      <input 
-                        type="number"
-                        step="0.1"
-                        value={customZipf}
-                        onChange={(e) => setCustomZipf(e.target.value)}
-                        className="w-20 bg-transparent text-headline-sm font-bold text-primary outline-none border-b-2 border-outline focus:border-primary px-1 text-center"
-                      />
-                      <span className="text-body-sm text-on-surface-variant">미만</span>
-                    </div>
-                  )}
-                </div>
+                {!isJa && (
+                  <div>
+                    <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
+                    <select 
+                      value={zipfFilter}
+                      onChange={(e) => setZipfFilter(e.target.value as 'all' | 'hard' | 'custom')}
+                      className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
+                    >
+                      <option value="all">전체 단어 (기본)</option>
+                      <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
+                      <option value="custom">직접 입력 (입력값 미만)</option>
+                    </select>
+                    
+                    {zipfFilter === 'custom' && (
+                      <div className="mt-3 flex items-center gap-3 bg-surface-container px-4 py-2 rounded-xl">
+                        <span className="text-body-sm font-bold text-on-surface">Zipf 스코어 기준:</span>
+                        <input 
+                          type="number"
+                          step="0.1"
+                          value={customZipf}
+                          onChange={(e) => setCustomZipf(e.target.value)}
+                          className="w-20 bg-transparent text-headline-sm font-bold text-primary outline-none border-b-2 border-outline focus:border-primary px-1 text-center"
+                        />
+                        <span className="text-body-sm text-on-surface-variant">미만</span>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* 단어/뜻 공개 방식 */}
                 <div>

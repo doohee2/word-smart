@@ -5,6 +5,7 @@ export interface WordList {
   title: string;
   createdAt: Date;
   isActive?: boolean;
+  lang?: 'en' | 'ja';
 }
 
 export interface Word {
@@ -59,6 +60,9 @@ export class WordSmartDB extends Dexie {
     });
     this.version(4).stores({
       history: '++id, serverId, userEmail, createdAt, type, isSynced, isDeleted'
+    });
+    this.version(5).stores({
+      wordLists: '++id, title, createdAt, isActive, lang'
     });
   }
 }

@@ -8,9 +8,11 @@ import DrivePickerModal from "./DrivePickerModal";
 import { db } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import { ConfirmModal } from "./ConfirmModal";
+import { useLanguageMode } from "@/providers/LanguageModeProvider";
 
 export function FileOpenButton() {
   const { status } = useSession();
+  const { setLangMode } = useLanguageMode();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDriveModalOpen, setIsDriveModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, title: string, message: string, type: 'success'|'error'|'info', onConfirm?: () => void}>({isOpen: false, title: '', message: '', type: 'info'});
@@ -34,24 +36,46 @@ export function FileOpenButton() {
       let listId = list?.id;
       let isNewList = false;
 
+      // Detect language from CSV header or character codes
+      let detectedLang: 'en' | 'ja' = 'en';
+      if (data.length > 0) {
+        const firstRow = data[0];
+        if ("일본어한자" in firstRow || "일본어발음" in firstRow || "한글 뜻과 한자별 한글독음" in firstRow) {
+          detectedLang = 'ja';
+        } else {
+          const firstWord = String(firstRow["Word"] || firstRow["일본어한자"] || Object.values(firstRow)[0] || "");
+          if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(firstWord)) {
+            detectedLang = 'ja';
+          }
+        }
+      }
+
       if (!listId) {
         listId = await db.wordLists.add({
           title: listTitle,
           createdAt: new Date(),
+          lang: detectedLang,
         });
         isNewList = true;
+      } else if (list && list.lang !== detectedLang) {
+        await db.wordLists.update(listId, { lang: detectedLang });
       }
 
       const parsedWords = data.map((row) => {
         const rawZipf = row["zipf_score"] || row["Zipf Score"];
         const zipfScore = rawZipf && !isNaN(parseFloat(rawZipf)) ? parseFloat(rawZipf) : undefined;
+        const word = String(row["Word"] || row["일본어한자"] || "").trim();
+        const partOfSpeech = String(row["Part of Speech"] || row["일본어발음"] || "").trim();
+        const meaningKo = String(row["Korean Meaning"] || row["한글 뜻과 한자별 한글독음"] || "").trim();
+        const exampleEn = String(row["Example Sentence"] || row["일본어예문"] || "").trim();
+        const exampleKo = String(row["Korean Translation"] || row["예문한글번역문"] || "").trim();
         return {
           listId: listId!,
-          word: row["Word"] || "",
-          partOfSpeech: row["Part of Speech"] || "",
-          meaningKo: row["Korean Meaning"] || "",
-          exampleEn: row["Example Sentence"] || "",
-          exampleKo: row["Korean Translation"] || "",
+          word,
+          partOfSpeech,
+          meaningKo,
+          exampleEn,
+          exampleKo,
           isLearned: false,
           testCount: 0,
           correctCount: 0,
@@ -81,6 +105,7 @@ export function FileOpenButton() {
           type: 'success',
           onConfirm: () => {
             setModalConfig(prev => ({...prev, isOpen: false}));
+            setLangMode(detectedLang);
             router.push("/settings");
           }
         });
