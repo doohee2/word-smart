@@ -445,6 +445,13 @@ export default function TestPage() {
                   </span>
                   <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
+                {isJa && currentWord.partOfSpeech && (
+                  <div className="mb-2">
+                    <span className="inline-block bg-primary text-on-primary text-title-md md:text-title-lg font-extrabold tracking-wide px-4 py-1 rounded-full shadow-sm">
+                      {currentWord.partOfSpeech}
+                    </span>
+                  </div>
+                )}
                 <div className="relative inline-block mb-2">
                   <h3 className="text-display-word-mobile md:text-display-word font-bold text-on-surface tracking-tight break-words">
                     {currentWord.word}
@@ -498,7 +505,7 @@ export default function TestPage() {
                       )}
                     >
                       <span>{mainMeaning}</span>
-                      {hanjaReading && <span className="text-xs font-normal opacity-80 mt-0.5 break-all">{hanjaReading}</span>}
+                      {hanjaReading && <span className="text-[10px] sm:text-[11px] font-medium text-on-surface-variant/90 mt-0.5 break-all leading-tight">{hanjaReading}</span>}
                     </button>
                   );
                 })}
