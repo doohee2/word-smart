@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Play, Volume2, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Volume2, VolumeX, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -13,8 +13,10 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { highlightExampleSentence } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { useAppSound } from "@/hooks/useAppSound";
 
 export default function StudyPage() {
+  const { isMuted, toggleMute, playStart, playClick, playCompleteWord, playSwipe, playMissionComplete } = useAppSound();
   const { langMode } = useLanguageMode();
   const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -175,11 +177,13 @@ export default function StudyPage() {
     completedWordsRef.current = [];
     incompleteWordsRef.current = [];
     setIsStarted(true);
+    playStart();
     setIsModalOpen(false);
   };
 
   const handleBack = () => {
     if (currentIndex <= 0) return;
+    playSwipe();
     setShowKoSentence(false);
     setDirection(-1);
     setCurrentIndex(prev => prev - 1);
@@ -187,6 +191,7 @@ export default function StudyPage() {
 
   const handleForward = () => {
     if (currentIndex >= maxReachedIndex || currentIndex >= studyQueue.length - 1) return;
+    playSwipe();
     setShowKoSentence(false);
     setDirection(1);
     setCurrentIndex(prev => prev + 1);
@@ -279,6 +284,7 @@ export default function StudyPage() {
         }).catch(err => console.error("History local save error:", err));
       }
 
+      playMissionComplete();
       setAlertConfig({ 
         isOpen: true, 
         message: `학습이 완료되었습니다!\n(세션 완료 단어: ${finalCompleted.length} / ${studyQueue.length})`, 
@@ -288,6 +294,11 @@ export default function StudyPage() {
       });
       return;
     } else {
+      if (learned) {
+        playCompleteWord();
+      } else {
+        playClick();
+      }
       setCurrentIndex(nextIndex);
     }
   };
@@ -401,8 +412,18 @@ export default function StudyPage() {
                 {studyQueue[currentIndex] ? listMap.get(studyQueue[currentIndex].listId)?.title || '단어장' : '단어장'}
               </span>
             </div>
-            <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">
-              {currentIndex + 1} / {studyQueue.length} 단어
+            <div className="flex items-center gap-2">
+              <div className="text-label-sm text-primary-container font-bold bg-surface-container py-1 px-3 rounded-full">
+                {currentIndex + 1} / {studyQueue.length} 단어
+              </div>
+              <button
+                onClick={toggleMute}
+                title={isMuted ? "소리 켜기" : "소리 끄기"}
+                aria-label="음소거 토글"
+                className="p-1.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
+              >
+                {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
+              </button>
             </div>
           </div>
 

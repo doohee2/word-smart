@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2 } from "lucide-react";
+import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -13,6 +13,7 @@ import { ConfirmModal } from "@/components/ConfirmModal";
 import { maskExampleHtml } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
+import { useAppSound } from "@/hooks/useAppSound";
 
 interface TestWord {
   wordData: Word;
@@ -20,6 +21,7 @@ interface TestWord {
 }
 
 export default function TestPage() {
+  const { isMuted, toggleMute, playStart, playSuccess, playError, playMissionComplete } = useAppSound();
   const { langMode } = useLanguageMode();
   const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -171,6 +173,7 @@ export default function TestPage() {
     correctWordsRef.current = [];
     incorrectWordsRef.current = [];
     setIsStarted(true);
+    playStart();
     setIsModalOpen(false);
   };
 
@@ -262,6 +265,7 @@ export default function TestPage() {
           }).catch(err => console.error("History local save error:", err));
         }
 
+        playMissionComplete();
         setAlertConfig({ 
           isOpen: true, 
           message: `테스트 완료!\n최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`, 
@@ -277,6 +281,8 @@ export default function TestPage() {
     if (feedback) return;
     
     const isCorrect = selectedMeaning === currentWord.meaningKo;
+    if (isCorrect) playSuccess();
+    else playError();
     setFeedback(isCorrect ? 'correct' : 'incorrect');
     setCorrectAnswer(currentWord.meaningKo);
     handleNextWord(isCorrect);
@@ -298,9 +304,11 @@ export default function TestPage() {
     const isCorrect = spellingInput.toLowerCase().trim() === currentWord.word.toLowerCase();
     
     if (isCorrect) {
+      playSuccess();
       setFeedback('correct');
       handleNextWord(true);
     } else {
+      playError();
       const wordLen = currentWord.word.length;
       const maxHints = Math.floor(wordLen / 2);
       
@@ -443,7 +451,17 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <ZipfBadge score={currentWord?.zipfScore} />
+                  <div className="flex items-center gap-2">
+                    <ZipfBadge score={currentWord?.zipfScore} />
+                    <button
+                      onClick={toggleMute}
+                      title={isMuted ? "소리 켜기" : "소리 끄기"}
+                      aria-label="음소거 토글"
+                      className="p-1 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
+                    >
+                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                    </button>
+                  </div>
                 </div>
                 {isJa && currentWord.partOfSpeech && (
                   <div className="mb-2">
@@ -524,7 +542,17 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <ZipfBadge score={currentWord?.zipfScore} />
+                  <div className="flex items-center gap-2">
+                    <ZipfBadge score={currentWord?.zipfScore} />
+                    <button
+                      onClick={toggleMute}
+                      title={isMuted ? "소리 켜기" : "소리 끄기"}
+                      aria-label="음소거 토글"
+                      className="p-1 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
+                    >
+                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                    </button>
+                  </div>
                 </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
                   {currentWord.meaningKo}
