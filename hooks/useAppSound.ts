@@ -33,12 +33,12 @@ export function useAppSound() {
     });
   }, []);
 
-  const soundOptions = { volume: 0.5 };
+  const soundOptions = { volume: 0.5, html5: true };
 
   // Pre-load all sound effects
   const [playStartSound] = useSound("/sounds/soundshelfstudio-ui-digital-tech-notification-549595.mp3", soundOptions);
-  const [playClickSound] = useSound("/sounds/soundshelfstudio-ui-switch-on-516359.mp3", soundOptions);
-  const [playCompleteSound] = useSound("/sounds/soundshelfstudio-ui-switch-off-516361.mp3", soundOptions);
+  const [playClickSound] = useSound("/sounds/soundshelfstudio-ui-switch-off-516361.mp3", soundOptions);
+  const [playCompleteSound] = useSound("/sounds/soundshelfstudio-ui-switch-on-516359.mp3", soundOptions);
   const [playSwipeSound] = useSound("/sounds/soundshelfstudio-ui-focus-519789.mp3", soundOptions);
   const [playSuccessSound] = useSound("/sounds/soundshelfstudio-ui-chime-success-sound-551841.mp3", soundOptions);
   const [playErrorSound] = useSound("/sounds/soundshelfstudio-ui-warning-beep-515666.mp3", soundOptions);

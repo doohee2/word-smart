@@ -420,23 +420,31 @@ export default function TestPage() {
       ) : (
         // --- Test Screen ---
         <div className="flex-1 flex flex-col w-full max-w-3xl mx-auto">
-          <section className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="w-full md:w-auto flex items-center gap-2 text-on-surface-variant">
+          <div className="w-full flex justify-between items-center mb-6 px-1">
+            <div className="flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
-              <span className="text-label-sm uppercase tracking-wider font-bold truncate max-w-[200px]">
+              <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
                 {testQueue[currentIndex] ? listMap.get(testQueue[currentIndex].wordData.listId)?.title || '단어장' : '단어장'}
               </span>
             </div>
-            
-            <div className="flex gap-4 w-full md:w-auto">
-              <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
-                <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">점수</p>
-                <p className="text-headline-md font-bold text-primary mt-1">{score} / {totalTested}</p>
-              </div>
-              <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
-                <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">정확도</p>
-                <p className="text-headline-md font-bold text-secondary mt-1">{accuracy}%</p>
-              </div>
+            <button
+              onClick={toggleMute}
+              title={isMuted ? "소리 켜기" : "소리 끄기"}
+              aria-label="음소거 토글"
+              className="p-1.5 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
+            >
+              {isMuted ? <VolumeX size={22} /> : <Volume2 size={22} />}
+            </button>
+          </div>
+
+          <section className="mb-6 flex gap-4 w-full justify-end">
+            <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
+              <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">점수</p>
+              <p className="text-headline-md font-bold text-primary mt-1">{score} / {totalTested}</p>
+            </div>
+            <div className="bg-surface-container-lowest shadow-sm rounded-xl p-3 flex-1 md:w-32 text-center border border-surface-variant">
+              <p className="text-label-sm text-on-surface-variant uppercase tracking-wider font-bold">정확도</p>
+              <p className="text-headline-md font-bold text-secondary mt-1">{accuracy}%</p>
             </div>
           </section>
 
@@ -451,17 +459,7 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <ZipfBadge score={currentWord?.zipfScore} />
-                    <button
-                      onClick={toggleMute}
-                      title={isMuted ? "소리 켜기" : "소리 끄기"}
-                      aria-label="음소거 토글"
-                      className="p-1 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
-                    >
-                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                    </button>
-                  </div>
+                  <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
                 {isJa && currentWord.partOfSpeech && (
                   <div className="mb-2">
@@ -542,17 +540,7 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <div className="flex items-center gap-2">
-                    <ZipfBadge score={currentWord?.zipfScore} />
-                    <button
-                      onClick={toggleMute}
-                      title={isMuted ? "소리 켜기" : "소리 끄기"}
-                      aria-label="음소거 토글"
-                      className="p-1 text-on-surface-variant hover:text-primary transition-colors focus:outline-none rounded-full"
-                    >
-                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                    </button>
-                  </div>
+                  <ZipfBadge score={currentWord?.zipfScore} />
                 </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
                   {currentWord.meaningKo}
