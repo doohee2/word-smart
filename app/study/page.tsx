@@ -137,8 +137,8 @@ export default function StudyPage() {
       pool = pool.filter(w => {
         // Zipf가 아예 없는 경우(undefined, 0, null)는 무조건 포함 (하위 호환성)
         if (w.zipfScore === undefined || w.zipfScore === null || w.zipfScore === 0) return true;
-        // Zipf 값이 있는 경우 threshold보다 작은(어려운) 단어만 포함
-        return w.zipfScore < threshold;
+        // 어려운 단어 선택 시 4.0 이하(★★, ★★★) 포함, 직접 입력 시 미만
+        return zipfFilter === 'hard' ? w.zipfScore <= threshold : w.zipfScore < threshold;
       });
     }
 
@@ -484,7 +484,11 @@ export default function StudyPage() {
                 )}
                 onClick={() => !isRevealed && setIsRevealed(true)}
               >
-                <ZipfBadge score={currentWord?.zipfScore} className="absolute top-6 left-6" />
+                <ZipfBadge 
+                  score={currentWord?.zipfScore} 
+                  listTitle={currentWord ? listMap.get(currentWord.listId)?.title : undefined}
+                  className="absolute top-6 left-6" 
+                />
                 
                 <button 
                   onClick={(e) => { e.stopPropagation(); playAudio(); }}
@@ -685,7 +689,7 @@ export default function StudyPage() {
                       className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
                     >
                       <option value="all">전체 단어 (기본)</option>
-                      <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
+                      <option value="hard">어려운 단어 (Zipf 4.0 이하 - ★★, ★★★)</option>
                       <option value="custom">직접 입력 (입력값 미만)</option>
                     </select>
                     

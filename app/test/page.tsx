@@ -131,7 +131,7 @@ export default function TestPage() {
       const threshold = zipfFilter === 'hard' ? 4.0 : (typeof customZipf === 'number' ? customZipf : parseFloat(customZipf) || 4.0);
       pool = pool.filter(w => {
         if (w.zipfScore === undefined || w.zipfScore === null || w.zipfScore === 0) return true;
-        return w.zipfScore < threshold;
+        return zipfFilter === 'hard' ? w.zipfScore <= threshold : w.zipfScore < threshold;
       });
     }
 
@@ -459,7 +459,10 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <ZipfBadge score={currentWord?.zipfScore} />
+                  <ZipfBadge 
+                    score={currentWord?.zipfScore} 
+                    listTitle={currentWord ? listMap.get(currentWord.listId)?.title : undefined}
+                  />
                 </div>
                 {isJa && currentWord.partOfSpeech && (
                   <div className="mb-2">
@@ -540,7 +543,10 @@ export default function TestPage() {
                   <span className="inline-block px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-label-sm font-bold">
                     문제 {totalTested + 1}
                   </span>
-                  <ZipfBadge score={currentWord?.zipfScore} />
+                  <ZipfBadge 
+                    score={currentWord?.zipfScore} 
+                    listTitle={currentWord ? listMap.get(currentWord.listId)?.title : undefined}
+                  />
                 </div>
                 <h3 className="text-display-word-mobile md:text-display-word font-bold text-primary mb-2 tracking-tight">
                   {currentWord.meaningKo}
@@ -674,7 +680,7 @@ export default function TestPage() {
                       className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-3 text-body-lg font-bold text-on-surface outline-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer"
                     >
                       <option value="all">전체 단어 (기본)</option>
-                      <option value="hard">어려운 단어 (Zipf 4.0 미만)</option>
+                      <option value="hard">어려운 단어 (Zipf 4.0 이하 - ★★, ★★★)</option>
                       <option value="custom">직접 입력 (입력값 미만)</option>
                     </select>
                     

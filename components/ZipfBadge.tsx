@@ -3,22 +3,44 @@ import clsx from "clsx";
 
 interface ZipfBadgeProps {
   score?: number | null;
+  listTitle?: string;
   className?: string;
 }
 
-export function ZipfBadge({ score, className }: ZipfBadgeProps) {
+export function ZipfBadge({ score, listTitle, className }: ZipfBadgeProps) {
   const isValid = score !== undefined && score !== null && score > 0;
   
   let starsCount = 1;
-  const isGray = !isValid;
+  let isGray = !isValid;
+  let labelText: string | undefined = undefined;
 
   if (isValid) {
-    if (score! >= 4.0) {
+    labelText = score!.toFixed(1);
+    if (score! > 4.0) {
       starsCount = 1;
-    } else if (score! >= 3.0) {
+    } else if (score! > 2.5) {
       starsCount = 2;
     } else {
       starsCount = 3;
+    }
+  } else if (listTitle) {
+    const upperTitle = listTitle.toUpperCase();
+    if (upperTitle.includes("N1")) {
+      starsCount = 4;
+      isGray = false;
+      labelText = "N1";
+    } else if (upperTitle.includes("N2") || upperTitle.includes("N3")) {
+      starsCount = 3;
+      isGray = false;
+      labelText = upperTitle.includes("N2") ? "N2" : "N3";
+    } else if (upperTitle.includes("N4")) {
+      starsCount = 2;
+      isGray = false;
+      labelText = "N4";
+    } else if (upperTitle.includes("N5")) {
+      starsCount = 1;
+      isGray = false;
+      labelText = "N5";
     }
   }
 
@@ -39,8 +61,8 @@ export function ZipfBadge({ score, className }: ZipfBadgeProps) {
           />
         ))}
       </div>
-      {isValid && (
-        <span>{score!.toFixed(1)}</span>
+      {labelText && (
+        <span>{labelText}</span>
       )}
     </div>
   );
