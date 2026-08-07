@@ -506,19 +506,23 @@ export default function StudyPage() {
                   </span>
                 </div>
                 
-                <h2 className={clsx(
+                <h2 
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className={clsx(
                   "text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-10 md:px-16 transition-all duration-300",
-                  (!isRevealed && primarySide === 'korean') ? "blur-md opacity-20 select-none text-transparent" : ""
+                  (!isRevealed && primarySide === 'korean') ? "blur-md opacity-20 select-none text-transparent" : "select-text cursor-auto"
                 )}>
                   {currentWord?.word}
                 </h2>
                 
                 <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
                 
-                <div className={clsx(
+                <div 
+                  onPointerDownCapture={(e) => e.stopPropagation()}
+                  className={clsx(
                   "mb-8 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-2",
                   isJa ? "text-headline-md md:text-headline-lg text-primary" : "text-headline-lg text-primary",
-                  (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : ""
+                  (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : "select-text cursor-auto"
                 )}>
                   {(() => {
                     const text = currentWord?.meaningKo || "";
@@ -553,7 +557,10 @@ export default function StudyPage() {
                       >
                         <Volume2 size={24} />
                       </button>
-                      <div>
+                      <div 
+                        className="select-text cursor-auto"
+                        onPointerDownCapture={(e) => e.stopPropagation()}
+                      >
                         {currentWord.exampleEn && (
                           <p 
                             className="text-body-md text-on-surface mb-2" 
