@@ -40,13 +40,17 @@ word-smart/
 │   ├── InfoModal.tsx                    # 앱 정보 안내 모달
 │   ├── LanguageToggle.tsx                 # 설정 창 전용 영어/일본어 모드 전환 라디오 뷰
 │   ├── Logo.tsx                         # 반응형 앱 타이틀 및 다크모드 지원 로고 컴포넌트
-│   ├── Navigation.tsx                   # MD3 스타일 네비게이션 (진행 중 이탈 방지 로직 적용)
-│   └── Providers.tsx                    # NextAuth, Theme, StudySession 프로바이더 래퍼
+│   ├── Navigation.tsx                   # MD3 스타일 네비게이션 (진행 중 이탈 방지 로직 적용, 음성 설정 모달 진입점 포함)
+│   ├── Providers.tsx                    # NextAuth, Theme, StudySession, TTSSettings 프로바이더 래퍼
+│   └── TTSSettingsModal.tsx             # (Phase 9) 전역 TTS 및 시스템 사운드 설정 모달
+├── hooks/
+│   └── useAppSound.ts                   # 시스템 사운드(효과음) 재생 및 음소거/볼륨 상태 연동 훅
 ├── lib/
 │   └── db.ts                            # Dexie.js 데이터베이스 스키마 (`isActive`, `testCount` 등)
 ├── providers/
 │   ├── LanguageModeProvider.tsx         # 전역 언어 모드(영어/일본어) 상태 관리 훅
-│   └── StudySessionProvider.tsx         # 전역 학습 진행 상태 관리 훅 (앱 이탈 방지용)
+│   ├── StudySessionProvider.tsx         # 전역 학습 진행 상태 관리 훅 (앱 이탈 방지용)
+│   └── TTSSettingsProvider.tsx          # (Phase 9) TTS 속도/음높이/볼륨, 효과음 설정 전역 상태 관리 훅
 ├── public/
 │   ├── icons/                           # PWA 아이콘 모음 (192x192, 512x512)
 │   └── manifest.json                    # PWA 매니페스트 파일 (앱 이름: 워드 스마트)
@@ -137,6 +141,15 @@ word-smart/
   * **100% 객관식 출제 & TTS 로케일 연동**: 한자 스펠링 주관식 입력을 원천 방지하여 일본어 테스트 시에는 무조건 8지선다 객관식(MCQ)으로 출제되며, Web Speech API 발음 재생 시 `ja-JP` 로케일을 통해 히라가на 발음과 일본어 예문을 낭독합니다.
   * **한자 어간 스마트 하이라이팅**: 일본어 예문 내에서 동사/형용사 활용형이 등장해도(`行く` ➡️ `行きます`), 핵심 한자 어간 부분(`行`)을 정확히 분리해 굵은 폰트(Bold)로 강조하는 하이라이팅 알고리즘을 추가했습니다.
   * **PDF 인쇄 모드 분리 (`app/pdf/page.tsx`)**: 한글/영문 CDN 폰트 기반인 jsPDF 라이브러리의 한자·히라гана 렌더링 미지원 특성을 명쾌히 안내하고, 일본어 모드로 PDF 진입 시 사용을 제한하며 설정 메뉴에서 영어 모드로 전환할 것을 시각적으로 유도합니다.
+
+### Phase 9: TTS 및 시스템 사운드 전역 관리 (Audio Control)
+* **전역 설정 모달 및 상태 연동 (`components/TTSSettingsModal.tsx`, `providers/TTSSettingsProvider.tsx`):**
+  * **TTS 상세 제어**: 발화 속도(0.5~2.0), 음높이(0.0~2.0), TTS 볼륨(0~100%) 및 브라우저에서 제공하는 영어 화자 억양(Voice URI)을 선택할 수 있는 슬라이더와 드롭다운을 제공합니다.
+  * **효과음 통합 제어**: 단어 학습 및 테스트 중 재생되는 시스템 효과음(`useAppSound.ts`)의 음소거 여부와 볼륨 크기(0~100%)를 모달에서 한 번에 설정할 수 있습니다.
+  * **로컬 스토리지 동기화**: 모든 설정값은 `word_smart_tts_settings`라는 키로 `localStorage`에 자동 저장되며, `TTSSettingsProvider`를 통해 앱 전역에서 렌더링을 차단하지 않고 상태를 실시간으로 공유합니다.
+* **학습 UX 고도화 (Auto TTS):**
+  * **자동 재생 모드**: '자동 TTS 모드' 체크 시, 학습 모드(`app/study/page.tsx`)에서 플래시카드를 좌우로 스와이프하여 넘길 때마다 화면 터치 없이 즉각적으로 단어 발음이 자동 재생되는 편의 기능을 도입했습니다.
+  * **터치 영역 확장**: 예문 발음 듣기 아이콘(`Volume2`)의 터치 인식 범위(Hit Area)를 좌측 여백 전체로 대폭 확장하여, 모바일 환경에서 오타(번역 토글 오작동)를 방지하고 쾌적한 학습이 가능하도록 Flex 레이아웃을 리팩토링했습니다.
 
 ## 5. 개선 필요사항 및 퓨처 워크 (Future Work)
 

@@ -14,9 +14,11 @@ import { highlightExampleSentence } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
 import { useAppSound } from "@/hooks/useAppSound";
+import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
 export default function StudyPage() {
   const { isMuted, toggleMute, playStart, playClick, playCompleteWord, playSwipe, playMissionComplete } = useAppSound();
+  const { settings } = useTTSSettings();
   const { langMode } = useLanguageMode();
   const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -323,11 +325,25 @@ export default function StudyPage() {
     }),
   };
 
+  const applyTTSSettings = (utterance: SpeechSynthesisUtterance, forceEnglish: boolean = false) => {
+    utterance.rate = settings.ttsRate;
+    utterance.pitch = settings.ttsPitch;
+    utterance.volume = settings.ttsVolume;
+    if ((!isJa || forceEnglish) && settings.ttsVoiceURI) {
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    }
+  };
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      applyTTSSettings(utterance);
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -337,9 +353,23 @@ export default function StudyPage() {
     if (currentWord?.exampleEn && 'speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      applyTTSSettings(utterance, isJa); // 예문은 일본어 모드라도 영어가 있을 수 있으므로 (단, 현재는 영어예문만 TTS)
+      // wait, isJa 인데 영어 예문이면 en-US 로 읽어야 하는가? 
+      // 기존 코드는 isJa ? 'ja-JP' : 'en-US' 였습니다. 
+      // 따라서 기존 로직을 최대한 유지하되, 목소리 설정은 영어인 경우 적용됩니다.
       window.speechSynthesis.speak(utterance);
     }
   };
+
+  // Auto TTS effect
+  useEffect(() => {
+    if (settings.autoTTS && studyQueue.length > 0 && !isRevealed) {
+      const timer = setTimeout(() => {
+        playAudio();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [currentIndex, studyQueue, isRevealed, settings.autoTTS]);
 
   const adjustCount = (delta: number) => {
     setStudyCount(prev => {

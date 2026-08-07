@@ -14,6 +14,7 @@ import { maskExampleHtml } from "@/lib/textUtils";
 import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
 import { useAppSound } from "@/hooks/useAppSound";
+import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
 interface TestWord {
   wordData: Word;
@@ -22,6 +23,7 @@ interface TestWord {
 
 export default function TestPage() {
   const { isMuted, toggleMute, playStart, playSuccess, playError, playMissionComplete } = useAppSound();
+  const { settings } = useTTSSettings();
   const { langMode } = useLanguageMode();
   const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
@@ -293,6 +295,16 @@ export default function TestPage() {
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      utterance.rate = settings.ttsRate;
+      utterance.pitch = settings.ttsPitch;
+      utterance.volume = settings.ttsVolume;
+      if (!isJa && settings.ttsVoiceURI) {
+        const voices = window.speechSynthesis.getVoices();
+        const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+      }
       window.speechSynthesis.speak(utterance);
     }
   };

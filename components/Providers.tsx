@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import React, { useState } from "react";
 import { StudySessionProvider } from "@/providers/StudySessionProvider";
 import { LanguageModeProvider } from "@/providers/LanguageModeProvider";
+import { TTSSettingsProvider } from "@/providers/TTSSettingsProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -28,9 +29,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProvider refetchInterval={0} refetchOnWindowFocus={false} refetchWhenOffline={false}>
           <LanguageModeProvider>
-            <StudySessionProvider>
-              {children}
-            </StudySessionProvider>
+            <TTSSettingsProvider>
+              <StudySessionProvider>
+                {children}
+              </StudySessionProvider>
+            </TTSSettingsProvider>
           </LanguageModeProvider>
         </SessionProvider>
       </ThemeProvider>

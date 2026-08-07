@@ -1,39 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
 import useSound from "use-sound";
-
-const MUTE_KEY = "word_smart_muted";
+import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
 export function useAppSound() {
-  const [isMuted, setIsMuted] = useState<boolean>(false);
-
-  // Initialize from localStorage and listen to mute toggle events across components
-  useEffect(() => {
-    const stored = localStorage.getItem(MUTE_KEY);
-    if (stored !== null) {
-      setIsMuted(stored === "true");
-    }
-
-    const handleMuteChange = () => {
-      const current = localStorage.getItem(MUTE_KEY);
-      setIsMuted(current === "true");
-    };
-
-    window.addEventListener("word_smart_mute_change", handleMuteChange);
-    return () => window.removeEventListener("word_smart_mute_change", handleMuteChange);
-  }, []);
+  const { settings, updateSettings } = useTTSSettings();
+  const isMuted = settings.isSfxMuted;
+  const volume = settings.sfxVolume;
 
   const toggleMute = useCallback(() => {
-    setIsMuted((prev) => {
-      const next = !prev;
-      localStorage.setItem(MUTE_KEY, String(next));
-      window.dispatchEvent(new Event("word_smart_mute_change"));
-      return next;
-    });
-  }, []);
+    updateSettings({ isSfxMuted: !isMuted });
+  }, [isMuted, updateSettings]);
 
-  const soundOptions = { volume: 0.5, html5: true };
+  const soundOptions = { volume, html5: true };
 
   // Pre-load all sound effects
   const [playStartSound] = useSound("/sounds/soundshelfstudio-ui-digital-tech-notification-549595.mp3", soundOptions);

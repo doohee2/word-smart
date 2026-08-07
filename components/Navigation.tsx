@@ -3,17 +3,19 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { BookOpen, FileText, Settings, PlaySquare, History } from "lucide-react";
+import { BookOpen, FileText, Settings, PlaySquare, History, AudioLines } from "lucide-react";
 import clsx from "clsx";
 import { Logo } from "./Logo";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "./ConfirmModal";
+import { TTSSettingsModal } from "./TTSSettingsModal";
 
 export function Navigation() {
   const pathname = usePathname();
   const router = useRouter();
   const { isActiveSession, setIsActiveSession } = useStudySession();
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, targetHref: string}>({isOpen: false, targetHref: ''});
+  const [isTTSModalOpen, setIsTTSModalOpen] = useState(false);
 
   const handleLinkClick = (e: React.MouseEvent, href: string) => {
     if (isActiveSession && pathname !== href) {
@@ -33,6 +35,7 @@ export function Navigation() {
     { href: "/test", label: "테스트", icon: PlaySquare },
     { href: "/history", label: "기록", icon: History },
     { href: "/pdf", label: "PDF 출력", icon: FileText },
+    { href: "#tts-settings", label: "음성 설정", icon: AudioLines, isAction: true },
     { href: "/settings", label: "설정", icon: Settings },
   ];
 
@@ -49,6 +52,20 @@ export function Navigation() {
           {links.map((link) => {
             const isActive = pathname === link.href || (pathname === '/' && link.href === '/study');
             const Icon = link.icon;
+            
+            if (link.isAction) {
+              return (
+                <button
+                  key={link.label}
+                  onClick={() => setIsTTSModalOpen(true)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ease-in-out text-on-surface-variant hover:bg-surface-variant w-full text-left"
+                >
+                  <Icon size={24} className="stroke-2" />
+                  <span className="text-label-sm">{link.label}</span>
+                </button>
+              );
+            }
+
             return (
               <Link
                 key={link.href}
@@ -74,6 +91,24 @@ export function Navigation() {
         {links.map((link) => {
           const isActive = pathname === link.href || (pathname === '/' && link.href === '/study');
           const Icon = link.icon;
+          
+          if (link.isAction) {
+            return (
+              <button
+                key={link.label}
+                onClick={() => setIsTTSModalOpen(true)}
+                className="flex flex-col items-center justify-center w-full max-w-[80px] h-full gap-1"
+              >
+                <div className="flex items-center justify-center w-16 h-8 rounded-full transition-colors text-on-surface-variant hover:bg-surface-variant">
+                  <Icon size={22} className="stroke-2" />
+                </div>
+                <span className="text-[11px] whitespace-nowrap transition-colors text-on-surface-variant">
+                  {link.label}
+                </span>
+              </button>
+            );
+          }
+
           return (
             <Link
               key={link.href}
@@ -109,6 +144,11 @@ export function Navigation() {
         onConfirm={confirmNavigation}
         confirmText="이동하기"
         cancelText="계속하기"
+      />
+
+      <TTSSettingsModal 
+        isOpen={isTTSModalOpen} 
+        onClose={() => setIsTTSModalOpen(false)} 
       />
     </>
   );
