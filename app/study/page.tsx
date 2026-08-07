@@ -366,7 +366,7 @@ export default function StudyPage() {
     if (settings.autoTTS && studyQueue.length > 0 && !isRevealed) {
       const timer = setTimeout(() => {
         playAudio();
-      }, 100);
+      }, 500); // 0.5초 딜레이 추가 (효과음 겹침 방지)
       return () => clearTimeout(timer);
     }
   }, [currentIndex, studyQueue, isRevealed, settings.autoTTS]);

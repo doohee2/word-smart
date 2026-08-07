@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { X, AudioLines, Settings2, PlayCircle, Volume2, Mic2 } from "lucide-react";
+import { X, AudioLines, PlayCircle, Volume2, Mic2 } from "lucide-react";
 import clsx from "clsx";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
@@ -29,7 +29,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
-      <div className="bg-surface-container-high rounded-3xl p-6 w-full max-w-md shadow-lg flex flex-col gap-6 max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface-container-high rounded-3xl p-5 w-full max-w-md shadow-lg flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary-container text-on-primary-container rounded-full">
@@ -45,14 +45,14 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
           </button>
         </div>
 
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-4">
           {/* Section: TTS 목소리 */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             <h3 className="text-label-lg font-bold flex items-center gap-2 text-primary">
               <Mic2 size={18} /> 영어 발음 억양 (Voice)
             </h3>
             <select
-              className="w-full p-3 rounded-xl bg-surface border border-outline text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              className="w-full p-2.5 rounded-xl bg-surface border border-outline text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
               value={settings.ttsVoiceURI}
               onChange={(e) => updateSettings({ ttsVoiceURI: e.target.value })}
             >
@@ -66,11 +66,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
           </div>
 
           {/* Section: TTS 세부 설정 */}
-          <div className="flex flex-col gap-4 bg-surface-container rounded-2xl p-4 border border-outline-variant/30">
-            <h3 className="text-label-lg font-bold flex items-center gap-2 text-on-surface">
-              <Settings2 size={18} /> 음성 읽기 세부 설정
-            </h3>
-            
+          <div className="flex flex-col gap-3 bg-surface-container rounded-2xl p-3 border border-outline-variant/30">
             <div className="flex flex-col gap-1">
               <div className="flex justify-between text-label-sm">
                 <span>발화 속도 (Rate)</span>
@@ -112,42 +108,36 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
           </div>
 
           {/* Section: 자동 재생 모드 */}
-          <label className="flex items-center gap-3 p-4 bg-surface-container rounded-2xl border border-outline-variant/30 cursor-pointer hover:bg-surface-variant/50 transition-colors">
+          <label className="flex items-center gap-3 p-3 bg-surface-container rounded-2xl border border-outline-variant/30 cursor-pointer hover:bg-surface-variant/50 transition-colors">
             <input 
               type="checkbox" 
               checked={settings.autoTTS}
               onChange={(e) => updateSettings({ autoTTS: e.target.checked })}
-              className="w-5 h-5 accent-primary rounded cursor-pointer"
+              className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
             />
-            <div className="flex flex-col">
-              <span className="text-body-lg font-bold text-on-surface flex items-center gap-2">
-                <PlayCircle size={18} /> 자동 TTS 모드
-              </span>
-              <span className="text-label-sm text-on-surface-variant">
-                학습 시 카드를 넘길 때 단어를 자동으로 읽어줍니다.
-              </span>
-            </div>
+            <span className="text-body-lg font-bold text-on-surface flex items-center gap-2">
+              <PlayCircle size={18} /> 단어 자동 읽기
+            </span>
           </label>
 
           {/* Section: 사운드 효과음 설정 */}
-          <div className="flex flex-col gap-4 p-4 bg-surface-container rounded-2xl border border-outline-variant/30">
+          <div className="flex flex-col gap-2 p-3 bg-surface-container rounded-2xl border border-outline-variant/30">
             <label className="flex items-center gap-3 cursor-pointer">
               <input 
                 type="checkbox" 
                 checked={!settings.isSfxMuted}
                 onChange={(e) => updateSettings({ isSfxMuted: !e.target.checked })}
-                className="w-5 h-5 accent-primary rounded cursor-pointer"
+                className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
               />
               <span className="text-body-lg font-bold text-on-surface flex items-center gap-2">
-                <Volume2 size={18} /> 시스템 효과음 켜기
+                <Volume2 size={18} /> 효과음 켜기
+                <span className="text-label-sm font-mono text-primary bg-primary-container px-2 py-0.5 rounded-md ml-1">
+                  {Math.round(settings.sfxVolume * 100)}%
+                </span>
               </span>
             </label>
 
-            <div className={clsx("flex flex-col gap-1 transition-opacity duration-300 pl-8", settings.isSfxMuted ? "opacity-50 pointer-events-none" : "opacity-100")}>
-              <div className="flex justify-between text-label-sm">
-                <span>효과음 볼륨</span>
-                <span className="font-mono">{Math.round(settings.sfxVolume * 100)}%</span>
-              </div>
+            <div className={clsx("flex flex-col transition-opacity duration-300 pl-8", settings.isSfxMuted ? "opacity-50 pointer-events-none" : "opacity-100")}>
               <input 
                 type="range" min="0.0" max="1.0" step="0.1" 
                 value={settings.sfxVolume} 
@@ -161,7 +151,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
 
         <button 
           onClick={onClose}
-          className="mt-2 w-full py-3 bg-primary text-on-primary rounded-xl text-label-lg font-bold hover:bg-primary/90 transition-colors"
+          className="mt-1 w-full py-2.5 bg-primary text-on-primary rounded-xl text-label-lg font-bold hover:bg-primary/90 transition-colors"
         >
           확인
         </button>
