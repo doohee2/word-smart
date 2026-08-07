@@ -543,41 +543,60 @@ export default function StudyPage() {
 
                 {(currentWord?.exampleEn || currentWord?.exampleKo) && (
                   <div 
-                    className="w-full mt-auto p-4 md:p-6 bg-surface-container rounded-2xl cursor-pointer hover:bg-surface-variant transition-colors text-left group"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowKoSentence(!showKoSentence);
-                    }}
+                    className="w-full mt-auto bg-surface-container rounded-2xl overflow-hidden hover:bg-surface-variant transition-colors text-left group"
                   >
-                    <div className="flex gap-4 items-start">
-                      <button 
-                        onClick={playExampleAudio}
-                        className="text-outline hover:text-primary mt-1 shrink-0 transition-colors"
-                        title="예문 듣기"
-                      >
-                        <Volume2 size={24} />
-                      </button>
+                    <div className="flex items-stretch">
+                      {/* Left TTS Area */}
                       <div 
-                        className="select-text cursor-auto"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playExampleAudio(e);
+                        }}
+                        className="pl-4 md:pl-6 pt-4 md:pt-6 pb-2 pr-4 cursor-pointer flex items-start"
+                      >
+                        <button 
+                          className="text-outline group-hover:text-primary mt-1 shrink-0 transition-colors pointer-events-none"
+                          title="예문 듣기"
+                        >
+                          <Volume2 size={24} />
+                        </button>
+                      </div>
+
+                      {/* Right Text Area */}
+                      <div 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowKoSentence(!showKoSentence);
+                        }}
+                        className="pr-4 md:pr-6 pt-4 md:pt-6 pb-2 select-text cursor-auto flex-1 flex flex-col justify-start"
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       >
-                        {currentWord.exampleEn && (
-                          <p 
-                            className="text-body-md text-on-surface mb-2" 
-                            dangerouslySetInnerHTML={{ 
-                              __html: highlightExampleSentence(currentWord.word, currentWord.exampleEn)
-                            }} 
-                          />
-                        )}
-                        <p className={clsx(
-                          "text-label-sm text-on-surface-variant transition-all duration-300 overflow-hidden",
-                          showKoSentence ? "opacity-100 h-auto mt-2" : "opacity-0 h-0"
-                        )}>
-                          {currentWord.exampleKo}
-                        </p>
+                        <div>
+                          {currentWord.exampleEn && (
+                            <p 
+                              className="text-body-md text-on-surface mb-2" 
+                              dangerouslySetInnerHTML={{ 
+                                __html: highlightExampleSentence(currentWord.word, currentWord.exampleEn)
+                              }} 
+                            />
+                          )}
+                          <p className={clsx(
+                            "text-label-sm text-on-surface-variant transition-all duration-300 overflow-hidden",
+                            showKoSentence ? "opacity-100 h-auto mt-2" : "opacity-0 h-0"
+                          )}>
+                            {currentWord.exampleKo}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="text-center mt-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                    
+                    <div 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowKoSentence(!showKoSentence);
+                      }}
+                      className="text-center pb-4 md:pb-6 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    >
                       <span className="text-[10px] text-outline font-bold uppercase tracking-widest">
                         터치하여 번역 {showKoSentence ? "숨기기" : "보기"}
                       </span>
