@@ -290,8 +290,11 @@ export default function TestPage() {
     handleNextWord(isCorrect);
   };
 
+  const [isSpeakingWord, setIsSpeakingWord] = useState(false);
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
+      if (window.speechSynthesis.speaking) return;
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
@@ -305,6 +308,11 @@ export default function TestPage() {
           utterance.voice = selectedVoice;
         }
       }
+      
+      utterance.onstart = () => setIsSpeakingWord(true);
+      utterance.onend = () => setIsSpeakingWord(false);
+      utterance.onerror = () => setIsSpeakingWord(false);
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -490,9 +498,12 @@ export default function TestPage() {
                   <button 
                     onClick={(e) => { e.stopPropagation(); playAudio(); }}
                     aria-label="발음 듣기" 
-                    className="absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
+                    className={clsx(
+                      "absolute -right-14 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full transition-colors focus:ring-2 focus:ring-primary outline-none",
+                      isSpeakingWord ? "bg-primary text-on-primary" : "bg-surface-container hover:bg-surface-variant text-primary"
+                    )}
                   >
-                    <Volume2 size={20} />
+                    <Volume2 size={20} className={clsx(isSpeakingWord && "animate-pulse")} />
                   </button>
                 </div>
                 
@@ -584,9 +595,12 @@ export default function TestPage() {
                     onClick={(e) => { e.preventDefault(); playAudio(); }}
                     type="button"
                     aria-label="발음 듣기" 
-                    className="ml-3 shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
+                    className={clsx(
+                      "ml-3 shrink-0 w-10 h-10 flex items-center justify-center rounded-full transition-colors focus:ring-2 focus:ring-primary outline-none",
+                      isSpeakingWord ? "bg-primary text-on-primary" : "bg-surface-container hover:bg-surface-variant text-primary"
+                    )}
                   >
-                    <Volume2 size={20} />
+                    <Volume2 size={20} className={clsx(isSpeakingWord && "animate-pulse")} />
                   </button>
                 </div>
 

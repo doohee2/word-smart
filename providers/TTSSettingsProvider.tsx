@@ -40,6 +40,9 @@ export function TTSSettingsProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         initialSettings = { ...initialSettings, ...JSON.parse(saved) };
+        if (initialSettings.ttsRate > 1.5) {
+          initialSettings.ttsRate = 1.5;
+        }
       } catch (e) {
         console.error("Failed to parse TTS settings", e);
       }

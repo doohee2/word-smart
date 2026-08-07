@@ -73,7 +73,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
                 <span className="font-mono">{settings.ttsRate.toFixed(1)}x</span>
               </div>
               <input 
-                type="range" min="0.5" max="2.0" step="0.1" 
+                type="range" min="0.5" max="1.5" step="0.1" 
                 value={settings.ttsRate} 
                 onChange={(e) => updateSettings({ ttsRate: parseFloat(e.target.value) })}
                 className="w-full accent-primary"

@@ -83,6 +83,8 @@ export default function StudyPage() {
   const [sessionAnswers, setSessionAnswers] = useState<{ [index: number]: boolean }>({});
   const [isRevealed, setIsRevealed] = useState(false);
   const [primarySide, setPrimarySide] = useState<'english' | 'korean'>('english');
+  const [isSpeakingWord, setIsSpeakingWord] = useState(false);
+  const [isSpeakingExample, setIsSpeakingExample] = useState(false);
   const { setIsActiveSession } = useStudySession();
 
   // Reset state on new card
@@ -340,10 +342,16 @@ export default function StudyPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
+      if (window.speechSynthesis.speaking) return;
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance);
+      
+      utterance.onstart = () => setIsSpeakingWord(true);
+      utterance.onend = () => setIsSpeakingWord(false);
+      utterance.onerror = () => setIsSpeakingWord(false);
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -351,12 +359,15 @@ export default function StudyPage() {
   const playExampleAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (currentWord?.exampleEn && 'speechSynthesis' in window) {
+      if (window.speechSynthesis.speaking) return;
       const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
-      applyTTSSettings(utterance, isJa); // 예문은 일본어 모드라도 영어가 있을 수 있으므로 (단, 현재는 영어예문만 TTS)
-      // wait, isJa 인데 영어 예문이면 en-US 로 읽어야 하는가? 
-      // 기존 코드는 isJa ? 'ja-JP' : 'en-US' 였습니다. 
-      // 따라서 기존 로직을 최대한 유지하되, 목소리 설정은 영어인 경우 적용됩니다.
+      applyTTSSettings(utterance, isJa);
+      
+      utterance.onstart = () => setIsSpeakingExample(true);
+      utterance.onend = () => setIsSpeakingExample(false);
+      utterance.onerror = () => setIsSpeakingExample(false);
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -523,9 +534,14 @@ export default function StudyPage() {
                 <button 
                   onClick={(e) => { e.stopPropagation(); playAudio(); }}
                   aria-label="발음 듣기" 
-                  className="absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-variant text-primary transition-colors focus:ring-2 focus:ring-primary outline-none"
+                  className={clsx(
+                    "absolute top-6 right-6 w-12 h-12 flex items-center justify-center rounded-full transition-colors focus:ring-2 focus:ring-primary outline-none",
+                    isSpeakingWord
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container hover:bg-surface-variant text-primary"
+                  )}
                 >
-                  <Volume2 size={24} />
+                  <Volume2 size={24} className={clsx(isSpeakingWord && "animate-pulse")} />
                 </button>
                 
                 <div className="mb-2">
@@ -585,7 +601,10 @@ export default function StudyPage() {
                         className="pl-4 md:pl-6 pt-4 md:pt-6 pb-2 pr-4 cursor-pointer flex items-start"
                       >
                         <button 
-                          className="text-outline group-hover:text-primary mt-1 shrink-0 transition-colors pointer-events-none"
+                          className={clsx(
+                            "mt-1 shrink-0 transition-colors pointer-events-none",
+                            isSpeakingExample ? "text-primary animate-pulse" : "text-outline group-hover:text-primary"
+                          )}
                           title="예문 듣기"
                         >
                           <Volume2 size={24} />
