@@ -292,9 +292,23 @@ export default function TestPage() {
 
   const [isSpeakingWord, setIsSpeakingWord] = useState(false);
 
+  // Chrome/Edge speechSynthesis 큐 멈춤 방지 keepAlive
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, []);
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      if (window.speechSynthesis.speaking) return;
+      // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
+      window.speechSynthesis.cancel();
+      setIsSpeakingWord(false);
+
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
@@ -313,7 +327,10 @@ export default function TestPage() {
       utterance.onend = () => setIsSpeakingWord(false);
       utterance.onerror = () => setIsSpeakingWord(false);
 
-      window.speechSynthesis.speak(utterance);
+      // cancel() 직후 speak()를 호출하면 무시되는 브라우저 버그 방지
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 50);
     }
   };
 

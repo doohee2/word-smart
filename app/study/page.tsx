@@ -340,9 +340,35 @@ export default function StudyPage() {
     }
   };
 
+  // Chrome/Edge speechSynthesis 큐 멈춤 방지 keepAlive
+  // Chrome은 긴 문장 재생 시 ~15초 후 내부적으로 음성 큐를 멈추는 버그가 있음
+  // pause()/resume()을 주기적으로 호출하여 큐를 살려두는 공식 workaround
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 10000); // 10초마다 keepAlive
+    return () => clearInterval(interval);
+  }, []);
+
+  // 카드가 바뀔 때 진행 중인 TTS를 즉시 취소하여 상태 충돌 방지
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeakingWord(false);
+    setIsSpeakingExample(false);
+  }, [currentIndex]);
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      if (window.speechSynthesis.speaking) return;
+      // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
+      window.speechSynthesis.cancel();
+      setIsSpeakingWord(false);
+      setIsSpeakingExample(false);
+
       const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
@@ -352,14 +378,21 @@ export default function StudyPage() {
       utterance.onend = () => setIsSpeakingWord(false);
       utterance.onerror = () => setIsSpeakingWord(false);
 
-      window.speechSynthesis.speak(utterance);
+      // cancel() 직후 speak()를 호출하면 무시되는 브라우저 버그 방지
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 50);
     }
   };
 
   const playExampleAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (currentWord?.exampleEn && 'speechSynthesis' in window) {
-      if (window.speechSynthesis.speaking) return;
+      // 기존 재생을 취소하고 새로 시작
+      window.speechSynthesis.cancel();
+      setIsSpeakingWord(false);
+      setIsSpeakingExample(false);
+
       const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance, isJa);
@@ -368,19 +401,28 @@ export default function StudyPage() {
       utterance.onend = () => setIsSpeakingExample(false);
       utterance.onerror = () => setIsSpeakingExample(false);
 
-      window.speechSynthesis.speak(utterance);
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 50);
     }
   };
 
-  // Auto TTS effect
+  // Auto TTS effect: 카드가 바뀔 때만 자동 재생 (isRevealed 제거하여 뒤집기 시 중복 트리거 방지)
+  const prevIndexRef = useRef(currentIndex);
   useEffect(() => {
-    if (settings.autoTTS && studyQueue.length > 0 && !isRevealed) {
-      const timer = setTimeout(() => {
-        playAudio();
-      }, 750); // 0.75초 딜레이 추가 (효과음 겹침 방지)
-      return () => clearTimeout(timer);
+    if (!settings.autoTTS || studyQueue.length === 0 || !isStarted) return;
+    // currentIndex가 실제로 변했을 때만 실행 (뒤집기 등 다른 상태 변경은 무시)
+    if (prevIndexRef.current === currentIndex && studyQueue.length > 0) {
+      // 첫 카드 진입 시에만 허용
+      if (currentIndex !== 0) return;
     }
-  }, [currentIndex, studyQueue, isRevealed, settings.autoTTS]);
+    prevIndexRef.current = currentIndex;
+
+    const timer = setTimeout(() => {
+      playAudio();
+    }, 750);
+    return () => clearTimeout(timer);
+  }, [currentIndex, settings.autoTTS, isStarted]);
 
   const adjustCount = (delta: number) => {
     setStudyCount(prev => {
