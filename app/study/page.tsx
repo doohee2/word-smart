@@ -395,7 +395,7 @@ export default function StudyPage() {
 
       const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
       utterance.lang = isJa ? 'ja-JP' : 'en-US';
-      applyTTSSettings(utterance, isJa);
+      applyTTSSettings(utterance); // 일본어 모드에서는 일본어 예문이므로 영어 음성 강제를 해제
       
       utterance.onstart = () => setIsSpeakingExample(true);
       utterance.onend = () => setIsSpeakingExample(false);
