@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     const { listId } = parseResult.data;
 
-    // Fetch the list details & verify ownership
+    // Fetch the list details (no ownership verification required for downloading)
     const { data: listData, error: listError } = await supabase
       .from('word_lists')
       .select('*')
@@ -34,10 +34,6 @@ export async function GET(request: NextRequest) {
     if (listError || !listData) {
       console.error("Fetch List Error:", listError);
       return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 404 });
-    }
-
-    if (listData.user_email !== session.user.email) {
-      return NextResponse.json({ error: "요청을 처리할 수 없습니다." }, { status: 403 });
     }
 
     // Fetch all words for this list with pagination to bypass Supabase max-rows limit

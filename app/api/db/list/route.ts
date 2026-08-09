@@ -10,11 +10,10 @@ export async function GET(_request: NextRequest) {
       return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
     }
 
-    // 1. Fetch only word lists belonging to the authenticated user
+    // 1. Fetch all word lists (public access)
     let { data: lists, error: listsError } = await supabase
       .from('word_lists')
       .select('id, title, lang, user_email, created_at')
-      .eq('user_email', session.user.email)
       .order('title', { ascending: true });
 
     // Fallback if lang column does not exist in Supabase DB yet (Postgres error 42703)
@@ -22,7 +21,6 @@ export async function GET(_request: NextRequest) {
       const fallback = await supabase
         .from('word_lists')
         .select('id, title, user_email, created_at')
-        .eq('user_email', session.user.email)
         .order('title', { ascending: true });
       lists = fallback.data as any;
       listsError = fallback.error;
