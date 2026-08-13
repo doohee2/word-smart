@@ -405,28 +405,6 @@ export default function TestPage() {
     return <div className="p-6 text-center text-on-surface-variant">로딩 중...</div>;
   }
 
-  if (lists.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">단어장이 없습니다.</h2>
-        <p className="text-body-md text-on-surface-variant">
-          우측 상단의 폴더 버튼을 눌러 CSV 단어장을 추가해주세요.
-        </p>
-      </div>
-    );
-  }
-
-  if (activeLists.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
-        <h2 className="text-headline-lg font-bold text-on-surface mb-4">{isJa ? '선택된 일본어 단어장이 없습니다.' : '선택된 영어 단어장이 없습니다.'}</h2>
-        <p className="text-body-md text-on-surface-variant">
-          설정 메뉴에서 학습할 단어장을 체크하거나 언어를 전환해주세요.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex-1 flex flex-col w-full min-h-full pb-8 pt-1 md:pt-1 relative">
 
@@ -434,36 +412,76 @@ export default function TestPage() {
       {!isStarted ? (
         // --- Pre-start Screen ---
         <motion.div 
-          className="flex-1 flex flex-col"
+          className="flex-1 flex flex-col relative"
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(e, { offset }) => {
             const swipe = offset.x;
-            if (swipe < -50 || swipe > 50) {
-              setLangMode(isJa ? 'en' : 'ja');
+            if (!isJa && swipe < -50) {
+              setLangMode('ja');
+              playSwipe();
+            } else if (isJa && swipe > 50) {
+              setLangMode('en');
               playSwipe();
             }
           }}
         >
+          {/* Left Button */}
+          {isJa && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); setLangMode('en'); playSwipe(); }}
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+              title="영어 모드"
+            >
+              <ChevronLeft size={24} />
+            </button>
+          )}
+          
+          {/* Right Button */}
+          {!isJa && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); setLangMode('ja'); playSwipe(); }}
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+              title="일본어 모드"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
+
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6 cursor-grab active:cursor-grabbing">
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 pointer-events-none">
               <Folder size={40} className="text-primary" />
             </div>
-            <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
-            <p className="text-body-md text-on-surface-variant pointer-events-none">총 {rawWords.length}개의 단어가 있습니다.</p>
-            <p className="text-label-sm text-outline mt-4 pointer-events-none opacity-60 animate-pulse">좌우로 스와이프하여 언어 모드 변경</p>
+            {lists.length === 0 ? (
+              <>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">단어장이 없습니다.</h2>
+                <p className="text-body-md text-on-surface-variant pointer-events-none">우측 상단의 폴더 버튼을 눌러 단어장을 추가해주세요.</p>
+              </>
+            ) : activeLists.length === 0 ? (
+              <>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장이 없습니다.</h2>
+                <p className="text-body-md text-on-surface-variant pointer-events-none">설정에서 단어장을 활성화해주세요.</p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
+                <p className="text-body-md text-on-surface-variant pointer-events-none">총 {rawWords.length}개의 단어가 있습니다.</p>
+              </>
+            )}
+            <p className="text-label-sm text-outline mt-4 pointer-events-none opacity-60 animate-pulse">좌우로 스와이프하거나 화살표를 눌러 언어 변경</p>
           </div>
           
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="w-full h-14 mt-auto mb-4 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95"
+            disabled={lists.length === 0 || activeLists.length === 0}
+            className="w-full h-14 mt-auto mb-4 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
           >
             <Play size={20} />
             테스트 시작
           </button>
 
           <div className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-4 text-xs text-on-surface break-words whitespace-pre-wrap leading-relaxed">
-            선택된 단어장: {activeLists.map(l => l.title).join(', ')}
+            {activeLists.length > 0 ? `선택된 단어장: ${activeLists.map(l => l.title).join(', ')}` : '선택된 단어장이 없습니다.'}
           </div>
         </motion.div>
       ) : (
