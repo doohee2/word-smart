@@ -19,7 +19,7 @@ import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 export default function StudyPage() {
   const { isMuted, toggleMute, playStart, playClick, playCompleteWord, playSwipe, playMissionComplete } = useAppSound();
   const { settings } = useTTSSettings();
-  const { langMode } = useLanguageMode();
+  const { langMode, setLangMode } = useLanguageMode();
   const isJa = langMode === 'ja';
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(async () => {
@@ -464,13 +464,25 @@ export default function StudyPage() {
 
       {!isStarted ? (
         // --- Pre-start Screen ---
-        <div className="flex-1 flex flex-col">
-          <div className="flex-1 flex flex-col items-center justify-center text-center p-6">
-            <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6">
+        <motion.div 
+          className="flex-1 flex flex-col"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={(e, { offset }) => {
+            const swipe = offset.x;
+            if (swipe < -50 || swipe > 50) {
+              setLangMode(isJa ? 'en' : 'ja');
+              playSwipe();
+            }
+          }}
+        >
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-6 cursor-grab active:cursor-grabbing">
+            <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 pointer-events-none">
               <Folder size={40} className="text-primary" />
             </div>
-            <h2 className="text-headline-lg font-bold text-on-surface mb-2">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
-            <p className="text-body-md text-on-surface-variant">총 {rawWords.length}개의 단어가 있습니다.</p>
+            <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
+            <p className="text-body-md text-on-surface-variant pointer-events-none">총 {rawWords.length}개의 단어가 있습니다.</p>
+            <p className="text-label-sm text-outline mt-4 pointer-events-none opacity-60 animate-pulse">좌우로 스와이프하여 언어 모드 변경</p>
           </div>
           
           <button 
@@ -484,7 +496,7 @@ export default function StudyPage() {
           <div className="w-full bg-surface-container border border-outline-variant rounded-xl px-4 py-4 text-xs text-on-surface break-words whitespace-pre-wrap leading-relaxed">
             선택된 단어장: {activeLists.map(l => l.title).join(', ')}
           </div>
-        </div>
+        </motion.div>
       ) : (
         // --- Study Screen ---
         <div className="flex-1 flex flex-col">
