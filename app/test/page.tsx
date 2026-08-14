@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight } from "lucide-react";
+import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
