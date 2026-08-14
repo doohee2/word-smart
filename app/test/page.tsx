@@ -78,8 +78,20 @@ export default function TestPage() {
     localStorage.setItem('setting_testCustomZipf', customZipf.toString());
   }, [testCount, onlyUnlearned, questionType, zipfFilter, customZipf]);
 
+  interface SavedTestState {
+    testQueue: TestWord[];
+    currentIndex: number;
+    score: number;
+    totalTested: number;
+    correctWords: string[];
+    incorrectWords: string[];
+    timestamp: number;
+  }
+  
   // Runtime State
   const [testQueue, setTestQueue] = useState<TestWord[]>([]);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const [savedState, setSavedState] = useState<SavedTestState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [totalTested, setTotalTested] = useState(0);
@@ -122,6 +134,64 @@ export default function TestPage() {
     setTestQueue([]);
     setCurrentIndex(0);
   }, [activeListIdsString]);
+
+  // Auto-save progress
+  useEffect(() => {
+    if (!isStarted || testQueue.length === 0) return;
+    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    const state: SavedTestState = {
+      testQueue,
+      currentIndex,
+      score,
+      totalTested,
+      correctWords: correctWordsRef.current,
+      incorrectWords: incorrectWordsRef.current,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(saveKey, JSON.stringify(state));
+  }, [isStarted, isJa, testQueue, currentIndex, score, totalTested]);
+
+  const handlePreStartCheck = () => {
+    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    const saved = localStorage.getItem(saveKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as SavedTestState;
+        if (parsed && parsed.testQueue && parsed.testQueue.length > 0) {
+          setSavedState(parsed);
+          setShowResumePrompt(true);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse saved state", e);
+      }
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleResume = () => {
+    if (savedState) {
+      setTestQueue(savedState.testQueue);
+      setCurrentIndex(savedState.currentIndex);
+      setScore(savedState.score);
+      setTotalTested(savedState.totalTested);
+      correctWordsRef.current = savedState.correctWords || [];
+      incorrectWordsRef.current = savedState.incorrectWords || [];
+      
+      setIsStarted(true);
+      setShowResumePrompt(false);
+      setSavedState(null);
+      playStart();
+    }
+  };
+
+  const handleRestart = () => {
+    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    localStorage.removeItem(saveKey);
+    setShowResumePrompt(false);
+    setSavedState(null);
+    setIsModalOpen(true);
+  };
 
   const handleStartTest = () => {
     if (!rawWords) return;
@@ -239,6 +309,10 @@ export default function TestPage() {
       if (currentIndex < testQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
       } else {
+        // Clear saved progress on completion
+        const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+        localStorage.removeItem(saveKey);
+
         // Save history
         if (session?.user?.email) {
           const payload = {
@@ -472,7 +546,7 @@ export default function TestPage() {
           </div>
           
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={handlePreStartCheck}
             disabled={lists.length === 0 || activeLists.length === 0}
             className="w-full h-14 mt-auto mb-4 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
           >
@@ -828,7 +902,46 @@ export default function TestPage() {
         title={alertConfig.title}
         message={alertConfig.message}
         type={alertConfig.type}
+        onConfirm={alertConfig.onCloseCallback}
       />
+
+      {/* Resume Prompt Modal */}
+      {showResumePrompt && savedState && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+          <div className="bg-surface-container-high rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-lg flex flex-col gap-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-secondary-container text-on-secondary-container rounded-full"><Info size={24} /></div>
+              <h2 className="text-title-lg font-bold text-on-surface">이어하기</h2>
+            </div>
+            <p className="text-body-lg text-on-surface-variant mb-2 break-words whitespace-pre-wrap">
+              이전에 진행하던 테스트 과정이 있습니다. 해당 과정을 계속 진행하겠습니까?
+            </p>
+            <p className="text-label-sm text-outline mb-4">
+              마지막 진행: {new Date(savedState.timestamp).toLocaleString()}
+            </p>
+            <div className="flex justify-end gap-3 mt-auto flex-wrap">
+              <button 
+                onClick={() => setShowResumePrompt(false)}
+                className="px-4 py-2 rounded-full text-label-lg font-medium text-on-surface-variant hover:bg-surface-variant transition-colors"
+              >
+                취소
+              </button>
+              <button 
+                onClick={handleRestart}
+                className="px-4 py-2 rounded-full text-label-lg font-medium text-on-surface-variant hover:bg-surface-variant border border-outline-variant transition-colors"
+              >
+                새로 시작
+              </button>
+              <button 
+                onClick={handleResume}
+                className="px-4 py-2 rounded-full text-label-lg font-medium bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-sm"
+              >
+                계속 진행
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

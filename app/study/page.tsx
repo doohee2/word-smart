@@ -72,9 +72,19 @@ export default function StudyPage() {
     localStorage.setItem('setting_studyZipfFilter', zipfFilter);
     localStorage.setItem('setting_studyCustomZipf', customZipf.toString());
   }, [studyCount, onlyUnlearned, revealMode, zipfFilter, customZipf]);
+
+  interface SavedStudyState {
+    studyQueue: Word[];
+    currentIndex: number;
+    sessionAnswers: { [index: number]: boolean };
+    maxReachedIndex: number;
+    timestamp: number;
+  }
   
   // Runtime State
   const [studyQueue, setStudyQueue] = useState<Word[]>([]);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const [savedState, setSavedState] = useState<SavedStudyState | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showKoSentence, setShowKoSentence] = useState(false);
   const [direction, setDirection] = useState(1);
@@ -129,6 +139,63 @@ export default function StudyPage() {
     setCurrentIndex(0);
     setSessionLearnedCount(0);
   }, [activeListIdsString]);
+
+  // Auto-save progress
+  useEffect(() => {
+    if (!isStarted || studyQueue.length === 0) return;
+    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    const state: SavedStudyState = {
+      studyQueue,
+      currentIndex,
+      sessionAnswers,
+      maxReachedIndex,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(saveKey, JSON.stringify(state));
+  }, [isStarted, isJa, studyQueue, currentIndex, sessionAnswers, maxReachedIndex]);
+
+  const handlePreStartCheck = () => {
+    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    const saved = localStorage.getItem(saveKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as SavedStudyState;
+        if (parsed && parsed.studyQueue && parsed.studyQueue.length > 0) {
+          setSavedState(parsed);
+          setShowResumePrompt(true);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse saved state", e);
+      }
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleResume = () => {
+    if (savedState) {
+      setStudyQueue(savedState.studyQueue);
+      setCurrentIndex(savedState.currentIndex);
+      setSessionAnswers(savedState.sessionAnswers);
+      setMaxReachedIndex(savedState.maxReachedIndex);
+      
+      const learned = Object.values(savedState.sessionAnswers).filter(v => v === true).length;
+      setSessionLearnedCount(learned);
+      
+      setIsStarted(true);
+      setShowResumePrompt(false);
+      setSavedState(null);
+      playStart();
+    }
+  };
+
+  const handleRestart = () => {
+    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    localStorage.removeItem(saveKey);
+    setShowResumePrompt(false);
+    setSavedState(null);
+    setIsModalOpen(true);
+  };
 
   const handleStartStudy = () => {
     if (!rawWords) return;
@@ -246,19 +313,12 @@ export default function StudyPage() {
     const isLast = currentIndex === studyQueue.length - 1;
 
     if (isLast) {
-      const finalCompleted: string[] = [];
-      const finalIncomplete: string[] = [];
-      studyQueue.forEach((w, idx) => {
-        const ans = (idx === currentIndex) ? learned : updatedAnswers[idx];
-        if (ans === true) {
-          finalCompleted.push(w.word);
-        } else {
-          finalIncomplete.push(w.word);
-        }
-      });
-
-      completedWordsRef.current = finalCompleted;
-      incompleteWordsRef.current = finalIncomplete;
+      const finalCompleted = studyQueue.filter((_, idx) => updatedAnswers[idx] === true);
+      const finalIncomplete = studyQueue.filter((_, idx) => updatedAnswers[idx] === false);
+      
+      // Clear saved progress on completion
+      const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+      localStorage.removeItem(saveKey);
 
       // Save history
       if (session?.user?.email) {
@@ -268,8 +328,8 @@ export default function StudyPage() {
           type: 'study' as const,
           totalCount: studyQueue.length,
           completedCount: finalCompleted.length,
-          incompleteWords: finalIncomplete.join(', '),
-          completeWords: finalCompleted.join(', '),
+          incompleteWords: finalIncomplete.map(w => w.word).join(', '),
+          completeWords: finalCompleted.map(w => w.word).join(', '),
           isSynced: false
         };
         
@@ -503,7 +563,7 @@ export default function StudyPage() {
           </div>
           
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={handlePreStartCheck}
             disabled={lists.length === 0 || activeLists.length === 0}
             className="w-full h-14 mt-auto mb-4 bg-primary hover:bg-primary-container text-on-primary rounded-xl flex items-center justify-center gap-2 text-headline-sm font-bold shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
           >
@@ -900,7 +960,46 @@ export default function StudyPage() {
         title={alertConfig.title}
         message={alertConfig.message}
         type={alertConfig.type}
+        onConfirm={alertConfig.onCloseCallback}
       />
+
+      {/* Resume Prompt Modal */}
+      {showResumePrompt && savedState && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+          <div className="bg-surface-container-high rounded-3xl p-6 md:p-8 max-w-sm w-full shadow-lg flex flex-col gap-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-secondary-container text-on-secondary-container rounded-full"><Info size={24} /></div>
+              <h2 className="text-title-lg font-bold text-on-surface">이어하기</h2>
+            </div>
+            <p className="text-body-lg text-on-surface-variant mb-2 break-words whitespace-pre-wrap">
+              이전에 진행하던 학습 과정이 있습니다. 해당 과정을 계속 진행하겠습니까?
+            </p>
+            <p className="text-label-sm text-outline mb-4">
+              마지막 진행: {new Date(savedState.timestamp).toLocaleString()}
+            </p>
+            <div className="flex justify-end gap-3 mt-auto flex-wrap">
+              <button 
+                onClick={() => setShowResumePrompt(false)}
+                className="px-4 py-2 rounded-full text-label-lg font-medium text-on-surface-variant hover:bg-surface-variant transition-colors"
+              >
+                취소
+              </button>
+              <button 
+                onClick={handleRestart}
+                className="px-4 py-2 rounded-full text-label-lg font-medium text-on-surface-variant hover:bg-surface-variant border border-outline-variant transition-colors"
+              >
+                새로 시작
+              </button>
+              <button 
+                onClick={handleResume}
+                className="px-4 py-2 rounded-full text-label-lg font-medium bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-sm"
+              >
+                계속 진행
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
