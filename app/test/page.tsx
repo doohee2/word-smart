@@ -324,7 +324,7 @@ export default function TestPage() {
             incompleteWords: incorrectWordsRef.current.join(', '),
             completeWords: correctWordsRef.current.join(', '),
             isSynced: false,
-            lang: isJa ? 'ja' : 'en'
+            lang: (isJa ? 'ja' : 'en') as 'ja' | 'en'
           };
           
           db.history.add(payload).then(id => {

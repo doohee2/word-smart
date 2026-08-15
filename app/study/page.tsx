@@ -331,7 +331,7 @@ export default function StudyPage() {
           incompleteWords: finalIncomplete.map(w => w.word).join(', '),
           completeWords: finalCompleted.map(w => w.word).join(', '),
           isSynced: false,
-          lang: isJa ? 'ja' : 'en'
+          lang: (isJa ? 'ja' : 'en') as 'ja' | 'en'
         };
         
         db.history.add(payload).then(id => {
