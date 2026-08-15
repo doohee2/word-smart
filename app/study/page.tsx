@@ -583,7 +583,7 @@ export default function StudyPage() {
       ) : (
         // --- Study Screen ---
         <div className="flex-1 flex flex-col">
-          <div className="w-full flex justify-between items-center mb-6 px-1">
+          <div className="w-full flex justify-between items-center mb-3 px-1">
             <div className="flex items-center gap-2 text-on-surface-variant">
               <Folder size={20} />
               <span className="text-label-sm uppercase tracking-wider truncate max-w-[150px] md:max-w-[300px]">
@@ -605,7 +605,7 @@ export default function StudyPage() {
             </div>
           </div>
 
-          <div className="relative w-full flex-1 flex flex-col min-h-[420px] mb-8">
+          <div className="relative w-full flex-1 flex flex-col min-h-[360px] mb-4">
             {currentIndex > 0 && (
               <button
                 onClick={(e) => {
@@ -657,7 +657,7 @@ export default function StudyPage() {
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className={clsx(
-                  "absolute inset-0 bg-surface-container-lowest rounded-[32px] shadow-lg p-6 md:p-12 flex flex-col items-center text-center justify-center border border-surface-variant",
+                  "absolute inset-0 bg-surface-container-lowest rounded-[32px] shadow-lg py-5 px-6 md:py-8 md:px-12 flex flex-col items-center text-center justify-center border border-surface-variant",
                   !isRevealed && "cursor-pointer"
                 )}
                 onClick={() => !isRevealed && setIsRevealed(true)}
@@ -692,18 +692,18 @@ export default function StudyPage() {
                 <h2 
                   onPointerDownCapture={(e) => e.stopPropagation()}
                   className={clsx(
-                  "text-display-word-mobile md:text-display-word text-on-surface mb-4 font-bold break-words w-full px-10 md:px-16 transition-all duration-300",
+                  "text-display-word-mobile md:text-display-word text-on-surface mb-2 font-bold break-words w-full px-10 md:px-16 transition-all duration-300",
                   (!isRevealed && primarySide === 'korean') ? "blur-md opacity-20 select-none text-transparent" : "select-text cursor-auto"
                 )}>
                   {currentWord?.word}
                 </h2>
                 
-                <div className="w-16 h-1 bg-surface-variant rounded-full mb-8"></div>
+                <div className="w-16 h-1 bg-surface-variant rounded-full mb-4"></div>
                 
                 <div 
                   onPointerDownCapture={(e) => e.stopPropagation()}
                   className={clsx(
-                  "mb-8 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-2",
+                  "mb-4 font-bold px-6 md:px-16 transition-all duration-300 flex flex-col items-center gap-2",
                   isJa ? "text-headline-md md:text-headline-lg text-primary" : "text-headline-lg text-primary",
                   (!isRevealed && primarySide === 'english') ? "blur-md opacity-20 select-none text-transparent" : "select-text cursor-auto"
                 )}>
@@ -735,7 +735,7 @@ export default function StudyPage() {
                           e.stopPropagation();
                           playExampleAudio(e);
                         }}
-                        className="pl-4 md:pl-6 pt-4 md:pt-6 pb-2 pr-4 cursor-pointer flex items-start"
+                        className="pl-4 md:pl-6 pt-3 md:pt-5 pb-1 pr-4 cursor-pointer flex items-start"
                       >
                         <button 
                           className={clsx(
@@ -754,7 +754,7 @@ export default function StudyPage() {
                           e.stopPropagation();
                           setShowKoSentence(!showKoSentence);
                         }}
-                        className="pr-4 md:pr-6 pt-4 md:pt-6 pb-2 select-text cursor-auto flex-1 flex flex-col justify-start"
+                        className="pr-4 md:pr-6 pt-3 md:pt-5 pb-1 select-text cursor-auto flex-1 flex flex-col justify-start"
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       >
                         <div>
@@ -781,7 +781,7 @@ export default function StudyPage() {
                         e.stopPropagation();
                         setShowKoSentence(!showKoSentence);
                       }}
-                      className="text-center pb-4 md:pb-6 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      className="text-center pb-3 md:pb-4 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer"
                     >
                       <span className="text-[10px] text-outline font-bold uppercase tracking-widest">
                         터치하여 번역 {showKoSentence ? "숨기기" : "보기"}
