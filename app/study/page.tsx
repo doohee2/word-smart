@@ -965,7 +965,6 @@ export default function StudyPage() {
         title={alertConfig.title}
         message={alertConfig.message}
         type={alertConfig.type}
-        onConfirm={alertConfig.onCloseCallback}
       />
 
       {/* Resume Prompt Modal */}
