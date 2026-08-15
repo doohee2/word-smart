@@ -35,6 +35,7 @@ export interface StudyHistory {
   isSynced: boolean;
   isDeleted?: boolean;
   deletedAt?: Date;
+  lang?: 'en' | 'ja';
 }
 
 export class WordSmartDB extends Dexie {

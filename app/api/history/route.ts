@@ -23,6 +23,7 @@ const syncOfflineSchema = z.object({
     incompleteWords: z.string().optional().default(""),
     completeWords: z.string().optional().default(""),
     createdAt: z.string().optional(),
+    lang: z.string().optional(),
   })),
 });
 
@@ -34,6 +35,7 @@ const insertSchema = z.object({
   incompleteWords: z.string().optional().default(""),
   completeWords: z.string().optional().default(""),
   createdAt: z.string().optional(),
+  lang: z.string().optional(),
 });
 
 const postHistorySchema = z.union([
@@ -101,14 +103,15 @@ export async function POST(request: NextRequest) {
     if (body.action === 'sync_offline') {
       if (body.records.length === 0) return NextResponse.json({ success: true, history: [] });
       
-      const insertData = body.records.map((r) => ({
+      const insertData = body.records.map((record) => ({
         user_email: userEmail,
-        type: r.type,
-        total_count: r.totalCount,
-        completed_count: r.completedCount,
-        incomplete_words: r.incompleteWords || "",
-        complete_words: r.completeWords || "",
-        created_at: r.createdAt ? new Date(r.createdAt).toISOString() : new Date().toISOString()
+        type: record.type,
+        total_count: record.totalCount,
+        completed_count: record.completedCount,
+        incomplete_words: record.incompleteWords || "",
+        complete_words: record.completeWords || "",
+        created_at: record.createdAt ? new Date(record.createdAt).toISOString() : new Date().toISOString(),
+        lang: record.lang
       }));
 
       const { data, error } = await supabase
@@ -124,7 +127,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Normal insert
-    const { type, totalCount, completedCount, incompleteWords, completeWords, createdAt } = body;
+    const { type, totalCount, completedCount, incompleteWords, completeWords, createdAt, lang } = body;
 
     const { data, error } = await supabase
       .from('study_history')
@@ -135,7 +138,8 @@ export async function POST(request: NextRequest) {
         completed_count: completedCount,
         incomplete_words: incompleteWords || "",
         complete_words: completeWords || "",
-        created_at: createdAt ? new Date(createdAt).toISOString() : new Date().toISOString()
+        created_at: createdAt ? new Date(createdAt).toISOString() : new Date().toISOString(),
+        lang
       })
       .select()
       .single();

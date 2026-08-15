@@ -241,6 +241,11 @@ export default function HistoryPage() {
                       <div className="flex items-center gap-2 mb-0.5">
                         <span className="text-body-md font-bold text-on-surface">
                           {history.type === 'study' ? '단어 학습' : '단어 테스트'}
+                          {history.lang && (
+                            <span className="text-body-sm font-normal text-on-surface-variant ml-1">
+                              {history.lang === 'ja' ? '(일본어한자)' : '(영어)'}
+                            </span>
+                          )}
                         </span>
                         {!history.isSynced && (
                           <span className="text-[10px] bg-surface-variant px-2 py-0.5 rounded-full text-on-surface-variant">
