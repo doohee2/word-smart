@@ -16,8 +16,21 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
     if (!isOpen) return;
     const loadVoices = () => {
       const allVoices = window.speechSynthesis.getVoices();
-      // 영어 지원 목소리만 필터링
-      setVoices(allVoices.filter(v => v.lang.startsWith('en')));
+      
+      // 애플 기기의 특수 효과음(Novelty) 음성 블랙리스트
+      const APPLE_NOVELTY_VOICES = [
+        'Albert', 'Bad News', 'Bahh', 'Bells', 'Boing', 'Bubbles', 'Cellos', 
+        'Deranged', 'Good News', 'Hysterical', 'Pipe Organ', 'Trinoids', 
+        'Whisper', 'Wobble', 'Zarvox', 'Jester', 'Organ', 'Superstar'
+      ];
+
+      // 영어 지원 목소리 중 특수 효과음 필터링
+      setVoices(allVoices.filter(v => {
+        if (!v.lang.startsWith('en')) return false;
+        // 블랙리스트에 포함된 이름이 있는지 확인
+        if (APPLE_NOVELTY_VOICES.some(novelty => v.name.includes(novelty))) return false;
+        return true;
+      }));
     };
     loadVoices();
     if (window.speechSynthesis.onvoiceschanged !== undefined) {

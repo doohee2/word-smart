@@ -543,7 +543,7 @@ export default function StudyPage() {
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6 cursor-grab active:cursor-grabbing">
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 pointer-events-none select-none">
               {isJa ? (
-                <span className="text-primary text-5xl font-bold font-serif leading-none mt-1">漢</span>
+                <span className="text-primary text-4xl font-bold font-serif leading-none mt-1 ml-1 tracking-widest">日本</span>
               ) : (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">Abc</span>
               )}
