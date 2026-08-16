@@ -309,10 +309,6 @@ export default function TestPage() {
       if (currentIndex < testQueue.length - 1) {
         setCurrentIndex(prev => prev + 1);
       } else {
-        // Clear saved progress on completion
-        const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
-        localStorage.removeItem(saveKey);
-
         // Save history
         if (session?.user?.email) {
           const payload = {
@@ -348,7 +344,11 @@ export default function TestPage() {
           message: `테스트 완료!\n최종 점수: ${isCorrect ? score + 1 : score} / ${testQueue.length}`, 
           type: 'success', 
           title: '테스트 완료',
-          onCloseCallback: () => setIsStarted(false)
+          onCloseCallback: () => {
+            const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+            localStorage.removeItem(saveKey);
+            setIsStarted(false);
+          }
         });
       }
     }, isCorrect ? 1500 : 2500);

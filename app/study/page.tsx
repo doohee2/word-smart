@@ -316,10 +316,6 @@ export default function StudyPage() {
       const finalCompleted = studyQueue.filter((_, idx) => updatedAnswers[idx] === true);
       const finalIncomplete = studyQueue.filter((_, idx) => updatedAnswers[idx] === false);
       
-      // Clear saved progress on completion
-      const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
-      localStorage.removeItem(saveKey);
-
       // Save history
       if (session?.user?.email) {
         const payload = {
@@ -355,7 +351,11 @@ export default function StudyPage() {
         message: `학습이 완료되었습니다!\n(세션 완료 단어: ${finalCompleted.length} / ${studyQueue.length})`, 
         type: 'success', 
         title: '학습 완료',
-        onCloseCallback: () => setIsStarted(false)
+        onCloseCallback: () => {
+          const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+          localStorage.removeItem(saveKey);
+          setIsStarted(false);
+        }
       });
       return;
     } else {
