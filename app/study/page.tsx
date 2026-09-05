@@ -768,7 +768,7 @@ export default function StudyPage() {
                             <p 
                               className={clsx(
                                 "text-on-surface mb-2",
-                                isZh ? "text-title-lg md:text-headline-sm font-bold" : "text-body-md"
+                                isZh ? "text-2xl md:text-3xl font-bold leading-normal" : "text-body-md"
                               )}
                               dangerouslySetInnerHTML={{ 
                                 __html: highlightExampleSentence(currentWord.word, currentWord.exampleEn)
@@ -777,7 +777,7 @@ export default function StudyPage() {
                           )}
                           <p className={clsx(
                             "text-on-surface-variant transition-all duration-300 overflow-hidden",
-                            isZh ? "text-title-md md:text-title-lg font-bold" : "text-label-sm",
+                            isZh ? "text-xl md:text-2xl font-bold leading-normal" : "text-label-sm",
                             showKoSentence ? "opacity-100 h-auto mt-2" : "opacity-0 h-0"
                           )}>
                             {currentWord.exampleKo}

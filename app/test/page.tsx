@@ -645,7 +645,7 @@ export default function TestPage() {
                       <p 
                         className={clsx(
                           "text-on-surface-variant",
-                          isZh ? "text-title-lg md:text-headline-sm font-bold" : "text-body-md italic"
+                          isZh ? "text-2xl md:text-3xl font-bold not-italic leading-normal" : "text-body-md italic"
                         )}
                         dangerouslySetInnerHTML={{ 
                           __html: maskExampleHtml(currentWord.word, currentWord.exampleEn)
