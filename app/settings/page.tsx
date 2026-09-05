@@ -59,7 +59,15 @@ function WordListItem({
     if (!list.id) return;
     const words = await db.words.where('listId').equals(list.id).toArray();
     const isJa = list.lang === 'ja';
-    const csvData = words.map(w => isJa ? {
+    const isZh = list.lang === 'zh';
+    const csvData = words.map(w => isZh ? {
+      "한자": w.word,
+      "부수와 형성원리": w.meaningKo,
+      "훈음": w.partOfSpeech,
+      "한자 단어": w.exampleEn,
+      "한자 단어 독음": w.exampleKo,
+      "급수 난이도": w.zipfScore !== undefined && w.zipfScore !== null ? w.zipfScore : ""
+    } : isJa ? {
       "일본어한자": w.word,
       "일본어발음": w.partOfSpeech,
       "한글 뜻과 한자별 한글독음": w.meaningKo,
@@ -200,7 +208,7 @@ export default function SettingsPage() {
   const { status } = useSession();
   const { langMode } = useLanguageMode();
   const allLists = useLiveQuery(() => db.wordLists.orderBy('title').toArray());
-  const lists = allLists?.filter(l => langMode === 'ja' ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+  const lists = allLists?.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en'));
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, listToDelete: WordList | null}>({isOpen: false, listToDelete: null});
   const [uploadStatus, setUploadStatus] = useState<{isOpen: boolean, message: string, type: 'info'|'success'|'error', isUploading: boolean}>({isOpen: false, message: '', type: 'info', isUploading: false});
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);

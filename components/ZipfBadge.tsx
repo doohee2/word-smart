@@ -2,23 +2,36 @@ import { Star } from "lucide-react";
 import clsx from "clsx";
 
 interface ZipfBadgeProps {
-  score?: number | null;
+  score?: number | string | null;
   listTitle?: string;
   className?: string;
 }
 
 export function ZipfBadge({ score, listTitle, className }: ZipfBadgeProps) {
-  const isValid = score !== undefined && score !== null && score > 0;
+  const isValid = score !== undefined && score !== null && score !== 0 && score !== "";
   
   let starsCount = 1;
   let isGray = !isValid;
   let labelText: string | undefined = undefined;
 
-  if (isValid) {
-    labelText = score!.toFixed(1);
-    if (score! > 4.0) {
+  if (typeof score === 'string') {
+    labelText = score;
+    isGray = false;
+    const num = parseFloat(score.replace(/[^0-9.]/g, ''));
+    if (!isNaN(num)) {
+      if (num <= 1.5) starsCount = 4;
+      else if (num <= 2.5) starsCount = 3;
+      else if (num <= 3.5) starsCount = 2;
+      else if (num <= 5.5) starsCount = 1;
+      else starsCount = 0;
+    } else {
+      starsCount = 0;
+    }
+  } else if (isValid && typeof score === 'number') {
+    labelText = score.toFixed(1);
+    if (score > 4.0) {
       starsCount = 1;
-    } else if (score! > 2.5) {
+    } else if (score > 2.5) {
       starsCount = 2;
     } else {
       starsCount = 3;
@@ -52,8 +65,8 @@ export function ZipfBadge({ score, listTitle, className }: ZipfBadgeProps) {
         : "bg-surface-container text-on-surface border-outline-variant",
       className
     )}>
-      <div className="flex -space-x-0.5">
-        {Array.from({ length: Math.max(1, starsCount) }).map((_, i) => (
+      <div className={clsx("flex -space-x-0.5", starsCount === 0 && "hidden")}>
+        {Array.from({ length: Math.max(0, starsCount) }).map((_, i) => (
           <Star 
             key={i} 
             size={14} 

@@ -37,10 +37,12 @@ export function FileOpenButton() {
       let isNewList = false;
 
       // Detect language from CSV header or character codes
-      let detectedLang: 'en' | 'ja' = 'en';
+      let detectedLang: 'en' | 'ja' | 'zh' = 'en';
       if (data.length > 0) {
         const firstRow = data[0];
-        if ("일본어한자" in firstRow || "일본어발음" in firstRow || "한글 뜻과 한자별 한글독음" in firstRow) {
+        if ("한자" in firstRow && "훈음" in firstRow) {
+          detectedLang = 'zh';
+        } else if ("일본어한자" in firstRow || "일본어발음" in firstRow || "한글 뜻과 한자별 한글독음" in firstRow) {
           detectedLang = 'ja';
         } else {
           const firstWord = String(firstRow["Word"] || firstRow["일본어한자"] || Object.values(firstRow)[0] || "");
@@ -62,13 +64,29 @@ export function FileOpenButton() {
       }
 
       const parsedWords = data.map((row) => {
-        const rawZipf = row["zipf_score"] || row["Zipf Score"];
-        const zipfScore = rawZipf && !isNaN(parseFloat(rawZipf)) ? parseFloat(rawZipf) : undefined;
-        const word = String(row["Word"] || row["일본어한자"] || "").trim();
-        const partOfSpeech = String(row["Part of Speech"] || row["일본어발음"] || "").trim();
-        const meaningKo = String(row["Korean Meaning"] || row["한글 뜻과 한자별 한글독음"] || "").trim();
-        const exampleEn = String(row["Example Sentence"] || row["일본어예문"] || "").trim();
-        const exampleKo = String(row["Korean Translation"] || row["예문한글번역문"] || "").trim();
+        let zipfScore: number | string | undefined = undefined;
+        let word = "";
+        let partOfSpeech = "";
+        let meaningKo = "";
+        let exampleEn = "";
+        let exampleKo = "";
+
+        if (detectedLang === 'zh') {
+          word = String(row["한자"] || "").trim();
+          partOfSpeech = String(row["훈음"] || "").trim();
+          meaningKo = String(row["부수와 형성원리"] || "").trim();
+          exampleEn = String(row["한자 단어"] || "").trim();
+          exampleKo = String(row["한자 단어 독음"] || "").trim();
+          zipfScore = row["급수 난이도"] ? String(row["급수 난이도"]).trim() : undefined;
+        } else {
+          const rawZipf = row["zipf_score"] || row["Zipf Score"];
+          zipfScore = rawZipf && !isNaN(parseFloat(rawZipf)) ? parseFloat(rawZipf) : undefined;
+          word = String(row["Word"] || row["일본어한자"] || "").trim();
+          partOfSpeech = String(row["Part of Speech"] || row["일본어발음"] || "").trim();
+          meaningKo = String(row["Korean Meaning"] || row["한글 뜻과 한자별 한글독음"] || "").trim();
+          exampleEn = String(row["Example Sentence"] || row["일본어예문"] || "").trim();
+          exampleKo = String(row["Korean Translation"] || row["예문한글번역문"] || "").trim();
+        }
         return {
           listId: listId!,
           word,

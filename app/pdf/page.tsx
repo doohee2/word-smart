@@ -16,14 +16,15 @@ import { useLanguageMode } from "@/providers/LanguageModeProvider";
 export default function PDFPage() {
   const { langMode } = useLanguageMode();
   const isJa = langMode === 'ja';
+  const isZh = langMode === 'zh';
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(async () => {
     const all = await db.wordLists.filter(list => !!list.isActive).toArray();
-    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+    return all.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en'));
   }, [langMode]);
   const rawWords = useLiveQuery(async () => {
     const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
-    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
+    const activeListIds = allActive.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
   }, [langMode]);
@@ -198,15 +199,15 @@ export default function PDFPage() {
     return <div className="p-6 text-center text-on-surface-variant">로딩 중...</div>;
   }
 
-  if (isJa) {
+  if (isJa || isZh) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-center p-6 mt-20">
         <div className="w-20 h-20 bg-surface-container rounded-full flex items-center justify-center mb-6">
           <FileText size={36} className="text-on-surface-variant/50" />
         </div>
-        <h2 className="text-headline-sm font-bold text-on-surface mb-2">일본어 한자 단어장은 PDF 인쇄를 지원하지 않습니다.</h2>
+        <h2 className="text-headline-sm font-bold text-on-surface mb-2">{isJa ? '일본어 한자' : '한자'} 단어장은 PDF 인쇄를 지원하지 않습니다.</h2>
         <p className="text-body-md text-on-surface-variant max-w-sm mx-auto leading-relaxed">
-          현재 일본어 한자 및 히라가나 폰트 렌더링 최적화 문제로 인해 일본어 모드에서는 PDF 인쇄 기능을 사용할 수 없습니다.<br /><b>설정 메뉴</b>에서 영어 단어장 모드로 전환하여 이용해주세요.
+          현재 한자 및 히라가나 폰트 렌더링 최적화 문제로 인해 {isJa ? '일본어' : '한자'} 모드에서는 PDF 인쇄 기능을 사용할 수 없습니다.<br /><b>설정 메뉴</b>에서 영어 단어장 모드로 전환하여 이용해주세요.
         </p>
       </div>
     );

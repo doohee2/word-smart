@@ -5,7 +5,7 @@ export interface WordList {
   title: string;
   createdAt: Date;
   isActive?: boolean;
-  lang?: 'en' | 'ja';
+  lang?: 'en' | 'ja' | 'zh';
 }
 
 export interface Word {
@@ -19,7 +19,7 @@ export interface Word {
   isLearned: boolean;
   testCount: number;
   correctCount: number;
-  zipfScore?: number;
+  zipfScore?: number | string;
 }
 
 export interface StudyHistory {
@@ -35,7 +35,7 @@ export interface StudyHistory {
   isSynced: boolean;
   isDeleted?: boolean;
   deletedAt?: Date;
-  lang?: 'en' | 'ja';
+  lang?: 'en' | 'ja' | 'zh';
 }
 
 export class WordSmartDB extends Dexie {

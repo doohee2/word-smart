@@ -21,10 +21,11 @@ export default function StudyPage() {
   const { settings } = useTTSSettings();
   const { langMode, setLangMode } = useLanguageMode();
   const isJa = langMode === 'ja';
+  const isZh = langMode === 'zh';
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(async () => {
     const all = await db.wordLists.filter(list => !!list.isActive).toArray();
-    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+    return all.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en'));
   }, [langMode]);
   const { data: session } = useSession();
   const completedWordsRef = useRef<string[]>([]);
@@ -32,7 +33,7 @@ export default function StudyPage() {
 
   const rawWords = useLiveQuery(async () => {
     const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
-    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
+    const activeListIds = allActive.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
   }, [langMode]);
@@ -143,7 +144,7 @@ export default function StudyPage() {
   // Auto-save progress
   useEffect(() => {
     if (!isStarted || studyQueue.length === 0) return;
-    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_study_ja' : langMode === 'zh' ? 'word_smart_resume_study_zh' : 'word_smart_resume_study_en';
     const state: SavedStudyState = {
       studyQueue,
       currentIndex,
@@ -155,7 +156,7 @@ export default function StudyPage() {
   }, [isStarted, isJa, studyQueue, currentIndex, sessionAnswers, maxReachedIndex]);
 
   const handlePreStartCheck = () => {
-    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_study_ja' : langMode === 'zh' ? 'word_smart_resume_study_zh' : 'word_smart_resume_study_en';
     const saved = localStorage.getItem(saveKey);
     if (saved) {
       try {
@@ -190,7 +191,7 @@ export default function StudyPage() {
   };
 
   const handleRestart = () => {
-    const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_study_ja' : langMode === 'zh' ? 'word_smart_resume_study_zh' : 'word_smart_resume_study_en';
     localStorage.removeItem(saveKey);
     setShowResumePrompt(false);
     setSavedState(null);
@@ -206,10 +207,14 @@ export default function StudyPage() {
     if (zipfFilter !== 'all') {
       const threshold = zipfFilter === 'hard' ? 4.0 : (typeof customZipf === 'number' ? customZipf : parseFloat(customZipf) || 4.0);
       pool = pool.filter(w => {
-        // Zipf가 아예 없는 경우(undefined, 0, null)는 무조건 포함 (하위 호환성)
-        if (w.zipfScore === undefined || w.zipfScore === null || w.zipfScore === 0) return true;
+        let score = w.zipfScore;
+        if (typeof score === 'string') {
+          score = parseFloat(score.replace(/[^0-9.]/g, ''));
+        }
+        // Zipf가 아예 없는 경우(undefined, 0, null, NaN)는 무조건 포함 (하위 호환성)
+        if (score === undefined || score === null || score === 0 || isNaN(score as number)) return true;
         // 어려운 단어 선택 시 4.0 이하(★★, ★★★) 포함, 직접 입력 시 미만
-        return zipfFilter === 'hard' ? w.zipfScore <= threshold : w.zipfScore < threshold;
+        return zipfFilter === 'hard' ? (score as number) <= threshold : (score as number) < threshold;
       });
     }
 
@@ -327,7 +332,7 @@ export default function StudyPage() {
           incompleteWords: finalIncomplete.map(w => w.word).join(', '),
           completeWords: finalCompleted.map(w => w.word).join(', '),
           isSynced: false,
-          lang: (isJa ? 'ja' : 'en') as 'ja' | 'en'
+          lang: langMode as 'ja' | 'en' | 'zh'
         };
         
         db.history.add(payload).then(id => {
@@ -352,7 +357,7 @@ export default function StudyPage() {
         type: 'success', 
         title: '학습 완료',
         onCloseCallback: () => {
-          const saveKey = isJa ? 'word_smart_resume_study_ja' : 'word_smart_resume_study_en';
+          const saveKey = langMode === 'ja' ? 'word_smart_resume_study_ja' : langMode === 'zh' ? 'word_smart_resume_study_zh' : 'word_smart_resume_study_en';
           localStorage.removeItem(saveKey);
           setIsStarted(false);
         }
@@ -430,9 +435,9 @@ export default function StudyPage() {
       setIsSpeakingWord(false);
       setIsSpeakingExample(false);
 
-      const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const textToSpeak = isZh ? (currentWord.partOfSpeech || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance);
       
       utterance.onstart = () => setIsSpeakingWord(true);
@@ -448,14 +453,15 @@ export default function StudyPage() {
 
   const playExampleAudio = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (currentWord?.exampleEn && 'speechSynthesis' in window) {
+    const textToSpeak = isZh ? currentWord?.exampleKo : currentWord?.exampleEn;
+    if (textToSpeak && 'speechSynthesis' in window) {
       // 기존 재생을 취소하고 새로 시작
       window.speechSynthesis.cancel();
       setIsSpeakingWord(false);
       setIsSpeakingExample(false);
 
-      const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
-      utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance); // 일본어 모드에서는 일본어 예문이므로 영어 음성 강제를 해제
       
       utterance.onstart = () => setIsSpeakingExample(true);
@@ -509,40 +515,36 @@ export default function StudyPage() {
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(e, { offset }) => {
             const swipe = offset.x;
-            if (!isJa && swipe < -50) {
-              setLangMode('ja');
+            if (swipe < -50) {
+              setLangMode(langMode === 'en' ? 'ja' : langMode === 'ja' ? 'zh' : 'en');
               playSwipe();
-            } else if (isJa && swipe > 50) {
-              setLangMode('en');
+            } else if (swipe > 50) {
+              setLangMode(langMode === 'en' ? 'zh' : langMode === 'ja' ? 'en' : 'ja');
               playSwipe();
             }
           }}
         >
-          {/* Left Button */}
-          {isJa && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); setLangMode('en'); playSwipe(); }}
-              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
-              title="영어 모드"
-            >
-              <ChevronLeft size={24} />
-            </button>
-          )}
+          <button 
+            onClick={(e) => { e.stopPropagation(); setLangMode(langMode === 'en' ? 'zh' : langMode === 'ja' ? 'en' : 'ja'); playSwipe(); }}
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+            title={langMode === 'en' ? '한자 모드' : langMode === 'ja' ? '영어 모드' : '일본어 모드'}
+          >
+            <ChevronLeft size={24} />
+          </button>
           
-          {/* Right Button */}
-          {!isJa && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); setLangMode('ja'); playSwipe(); }}
-              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
-              title="일본어 모드"
-            >
-              <ChevronRight size={24} />
-            </button>
-          )}
+          <button 
+            onClick={(e) => { e.stopPropagation(); setLangMode(langMode === 'en' ? 'ja' : langMode === 'ja' ? 'zh' : 'en'); playSwipe(); }}
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+            title={langMode === 'en' ? '일본어 모드' : langMode === 'ja' ? '한자 모드' : '영어 모드'}
+          >
+            <ChevronRight size={24} />
+          </button>
 
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6 cursor-grab active:cursor-grabbing">
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 pointer-events-none select-none">
-              {isJa ? (
+              {isZh ? (
+                <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">漢</span>
+              ) : isJa ? (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1 ml-1 tracking-widest">日本</span>
               ) : (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">Abc</span>
@@ -555,7 +557,7 @@ export default function StudyPage() {
               </>
             ) : activeLists.length === 0 ? (
               <>
-                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장이 없습니다.</h2>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isZh ? '한자' : isJa ? '일본어' : '영어'} 단어장이 없습니다.</h2>
                 <p className="text-body-md text-on-surface-variant pointer-events-none">설정에서 단어장을 활성화해주세요.</p>
               </>
             ) : (

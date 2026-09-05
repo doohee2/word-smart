@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const uploadSchema = z.object({
   title: z.string().min(1),
-  lang: z.enum(['en', 'ja']).optional(),
+  lang: z.enum(['en', 'ja', 'zh']).optional(),
   words: z.array(
     z.object({
       word: z.string().min(1),
@@ -14,7 +14,7 @@ const uploadSchema = z.object({
       meaningKo: z.string(),
       exampleEn: z.string().optional().nullable(),
       exampleKo: z.string().optional().nullable(),
-      zipfScore: z.number().optional().nullable(),
+      zipfScore: z.union([z.number(), z.string()]).optional().nullable(),
     })
   ),
 });

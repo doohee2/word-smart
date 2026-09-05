@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type LangMode = 'en' | 'ja';
+type LangMode = 'en' | 'ja' | 'zh';
 
 interface LanguageModeContextType {
   langMode: LangMode;
@@ -19,8 +19,8 @@ export function LanguageModeProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const saved = localStorage.getItem('word_smart_lang_mode');
-    if (saved === 'en' || saved === 'ja') {
-      setLangModeState(saved);
+    if (saved === 'en' || saved === 'ja' || saved === 'zh') {
+      setLangModeState(saved as LangMode);
     }
   }, []);
 

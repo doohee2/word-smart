@@ -26,10 +26,11 @@ export default function TestPage() {
   const { settings } = useTTSSettings();
   const { langMode, setLangMode } = useLanguageMode();
   const isJa = langMode === 'ja';
+  const isZh = langMode === 'zh';
   const lists = useLiveQuery(() => db.wordLists.toArray());
   const activeLists = useLiveQuery(async () => {
     const all = await db.wordLists.filter(list => !!list.isActive).toArray();
-    return all.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en'));
+    return all.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en'));
   }, [langMode]);
   const { data: session } = useSession();
   const correctWordsRef = useRef<string[]>([]);
@@ -37,7 +38,7 @@ export default function TestPage() {
 
   const rawWords = useLiveQuery(async () => {
     const allActive = await db.wordLists.filter(l => !!l.isActive).toArray();
-    const activeListIds = allActive.filter(l => isJa ? l.lang === 'ja' : (!l.lang || l.lang === 'en')).map(l => l.id!);
+    const activeListIds = allActive.filter(l => langMode === 'ja' ? l.lang === 'ja' : langMode === 'zh' ? l.lang === 'zh' : (!l.lang || l.lang === 'en')).map(l => l.id!);
     if (activeListIds.length === 0) return [];
     return db.words.where('listId').anyOf(activeListIds).toArray();
   }, [langMode]);
@@ -138,7 +139,7 @@ export default function TestPage() {
   // Auto-save progress
   useEffect(() => {
     if (!isStarted || testQueue.length === 0) return;
-    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_test_ja' : langMode === 'zh' ? 'word_smart_resume_test_zh' : 'word_smart_resume_test_en';
     const state: SavedTestState = {
       testQueue,
       currentIndex,
@@ -152,7 +153,7 @@ export default function TestPage() {
   }, [isStarted, isJa, testQueue, currentIndex, score, totalTested]);
 
   const handlePreStartCheck = () => {
-    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_test_ja' : langMode === 'zh' ? 'word_smart_resume_test_zh' : 'word_smart_resume_test_en';
     const saved = localStorage.getItem(saveKey);
     if (saved) {
       try {
@@ -186,7 +187,7 @@ export default function TestPage() {
   };
 
   const handleRestart = () => {
-    const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+    const saveKey = langMode === 'ja' ? 'word_smart_resume_test_ja' : langMode === 'zh' ? 'word_smart_resume_test_zh' : 'word_smart_resume_test_en';
     localStorage.removeItem(saveKey);
     setShowResumePrompt(false);
     setSavedState(null);
@@ -202,8 +203,12 @@ export default function TestPage() {
     if (zipfFilter !== 'all') {
       const threshold = zipfFilter === 'hard' ? 4.0 : (typeof customZipf === 'number' ? customZipf : parseFloat(customZipf) || 4.0);
       pool = pool.filter(w => {
-        if (w.zipfScore === undefined || w.zipfScore === null || w.zipfScore === 0) return true;
-        return zipfFilter === 'hard' ? w.zipfScore <= threshold : w.zipfScore < threshold;
+        let score = w.zipfScore;
+        if (typeof score === 'string') {
+          score = parseFloat(score.replace(/[^0-9.]/g, ''));
+        }
+        if (score === undefined || score === null || score === 0 || isNaN(score as number)) return true;
+        return zipfFilter === 'hard' ? (score as number) <= threshold : (score as number) < threshold;
       });
     }
 
@@ -257,9 +262,10 @@ export default function TestPage() {
   useEffect(() => {
     if (currentMode === 'mcq' && currentWord && rawWords && rawWords.length > 0) {
       const meanings = new Set<string>();
-      meanings.add(currentWord.meaningKo);
+      const answerField = isZh ? currentWord.partOfSpeech : currentWord.meaningKo;
+      meanings.add(answerField);
       
-      const pool = rawWords.filter(w => w.meaningKo !== currentWord.meaningKo).map(w => w.meaningKo);
+      const pool = rawWords.filter(w => (isZh ? w.partOfSpeech : w.meaningKo) !== answerField).map(w => isZh ? w.partOfSpeech : w.meaningKo);
       const shuffledPool = pool.sort(() => 0.5 - Math.random());
       
       for (const m of shuffledPool) {
@@ -320,7 +326,7 @@ export default function TestPage() {
             incompleteWords: incorrectWordsRef.current.join(', '),
             completeWords: correctWordsRef.current.join(', '),
             isSynced: false,
-            lang: (isJa ? 'ja' : 'en') as 'ja' | 'en'
+            lang: langMode as 'ja' | 'en' | 'zh'
           };
           
           db.history.add(payload).then(id => {
@@ -345,7 +351,7 @@ export default function TestPage() {
           type: 'success', 
           title: '테스트 완료',
           onCloseCallback: () => {
-            const saveKey = isJa ? 'word_smart_resume_test_ja' : 'word_smart_resume_test_en';
+            const saveKey = langMode === 'ja' ? 'word_smart_resume_test_ja' : langMode === 'zh' ? 'word_smart_resume_test_zh' : 'word_smart_resume_test_en';
             localStorage.removeItem(saveKey);
             setIsStarted(false);
           }
@@ -357,11 +363,12 @@ export default function TestPage() {
   const handleMCQSelect = (selectedMeaning: string) => {
     if (feedback) return;
     
-    const isCorrect = selectedMeaning === currentWord.meaningKo;
+    const answerField = isZh ? currentWord.partOfSpeech : currentWord.meaningKo;
+    const isCorrect = selectedMeaning === answerField;
     if (isCorrect) playSuccess();
     else playError();
     setFeedback(isCorrect ? 'correct' : 'incorrect');
-    setCorrectAnswer(currentWord.meaningKo);
+    setCorrectAnswer(answerField);
     handleNextWord(isCorrect);
   };
 
@@ -384,9 +391,9 @@ export default function TestPage() {
       window.speechSynthesis.cancel();
       setIsSpeakingWord(false);
 
-      const textToSpeak = isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const textToSpeak = isZh ? (currentWord.partOfSpeech || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = isJa ? 'ja-JP' : 'en-US';
+      utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       utterance.rate = settings.ttsRate;
       utterance.pitch = settings.ttsPitch;
       utterance.volume = settings.ttsVolume;
@@ -492,40 +499,36 @@ export default function TestPage() {
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(e, { offset }) => {
             const swipe = offset.x;
-            if (!isJa && swipe < -50) {
-              setLangMode('ja');
+            if (swipe < -50) {
+              setLangMode(langMode === 'en' ? 'ja' : langMode === 'ja' ? 'zh' : 'en');
               playSwipe();
-            } else if (isJa && swipe > 50) {
-              setLangMode('en');
+            } else if (swipe > 50) {
+              setLangMode(langMode === 'en' ? 'zh' : langMode === 'ja' ? 'en' : 'ja');
               playSwipe();
             }
           }}
         >
-          {/* Left Button */}
-          {isJa && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); setLangMode('en'); playSwipe(); }}
-              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
-              title="영어 모드"
-            >
-              <ChevronLeft size={24} />
-            </button>
-          )}
+          <button 
+            onClick={(e) => { e.stopPropagation(); setLangMode(langMode === 'en' ? 'zh' : langMode === 'ja' ? 'en' : 'ja'); playSwipe(); }}
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+            title={langMode === 'en' ? '한자 모드' : langMode === 'ja' ? '영어 모드' : '일본어 모드'}
+          >
+            <ChevronLeft size={24} />
+          </button>
           
-          {/* Right Button */}
-          {!isJa && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); setLangMode('ja'); playSwipe(); }}
-              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
-              title="일본어 모드"
-            >
-              <ChevronRight size={24} />
-            </button>
-          )}
+          <button 
+            onClick={(e) => { e.stopPropagation(); setLangMode(langMode === 'en' ? 'ja' : langMode === 'ja' ? 'zh' : 'en'); playSwipe(); }}
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 p-2 bg-surface-variant/50 hover:bg-surface-variant text-on-surface-variant rounded-full flex transition-colors z-10"
+            title={langMode === 'en' ? '일본어 모드' : langMode === 'ja' ? '한자 모드' : '영어 모드'}
+          >
+            <ChevronRight size={24} />
+          </button>
 
           <div className="flex-1 flex flex-col items-center justify-center text-center p-6 cursor-grab active:cursor-grabbing">
             <div className="w-24 h-24 bg-primary-container rounded-full flex items-center justify-center mb-6 pointer-events-none select-none">
-              {isJa ? (
+              {isZh ? (
+                <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">漢</span>
+              ) : isJa ? (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1 ml-1 tracking-widest">日本</span>
               ) : (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">Abc</span>
@@ -538,12 +541,12 @@ export default function TestPage() {
               </>
             ) : activeLists.length === 0 ? (
               <>
-                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장이 없습니다.</h2>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isZh ? '한자' : isJa ? '일본어' : '영어'} 단어장이 없습니다.</h2>
                 <p className="text-body-md text-on-surface-variant pointer-events-none">설정에서 단어장을 활성화해주세요.</p>
               </>
             ) : (
               <>
-                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isZh ? '한자' : isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
                 <p className="text-body-md text-on-surface-variant pointer-events-none">총 {rawWords.length}개의 단어가 있습니다.</p>
               </>
             )}
