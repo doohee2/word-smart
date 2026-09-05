@@ -399,7 +399,7 @@ export default function TestPage() {
       utterance.rate = settings.ttsRate;
       utterance.pitch = settings.ttsPitch;
       utterance.volume = settings.ttsVolume;
-      if (!isJa && settings.ttsVoiceURI) {
+      if (!isJa && !isZh && settings.ttsVoiceURI) {
         const voices = window.speechSynthesis.getVoices();
         const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
         if (selectedVoice) {
@@ -643,7 +643,10 @@ export default function TestPage() {
                     <div className="flex items-start gap-3">
                       <Lightbulb className="text-primary shrink-0 mt-0.5" size={20} />
                       <p 
-                        className="text-body-md text-on-surface-variant italic"
+                        className={clsx(
+                          "text-on-surface-variant",
+                          isZh ? "text-title-lg md:text-headline-sm font-bold" : "text-body-md italic"
+                        )}
                         dangerouslySetInnerHTML={{ 
                           __html: maskExampleHtml(currentWord.word, currentWord.exampleEn)
                         }} 

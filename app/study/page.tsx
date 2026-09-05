@@ -401,7 +401,7 @@ export default function StudyPage() {
     utterance.rate = settings.ttsRate;
     utterance.pitch = settings.ttsPitch;
     utterance.volume = settings.ttsVolume;
-    if ((!isJa || forceEnglish) && settings.ttsVoiceURI) {
+    if (((!isJa && !isZh) || forceEnglish) && settings.ttsVoiceURI) {
       const voices = window.speechSynthesis.getVoices();
       const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
       if (selectedVoice) {
@@ -766,14 +766,18 @@ export default function StudyPage() {
                         <div>
                           {currentWord.exampleEn && (
                             <p 
-                              className="text-body-md text-on-surface mb-2" 
+                              className={clsx(
+                                "text-on-surface mb-2",
+                                isZh ? "text-title-lg md:text-headline-sm font-bold" : "text-body-md"
+                              )}
                               dangerouslySetInnerHTML={{ 
                                 __html: highlightExampleSentence(currentWord.word, currentWord.exampleEn)
                               }} 
                             />
                           )}
                           <p className={clsx(
-                            "text-label-sm text-on-surface-variant transition-all duration-300 overflow-hidden",
+                            "text-on-surface-variant transition-all duration-300 overflow-hidden",
+                            isZh ? "text-title-md md:text-title-lg font-bold" : "text-label-sm",
                             showKoSentence ? "opacity-100 h-auto mt-2" : "opacity-0 h-0"
                           )}>
                             {currentWord.exampleKo}
