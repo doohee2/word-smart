@@ -65,10 +65,14 @@ export default function TestPage() {
     const savedType = localStorage.getItem('setting_testQuestionType');
     if (savedType) setQuestionType(savedType as 'english' | 'korean' | 'random');
     const savedZipfFilter = localStorage.getItem('setting_testZipfFilter');
-    if (savedZipfFilter === 'all' || savedZipfFilter === 'hard' || savedZipfFilter === 'custom') setZipfFilter(savedZipfFilter);
+    if (isJa || isZh) {
+      setZipfFilter('all');
+    } else if (savedZipfFilter === 'all' || savedZipfFilter === 'hard' || savedZipfFilter === 'custom') {
+      setZipfFilter(savedZipfFilter);
+    }
     const savedCustomZipf = localStorage.getItem('setting_testCustomZipf');
     if (savedCustomZipf) setCustomZipf(savedCustomZipf);
-  }, []);
+  }, [isJa, isZh]);
 
   // Save settings on change
   useEffect(() => {
@@ -262,10 +266,9 @@ export default function TestPage() {
   useEffect(() => {
     if (currentMode === 'mcq' && currentWord && rawWords && rawWords.length > 0) {
       const meanings = new Set<string>();
-      const answerField = isZh ? currentWord.partOfSpeech : currentWord.meaningKo;
-      meanings.add(answerField);
+      meanings.add(currentWord.meaningKo);
       
-      const pool = rawWords.filter(w => (isZh ? w.partOfSpeech : w.meaningKo) !== answerField).map(w => isZh ? w.partOfSpeech : w.meaningKo);
+      const pool = rawWords.filter(w => w.meaningKo !== currentWord.meaningKo).map(w => w.meaningKo);
       const shuffledPool = pool.sort(() => 0.5 - Math.random());
       
       for (const m of shuffledPool) {
@@ -363,12 +366,11 @@ export default function TestPage() {
   const handleMCQSelect = (selectedMeaning: string) => {
     if (feedback) return;
     
-    const answerField = isZh ? currentWord.partOfSpeech : currentWord.meaningKo;
-    const isCorrect = selectedMeaning === answerField;
+    const isCorrect = selectedMeaning === currentWord.meaningKo;
     if (isCorrect) playSuccess();
     else playError();
     setFeedback(isCorrect ? 'correct' : 'incorrect');
-    setCorrectAnswer(answerField);
+    setCorrectAnswer(currentWord.meaningKo);
     handleNextWord(isCorrect);
   };
 
@@ -391,7 +393,7 @@ export default function TestPage() {
       window.speechSynthesis.cancel();
       setIsSpeakingWord(false);
 
-      const textToSpeak = isZh ? (currentWord.partOfSpeech || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const textToSpeak = isZh ? (currentWord.meaningKo || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       utterance.rate = settings.ttsRate;

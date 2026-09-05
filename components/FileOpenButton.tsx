@@ -73,8 +73,8 @@ export function FileOpenButton() {
 
         if (detectedLang === 'zh') {
           word = String(row["한자"] || "").trim();
-          partOfSpeech = String(row["훈음"] || "").trim();
-          meaningKo = String(row["부수와 형성원리"] || "").trim();
+          partOfSpeech = String(row["부수와 형성원리"] || "").trim();
+          meaningKo = String(row["훈음"] || "").trim();
           exampleEn = String(row["한자 단어"] || "").trim();
           exampleKo = String(row["한자 단어 독음"] || "").trim();
           zipfScore = row["급수 난이도"] ? String(row["급수 난이도"]).trim() : undefined;

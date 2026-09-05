@@ -62,8 +62,8 @@ function WordListItem({
     const isZh = list.lang === 'zh';
     const csvData = words.map(w => isZh ? {
       "한자": w.word,
-      "부수와 형성원리": w.meaningKo,
-      "훈음": w.partOfSpeech,
+      "부수와 형성원리": w.partOfSpeech,
+      "훈음": w.meaningKo,
       "한자 단어": w.exampleEn,
       "한자 단어 독음": w.exampleKo,
       "급수 난이도": w.zipfScore !== undefined && w.zipfScore !== null ? w.zipfScore : ""

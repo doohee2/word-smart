@@ -60,10 +60,14 @@ export default function StudyPage() {
     const savedRevealMode = localStorage.getItem('setting_studyRevealMode');
     if (savedRevealMode === '2sec' || savedRevealMode === 'touch') setRevealMode(savedRevealMode);
     const savedZipfFilter = localStorage.getItem('setting_studyZipfFilter');
-    if (savedZipfFilter === 'all' || savedZipfFilter === 'hard' || savedZipfFilter === 'custom') setZipfFilter(savedZipfFilter);
+    if (isJa || isZh) {
+      setZipfFilter('all');
+    } else if (savedZipfFilter === 'all' || savedZipfFilter === 'hard' || savedZipfFilter === 'custom') {
+      setZipfFilter(savedZipfFilter);
+    }
     const savedCustomZipf = localStorage.getItem('setting_studyCustomZipf');
     if (savedCustomZipf) setCustomZipf(savedCustomZipf);
-  }, []);
+  }, [isJa, isZh]);
 
   // Save settings on change
   useEffect(() => {
@@ -435,7 +439,7 @@ export default function StudyPage() {
       setIsSpeakingWord(false);
       setIsSpeakingExample(false);
 
-      const textToSpeak = isZh ? (currentWord.partOfSpeech || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
+      const textToSpeak = isZh ? (currentWord.meaningKo || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance);
@@ -562,7 +566,7 @@ export default function StudyPage() {
               </>
             ) : (
               <>
-                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
+                <h2 className="text-headline-lg font-bold text-on-surface mb-2 pointer-events-none">선택된 {isZh ? '한자' : isJa ? '일본어' : '영어'} 단어장 {activeLists.length}개</h2>
                 <p className="text-body-md text-on-surface-variant pointer-events-none">총 {rawWords.length}개의 단어가 있습니다.</p>
               </>
             )}
