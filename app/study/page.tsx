@@ -902,7 +902,7 @@ export default function StudyPage() {
                 </label>
 
                 {/* 난이도 필터 (Zipf) */}
-                {!isJa && (
+                {(!isJa && !isZh) && (
                   <div>
                     <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
                     <select 

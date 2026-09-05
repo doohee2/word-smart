@@ -8,13 +8,16 @@ interface ZipfBadgeProps {
 }
 
 export function ZipfBadge({ score, listTitle, className }: ZipfBadgeProps) {
-  const isValid = score !== undefined && score !== null && score !== 0 && score !== "";
+  const isValid = score !== undefined && score !== null && score !== 0 && score !== "" && score !== "NaN";
   
   let starsCount = 1;
   let isGray = !isValid;
   let labelText: string | undefined = undefined;
 
-  if (typeof score === 'string') {
+  if (typeof score === 'number' && isNaN(score)) {
+    isGray = true;
+    starsCount = 1; // Default back to gray star
+  } else if (typeof score === 'string') {
     labelText = score;
     isGray = false;
     const num = parseFloat(score.replace(/[^0-9.]/g, ''));

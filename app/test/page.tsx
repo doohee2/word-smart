@@ -240,7 +240,7 @@ export default function TestPage() {
     
     const queue: TestWord[] = selectedWords.map(w => {
       let m: 'mcq' | 'spelling' = 'mcq';
-      if (isJa) m = 'mcq';
+      if (isJa || isZh) m = 'mcq';
       else if (questionType === 'english') m = 'mcq';
       else if (questionType === 'korean') m = 'spelling';
       else m = Math.random() > 0.5 ? 'mcq' : 'spelling';
@@ -831,7 +831,7 @@ export default function TestPage() {
                 </label>
 
                 {/* 난이도 필터 (Zipf) */}
-                {!isJa && (
+                {(!isJa && !isZh) && (
                   <div>
                     <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">난이도 필터 (Zipf)</label>
                     <select 
@@ -861,7 +861,7 @@ export default function TestPage() {
                 )}
 
                 {/* 출제 유형 */}
-                {!isJa ? (
+                {(!isJa && !isZh) ? (
                   <div>
                     <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
                     <div className="flex bg-surface-container rounded-xl p-1">
@@ -889,7 +889,7 @@ export default function TestPage() {
                   <div>
                     <label className="block text-label-sm font-bold text-on-surface-variant uppercase tracking-wider mb-3">출제 유형</label>
                     <div className="p-4 bg-surface-container rounded-xl text-center text-body-md font-bold text-primary">
-                      일본어 한자 단어는 객관식 퀴즈(100%)로 출제됩니다.
+                      선택하신 단어장은 객관식 퀴즈(100%)로 출제됩니다.
                     </div>
                   </div>
                 )}
