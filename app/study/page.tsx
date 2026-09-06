@@ -549,7 +549,7 @@ export default function StudyPage() {
               {isZh ? (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">漢</span>
               ) : isJa ? (
-                <span className="text-primary text-4xl font-bold font-serif leading-none mt-1 ml-1 tracking-widest">日本</span>
+                <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">日</span>
               ) : (
                 <span className="text-primary text-4xl font-bold font-serif leading-none mt-1">Abc</span>
               )}
@@ -668,11 +668,27 @@ export default function StudyPage() {
                 )}
                 onClick={() => !isRevealed && setIsRevealed(true)}
               >
-                <ZipfBadge 
-                  score={currentWord?.zipfScore} 
-                  listTitle={currentWord ? listMap.get(currentWord.listId)?.title : undefined}
-                  className="absolute top-6 left-6" 
-                />
+                <button
+                  className="absolute top-6 left-6 transition-transform hover:scale-105 active:scale-95"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!currentWord) return;
+                    let url = `https://en.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
+                    if (isJa) {
+                      url = `https://ja.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
+                    } else if (isZh) {
+                      url = `https://hanja.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
+                    }
+                    window.open(url, '_blank');
+                  }}
+                  title="네이버 사전 검색"
+                  aria-label="네이버 사전 검색"
+                >
+                  <ZipfBadge 
+                    score={currentWord?.zipfScore} 
+                    listTitle={currentWord ? listMap.get(currentWord.listId)?.title : undefined}
+                  />
+                </button>
                 
                 <button 
                   onClick={(e) => { e.stopPropagation(); playAudio(); }}
