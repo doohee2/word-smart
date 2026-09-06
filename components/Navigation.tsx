@@ -18,7 +18,7 @@ export function Navigation() {
   const [isTTSModalOpen, setIsTTSModalOpen] = useState(false);
 
   const handleLinkClick = (e: React.MouseEvent, href: string) => {
-    if (isActiveSession && pathname !== href) {
+    if (isActiveSession) {
       e.preventDefault();
       setModalConfig({isOpen: true, targetHref: href});
     }
@@ -27,7 +27,12 @@ export function Navigation() {
   const confirmNavigation = () => {
     setIsActiveSession(false);
     setModalConfig(prev => ({...prev, isOpen: false}));
-    router.push(modalConfig.targetHref);
+    
+    if (pathname === modalConfig.targetHref || (pathname === '/' && modalConfig.targetHref === '/study')) {
+      window.dispatchEvent(new Event('word-smart-stop-session'));
+    } else {
+      router.push(modalConfig.targetHref);
+    }
   };
 
   const links = [

@@ -387,6 +387,14 @@ export default function TestPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const handleStopSession = () => {
+      setIsStarted(false);
+    };
+    window.addEventListener('word-smart-stop-session', handleStopSession);
+    return () => window.removeEventListener('word-smart-stop-session', handleStopSession);
+  }, []);
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
       // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
