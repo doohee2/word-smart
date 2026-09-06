@@ -243,7 +243,7 @@ export default function HistoryPage() {
                           {history.type === 'study' ? '단어 학습' : '단어 테스트'}
                           {history.lang && (
                             <span className="text-body-sm font-normal text-on-surface-variant ml-1">
-                              {history.lang === 'ja' ? '(일본어한자)' : '(영어)'}
+                              {history.lang === 'ja' ? '(일본어한자)' : history.lang === 'zh' ? '(한자)' : '(영어)'}
                             </span>
                           )}
                         </span>
