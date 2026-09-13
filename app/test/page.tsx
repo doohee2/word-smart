@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { Lightbulb, Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -375,6 +375,7 @@ export default function TestPage() {
   };
 
   const [isSpeakingWord, setIsSpeakingWord] = useState(false);
+  const [isSpeakingExample, setIsSpeakingExample] = useState(false);
 
   // Chrome/Edge speechSynthesis 큐 멈춤 방지 keepAlive
   useEffect(() => {
@@ -424,6 +425,34 @@ export default function TestPage() {
         window.speechSynthesis.speak(utterance);
       }, 50);
     }
+  };
+
+  const playExampleAudio = () => {
+    if (!currentWord?.exampleEn || !('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    setIsSpeakingWord(false);
+    setIsSpeakingExample(false);
+
+    const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
+    utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
+    utterance.rate = settings.ttsRate;
+    utterance.pitch = settings.ttsPitch;
+    utterance.volume = settings.ttsVolume;
+    if (!isJa && !isZh && settings.ttsVoiceURI) {
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    }
+
+    utterance.onstart = () => setIsSpeakingExample(true);
+    utterance.onend = () => setIsSpeakingExample(false);
+    utterance.onerror = () => setIsSpeakingExample(false);
+
+    setTimeout(() => {
+      window.speechSynthesis.speak(utterance);
+    }, 50);
   };
 
   const handleSpellingSubmit = (e: React.FormEvent) => {
@@ -666,7 +695,18 @@ export default function TestPage() {
                 {currentWord.exampleEn && (
                   <div className="mt-6 bg-surface-container p-4 rounded-xl text-left border border-surface-variant">
                     <div className="flex items-start gap-3">
-                      <Lightbulb className="text-primary shrink-0 mt-0.5" size={20} />
+                      <button
+                        onClick={(e) => { e.stopPropagation(); playExampleAudio(); }}
+                        aria-label="예문 듣기"
+                        className={clsx(
+                          "shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+                          isSpeakingExample
+                            ? "bg-primary text-on-primary"
+                            : "text-primary hover:bg-surface-variant"
+                        )}
+                      >
+                        <Volume2 size={18} className={clsx(isSpeakingExample && "animate-pulse")} />
+                      </button>
                       <p 
                         className={clsx(
                           "text-on-surface-variant",

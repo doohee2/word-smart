@@ -86,7 +86,7 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
       if (ctx) {
         ctx.scale(dpr, dpr);
         ctx.strokeStyle = "#1a1a1a";
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4.5;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.fillStyle = "#1a1a1a";
@@ -128,11 +128,11 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200 shrink-0">
           <button
             onClick={clearCanvas}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-full transition-colors"
+            className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-full transition-colors"
             title="지우기"
+            aria-label="지우기"
           >
             <Eraser size={18} />
-            <span>지우기</span>
           </button>
 
           <span className="text-sm font-bold text-gray-400 select-none">연습장</span>
