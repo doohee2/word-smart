@@ -15,6 +15,7 @@ import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
 import { useAppSound } from "@/hooks/useAppSound";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
+import { DrawingPad } from "@/components/DrawingPad";
 
 export default function StudyPage() {
   const { isMuted, toggleMute, playStart, playClick, playCompleteWord, playSwipe, playMissionComplete } = useAppSound();
@@ -101,6 +102,7 @@ export default function StudyPage() {
   const [isSpeakingWord, setIsSpeakingWord] = useState(false);
   const [isSpeakingExample, setIsSpeakingExample] = useState(false);
   const { setIsActiveSession } = useStudySession();
+  const [isDrawingPadOpen, setIsDrawingPadOpen] = useState(false);
 
   // Reset state on new card
   useEffect(() => {
@@ -675,6 +677,7 @@ export default function StudyPage() {
                   !isRevealed && "cursor-pointer"
                 )}
                 onClick={() => !isRevealed && setIsRevealed(true)}
+                onDoubleClick={() => setIsDrawingPadOpen(true)}
               >
                 <button
                   className="absolute top-6 left-6 transition-transform hover:scale-105 active:scale-95"
@@ -1038,6 +1041,9 @@ export default function StudyPage() {
           </div>
         </div>
       )}
+
+      {/* Drawing Pad */}
+      <DrawingPad isOpen={isDrawingPadOpen} onClose={() => setIsDrawingPadOpen(false)} />
     </div>
   );
 }
