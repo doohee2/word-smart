@@ -86,7 +86,7 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
       if (ctx) {
         ctx.scale(dpr, dpr);
         ctx.strokeStyle = "#1a1a1a";
-        ctx.lineWidth = 4.5;
+        ctx.lineWidth = 7;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
         ctx.fillStyle = "#1a1a1a";
@@ -135,7 +135,7 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
             <Eraser size={18} />
           </button>
 
-          <span className="text-sm font-bold text-gray-400 select-none">연습장</span>
+          <span className="flex-1" />
 
           <button
             onClick={onClose}
