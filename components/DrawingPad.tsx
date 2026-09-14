@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect, useCallback } from "react";
-import { X, Eraser } from "lucide-react";
+import { X, Eraser, Eye, EyeOff } from "lucide-react";
 
 interface DrawingPadProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [isOpaque, setIsOpaque] = useState(false);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
 
   const getPos = useCallback((e: React.MouseEvent | React.TouchEvent) => {
@@ -120,8 +121,8 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
       onClick={onClose}
     >
       <div
-        className="relative rounded-3xl shadow-2xl flex flex-col overflow-hidden"
-        style={{ width: "min(90vw, 800px)", height: "80vh", backgroundColor: "rgba(255, 255, 255, 0.75)" }}
+        className="relative rounded-3xl shadow-2xl flex flex-col overflow-hidden transition-colors duration-200"
+        style={{ width: "min(90vw, 800px)", height: "80vh", backgroundColor: isOpaque ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.75)" }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -135,7 +136,14 @@ export function DrawingPad({ isOpen, onClose }: DrawingPadProps) {
             <Eraser size={18} />
           </button>
 
-          <span className="flex-1" />
+          <button
+            onClick={() => setIsOpaque(prev => !prev)}
+            className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 rounded-full transition-colors"
+            title={isOpaque ? "반투명" : "불투명"}
+            aria-label={isOpaque ? "반투명으로 전환" : "불투명으로 전환"}
+          >
+            {isOpaque ? <Eye size={18} /> : <EyeOff size={18} />}
+          </button>
 
           <button
             onClick={onClose}
