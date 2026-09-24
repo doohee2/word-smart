@@ -24,6 +24,7 @@ function WordListItem({
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(list.title);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const stats = useLiveQuery(async () => {
     if (!list.id) return { total: 0, testCount: 0, rate: 0 };
@@ -94,6 +95,15 @@ function WordListItem({
 
   const handleUploadDB = () => {
     onUploadRequest(list);
+  };
+
+  const handleResetProgress = async () => {
+    if (!list.id) return;
+    const words = await db.words.where('listId').equals(list.id).toArray();
+    await Promise.all(
+      words.map(w => w.id ? db.words.update(w.id, { isLearned: false, testCount: 0, correctCount: 0 }) : Promise.resolve())
+    );
+    setShowResetConfirm(false);
   };
 
   if (!stats) return null; // loading
@@ -168,13 +178,21 @@ function WordListItem({
             <div className="w-px h-6 bg-surface-variant"></div>
             
             {/* Mobile Rate (No Bar) */}
-            <div className="flex md:hidden flex-col items-center min-w-[32px]">
+            <button 
+              className="flex md:hidden flex-col items-center min-w-[32px] cursor-pointer hover:opacity-70 active:scale-95 transition-all"
+              onClick={() => setShowResetConfirm(true)}
+              title="학습 진행률 초기화"
+            >
               <span className="text-[13px] font-bold text-primary">{stats.rate}%</span>
               <span className="text-[9px] text-outline font-semibold">완료율</span>
-            </div>
+            </button>
             
             {/* PC Rate (With Bar) */}
-            <div className="hidden md:flex flex-1 md:w-32 flex-col gap-1 justify-center">
+            <button 
+              className="hidden md:flex flex-1 md:w-32 flex-col gap-1 justify-center cursor-pointer hover:opacity-70 active:scale-95 transition-all"
+              onClick={() => setShowResetConfirm(true)}
+              title="학습 진행률 초기화"
+            >
               <div className="flex justify-between items-end">
                 <span className="text-[10px] text-outline font-semibold">완료율</span>
                 <span className="text-label-sm font-bold text-primary">{stats.rate}%</span>
@@ -182,7 +200,7 @@ function WordListItem({
               <div className="w-full bg-surface-variant rounded-full h-2 overflow-hidden">
                 <div className="bg-primary h-full rounded-full transition-all" style={{ width: `${stats.rate}%` }}></div>
               </div>
-            </div>
+            </button>
           </div>
           
           <div className="flex items-center justify-end gap-1 shrink-0">
@@ -200,6 +218,14 @@ function WordListItem({
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleResetProgress}
+        title="학습 진행률 초기화"
+        message={`"${list.title}" 단어장의 학습 진행률을 초기화하시겠습니까?\n완료율, 테스트 횟수, 정답률이 모두 0으로 리셋됩니다.`}
+      />
     </div>
   );
 }
