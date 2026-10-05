@@ -2,6 +2,7 @@
 
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, WordList } from "@/lib/db";
+import { fetchWithSessionRetry } from "@/lib/fetchAuth";
 import { useState } from "react";
 import { Check, Edit, Trash2, X, Download, CloudUpload, CloudDownload, ChevronDown, ChevronUp } from "lucide-react";
 import { ConfirmModal } from "@/components/ConfirmModal";
@@ -267,7 +268,7 @@ export default function SettingsPage() {
     setUploadStatus({ isOpen: true, message: `'${list.title}' 단어장을 업로드하는 중...`, type: 'info', isUploading: true });
     try {
       const words = await db.words.where('listId').equals(list.id).toArray();
-      const res = await fetch('/api/db/upload', {
+      const res = await fetchWithSessionRetry('/api/db/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: list.title, lang: list.lang || 'en', words })

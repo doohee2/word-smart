@@ -6,6 +6,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import { BookOpen, PlaySquare, Calendar, ChevronDown, ChevronUp, RefreshCw, Trash2 } from "lucide-react";
 import clsx from "clsx";
+import { fetchWithSessionRetry } from "@/lib/fetchAuth";
 
 export default function HistoryPage() {
   const { data: session } = useSession();
@@ -23,7 +24,7 @@ export default function HistoryPage() {
     
     setIsSyncing(true);
     // 1. Fetch keys (id, created_at, type) for the selected month
-    fetch(`/api/history?month=${selectedMonth}&keysOnly=true`, {
+    fetchWithSessionRetry(`/api/history?month=${selectedMonth}&keysOnly=true`, {
       signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
     })
       .then(res => res.json())
@@ -55,7 +56,7 @@ export default function HistoryPage() {
 
           if (missingIds.length > 0) {
             // 2. Fetch full records for missing IDs
-            const fetchRes = await fetch('/api/history', {
+            const fetchRes = await fetchWithSessionRetry('/api/history', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'fetch', ids: missingIds }),
@@ -144,7 +145,7 @@ export default function HistoryPage() {
       await db.history.update(id, { isDeleted: true, deletedAt: new Date(), isSynced: false });
       
       if (record.serverId && typeof navigator !== 'undefined' && navigator.onLine) {
-        fetch('/api/history', {
+        fetchWithSessionRetry('/api/history', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'delete', keys: [record.serverId] })

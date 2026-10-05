@@ -5,6 +5,7 @@ import { ConfirmModal } from "./ConfirmModal";
 import { useSession } from "next-auth/react";
 import { useLiveQuery } from "dexie-react-hooks";
 import clsx from "clsx";
+import { fetchWithSessionRetry } from "@/lib/fetchAuth";
 
 interface DBList {
   id: string;
@@ -33,7 +34,7 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
     if (!isOpen) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
-    fetch('/api/db/list')
+    fetchWithSessionRetry('/api/db/list')
       .then(res => res.json())
       .then(data => {
         if (data.error) throw new Error(data.error);
@@ -49,7 +50,7 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
   const handleDownload = async (dbList: DBList) => {
     setDownloadingId(dbList.id);
     try {
-      const res = await fetch(`/api/db/download?listId=${dbList.id}`);
+      const res = await fetchWithSessionRetry(`/api/db/download?listId=${dbList.id}`);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
 
@@ -142,7 +143,7 @@ export function DBDownloadModal({ isOpen, onClose }: { isOpen: boolean, onClose:
   const handleDelete = async (id: string) => {
     setIsDeleting(true);
     try {
-      const res = await fetch('/api/db/delete', {
+      const res = await fetchWithSessionRetry('/api/db/delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

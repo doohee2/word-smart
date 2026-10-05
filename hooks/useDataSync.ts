@@ -2,6 +2,7 @@ import { useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { db } from "@/lib/db";
 import { useNetworkStatus } from "./useNetworkStatus";
+import { fetchWithSessionRetry } from "@/lib/fetchAuth";
 
 export function useDataSync() {
   const { data: session } = useSession();
@@ -13,7 +14,7 @@ export function useDataSync() {
     try {
       // 1. Fetch keys (id, created_at, type) for the current month as a default sync
       const currentMonthStr = new Date().toISOString().slice(0, 7);
-      const res = await fetch(`/api/history?month=${currentMonthStr}&keysOnly=true`, {
+      const res = await fetchWithSessionRetry(`/api/history?month=${currentMonthStr}&keysOnly=true`, {
         signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
       });
       if (!res.ok) return;
@@ -52,7 +53,7 @@ export function useDataSync() {
         // 2. Upstream: Push new offline records
         const offlineRecords = localItems.filter(h => !h.isSynced && !h.isDeleted && !h.serverId);
         if (offlineRecords.length > 0) {
-          const syncRes = await fetch('/api/history', {
+          const syncRes = await fetchWithSessionRetry('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'sync_offline', records: offlineRecords }),
@@ -74,7 +75,7 @@ export function useDataSync() {
         const localDeletions = localItems.filter(h => h.isDeleted && !h.isSynced && h.serverId);
         if (localDeletions.length > 0) {
           const keys = localDeletions.map(h => h.serverId!);
-          const delRes = await fetch('/api/history', {
+          const delRes = await fetchWithSessionRetry('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'delete', keys }),
@@ -89,7 +90,7 @@ export function useDataSync() {
 
         // 4. Fetch full records for missing IDs
         if (missingIds.length > 0) {
-          const fetchRes = await fetch('/api/history', {
+          const fetchRes = await fetchWithSessionRetry('/api/history', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ action: 'fetch', ids: missingIds }),
@@ -125,7 +126,7 @@ export function useDataSync() {
     if (!session?.user?.email || (typeof navigator !== 'undefined' && !navigator.onLine)) return;
 
     try {
-      const res = await fetch('/api/db/list', {
+      const res = await fetchWithSessionRetry('/api/db/list', {
         signal: typeof AbortSignal !== 'undefined' ? AbortSignal.timeout(5000) : undefined
       });
       if (!res.ok) return;

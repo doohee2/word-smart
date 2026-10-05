@@ -13,7 +13,6 @@ declare module "next-auth" {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function refreshAccessToken(token: any) {
   try {
     const url =
@@ -44,12 +43,19 @@ async function refreshAccessToken(token: any) {
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error("RefreshAccessTokenError", error);
-    return {
-      ...token,
-      error: "RefreshAccessTokenError",
-    };
+
+    // 치명적 오류 (invalid_grant 등 권한 철회) 일 경우에만 강제 로그아웃 플래그 세팅
+    if (error?.error === "invalid_grant" || error?.error === "invalid_client") {
+      return {
+        ...token,
+        error: "RefreshAccessTokenError",
+      };
+    }
+
+    // 일시적인 네트워크 오류 등은 묵인하고 기존 토큰 반환 (다음 요청 시 재시도)
+    return token;
   }
 }
 
@@ -68,6 +74,9 @@ export const authOptions: import("next-auth").NextAuthOptions = {
       },
     }),
   ],
+  session: {
+    maxAge: 180 * 24 * 60 * 60, // 180 days
+  },
   callbacks: {
     async jwt({ token, account }) {
       // Initial sign in
@@ -78,8 +87,9 @@ export const authOptions: import("next-auth").NextAuthOptions = {
         return token;
       }
 
-      // Return previous token if the access token has not expired yet
-      if (Date.now() < (token.accessTokenExpires as number)) {
+      // Return previous token if the access token has not expired yet (with 60 seconds early refresh buffer)
+      const shouldRefreshTime = (token.accessTokenExpires as number) - 60 * 1000;
+      if (Date.now() < shouldRefreshTime) {
         return token;
       }
 
