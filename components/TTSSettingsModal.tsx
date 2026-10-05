@@ -11,6 +11,7 @@ interface TTSSettingsModalProps {
 export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
   const { settings, updateSettings } = useTTSSettings();
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [activeVoiceLang, setActiveVoiceLang] = useState<'en' | 'ja' | 'ko'>('en');
 
   useEffect(() => {
     if (!isOpen) return;
@@ -24,11 +25,14 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
         'Whisper', 'Wobble', 'Zarvox', 'Jester', 'Organ', 'Superstar'
       ];
 
-      // 영어 지원 목소리 중 특수 효과음 필터링
       setVoices(allVoices.filter(v => {
-        if (!v.lang.startsWith('en')) return false;
         // 블랙리스트에 포함된 이름이 있는지 확인
         if (APPLE_NOVELTY_VOICES.some(novelty => v.name.includes(novelty))) return false;
+        
+        if (activeVoiceLang === 'en' && !v.lang.startsWith('en')) return false;
+        if (activeVoiceLang === 'ja' && !v.lang.startsWith('ja')) return false;
+        if (activeVoiceLang === 'ko' && !v.lang.startsWith('ko')) return false;
+        
         return true;
       }));
     };
@@ -36,7 +40,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
     }
-  }, [isOpen]);
+  }, [isOpen, activeVoiceLang]);
 
   if (!isOpen) return null;
 
@@ -60,14 +64,40 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
 
         <div className="flex flex-col gap-4">
           {/* Section: TTS 목소리 */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <h3 className="text-label-lg font-bold flex items-center gap-2 text-primary">
-              <Mic2 size={18} /> 영어 발음 억양 (Voice)
+              <Mic2 size={18} /> 발음 억양 (Voice)
             </h3>
+            
+            <div className="flex bg-surface-container rounded-xl p-1 gap-1">
+              {[
+                { id: 'en', label: '영어' },
+                { id: 'ja', label: '일본어' },
+                { id: 'ko', label: '한자/한국어' }
+              ].map(lang => (
+                <button
+                  key={lang.id}
+                  onClick={() => setActiveVoiceLang(lang.id as 'en' | 'ja' | 'ko')}
+                  className={clsx(
+                    "flex-1 py-1.5 text-label-sm font-bold rounded-lg transition-colors",
+                    activeVoiceLang === lang.id
+                      ? "bg-primary text-on-primary shadow-sm"
+                      : "text-on-surface-variant hover:bg-surface-variant/50"
+                  )}
+                >
+                  {lang.label}
+                </button>
+              ))}
+            </div>
+
             <select
               className="w-full p-2.5 rounded-xl bg-surface border border-outline text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-              value={settings.ttsVoiceURI}
-              onChange={(e) => updateSettings({ ttsVoiceURI: e.target.value })}
+              value={activeVoiceLang === 'en' ? (settings.ttsVoiceURI_en || settings.ttsVoiceURI) : activeVoiceLang === 'ja' ? settings.ttsVoiceURI_ja : settings.ttsVoiceURI_ko}
+              onChange={(e) => {
+                if (activeVoiceLang === 'en') updateSettings({ ttsVoiceURI_en: e.target.value, ttsVoiceURI: e.target.value }); // update legacy field too
+                else if (activeVoiceLang === 'ja') updateSettings({ ttsVoiceURI_ja: e.target.value });
+                else if (activeVoiceLang === 'ko') updateSettings({ ttsVoiceURI_ko: e.target.value });
+              }}
             >
               <option value="">기본 목소리 (Default)</option>
               {voices.map(v => (

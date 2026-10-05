@@ -403,9 +403,16 @@ export default function StudyPage() {
     utterance.rate = settings.ttsRate;
     utterance.pitch = settings.ttsPitch;
     utterance.volume = settings.ttsVolume;
-    if (((!isJa && !isZh) || forceEnglish) && settings.ttsVoiceURI) {
+    
+    let targetURI = settings.ttsVoiceURI_en || settings.ttsVoiceURI;
+    if (!forceEnglish) {
+      if (utterance.lang.startsWith('ja')) targetURI = settings.ttsVoiceURI_ja;
+      if (utterance.lang.startsWith('ko')) targetURI = settings.ttsVoiceURI_ko;
+    }
+
+    if (targetURI) {
       const voices = window.speechSynthesis.getVoices();
-      const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
+      const selectedVoice = voices.find(v => v.voiceURI === targetURI);
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }

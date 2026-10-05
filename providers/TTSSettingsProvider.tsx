@@ -6,7 +6,10 @@ export interface TTSSettings {
   ttsRate: number;
   ttsPitch: number;
   ttsVolume: number;
-  ttsVoiceURI: string;
+  ttsVoiceURI: string; // legacy fallback
+  ttsVoiceURI_en: string;
+  ttsVoiceURI_ja: string;
+  ttsVoiceURI_ko: string;
   autoTTS: boolean;
   sfxVolume: number;
   isSfxMuted: boolean;
@@ -23,6 +26,9 @@ const defaultSettings: TTSSettings = {
   ttsPitch: 1.0,
   ttsVolume: 1.0,
   ttsVoiceURI: "",
+  ttsVoiceURI_en: "",
+  ttsVoiceURI_ja: "",
+  ttsVoiceURI_ko: "",
   autoTTS: false,
   sfxVolume: 0.5,
   isSfxMuted: false,

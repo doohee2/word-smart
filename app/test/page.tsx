@@ -396,6 +396,24 @@ export default function TestPage() {
     return () => window.removeEventListener('word-smart-stop-session', handleStopSession);
   }, []);
 
+  const applyTTSSettings = (utterance: SpeechSynthesisUtterance) => {
+    utterance.rate = settings.ttsRate;
+    utterance.pitch = settings.ttsPitch;
+    utterance.volume = settings.ttsVolume;
+    
+    let targetURI = settings.ttsVoiceURI_en || settings.ttsVoiceURI;
+    if (utterance.lang.startsWith('ja')) targetURI = settings.ttsVoiceURI_ja;
+    if (utterance.lang.startsWith('ko')) targetURI = settings.ttsVoiceURI_ko;
+
+    if (targetURI) {
+      const voices = window.speechSynthesis.getVoices();
+      const selectedVoice = voices.find(v => v.voiceURI === targetURI);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+      }
+    }
+  };
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
       // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
@@ -405,16 +423,7 @@ export default function TestPage() {
       const textToSpeak = isZh ? (currentWord.meaningKo || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
-      utterance.rate = settings.ttsRate;
-      utterance.pitch = settings.ttsPitch;
-      utterance.volume = settings.ttsVolume;
-      if (!isJa && !isZh && settings.ttsVoiceURI) {
-        const voices = window.speechSynthesis.getVoices();
-        const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-      }
+      applyTTSSettings(utterance);
       
       utterance.onstart = () => setIsSpeakingWord(true);
       utterance.onend = () => setIsSpeakingWord(false);
@@ -435,16 +444,7 @@ export default function TestPage() {
 
     const utterance = new SpeechSynthesisUtterance(currentWord.exampleEn);
     utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
-    utterance.rate = settings.ttsRate;
-    utterance.pitch = settings.ttsPitch;
-    utterance.volume = settings.ttsVolume;
-    if (!isJa && !isZh && settings.ttsVoiceURI) {
-      const voices = window.speechSynthesis.getVoices();
-      const selectedVoice = voices.find(v => v.voiceURI === settings.ttsVoiceURI);
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-    }
+    applyTTSSettings(utterance);
 
     utterance.onstart = () => setIsSpeakingExample(true);
     utterance.onend = () => setIsSpeakingExample(false);
