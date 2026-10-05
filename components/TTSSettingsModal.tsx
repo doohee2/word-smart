@@ -100,11 +100,23 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
               }}
             >
               <option value="">기본 목소리 (Default)</option>
-              {voices.map(v => (
-                <option key={v.voiceURI} value={v.voiceURI}>
-                  {v.name} ({v.lang})
-                </option>
-              ))}
+              {voices.map(v => {
+                let extra = "";
+                if (v.voiceURI.includes("ttsbundle")) extra = "Bundle";
+                else if (v.voiceURI.includes("speech.synthesis.voice")) extra = "System";
+                
+                if (!v.localService) {
+                  extra = extra ? `${extra}, 온라인` : "온라인";
+                }
+
+                const displayName = extra ? `${v.name} [${extra}]` : v.name;
+
+                return (
+                  <option key={v.voiceURI} value={v.voiceURI}>
+                    {displayName} ({v.lang})
+                  </option>
+                );
+              })}
             </select>
           </div>
 
