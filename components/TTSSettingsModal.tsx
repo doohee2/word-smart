@@ -100,16 +100,23 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
               }}
             >
               <option value="">기본 목소리 (Default)</option>
-              {voices.map(v => {
+              {voices.map((v, index) => {
                 let extra = "";
                 if (v.voiceURI.includes("ttsbundle")) extra = "Bundle";
                 else if (v.voiceURI.includes("speech.synthesis.voice")) extra = "System";
+                else if (v.voiceURI !== v.name) {
+                  // 알 수 없는 URI 형식이면 마지막 부분(단어)만 추출
+                  const parts = v.voiceURI.split(/[.-]/);
+                  extra = parts.length > 1 ? parts[parts.length - 1] : v.voiceURI;
+                }
                 
                 if (!v.localService) {
                   extra = extra ? `${extra}, 온라인` : "온라인";
                 }
 
-                const displayName = extra ? `${v.name} [${extra}]` : v.name;
+                // 식별자가 여전히 비어있다면 배열 순서(index) 번호라도 부여해서 무조건 구별되게 함
+                const tag = extra ? `[${extra}]` : `[#${index + 1}]`;
+                const displayName = `${v.name} ${tag}`;
 
                 return (
                   <option key={v.voiceURI} value={v.voiceURI}>
