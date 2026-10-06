@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
-import { Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { Send, Settings2, Play, X, Plus, Minus, Folder, Volume2, VolumeX, ChevronLeft, ChevronRight, Info, Languages } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -693,8 +693,8 @@ export default function TestPage() {
                 </div>
                 
                 {currentWord.exampleEn && (
-                  <div className="mt-6 bg-surface-container p-4 rounded-xl text-left border border-surface-variant">
-                    <div className="flex items-start gap-3">
+                  <div className="mt-6 bg-surface-container p-4 pb-8 rounded-xl text-left border border-surface-variant relative overflow-hidden group">
+                    <div className="flex items-start gap-3 relative z-0">
                       <button
                         onClick={(e) => { e.stopPropagation(); playExampleAudio(); }}
                         aria-label="예문 듣기"
@@ -717,6 +717,26 @@ export default function TestPage() {
                         }} 
                       />
                     </div>
+                    {/* Translation / Dictionary Folded Corner Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const text = currentWord?.exampleEn || currentWord?.exampleKo || currentWord?.word;
+                        if (!text) return;
+                        
+                        if (isZh) {
+                          window.open(`https://hanja.dict.naver.com/#/search?query=${encodeURIComponent(text)}`, '_blank');
+                        } else if (isJa) {
+                          window.open(`https://papago.naver.com/?sl=ja&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
+                        } else {
+                          window.open(`https://papago.naver.com/?sl=en&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
+                        }
+                      }}
+                      className="absolute bottom-0 right-0 w-11 h-11 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2.5 rounded-tl-[24px] z-10 focus:outline-none"
+                      title={isZh ? "네이버 한자 사전 열기" : "파파고 번역 열기"}
+                    >
+                      <Languages size={16} />
+                    </button>
                   </div>
                 )}
                 

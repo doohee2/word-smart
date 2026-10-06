@@ -5,7 +5,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db, Word } from "@/lib/db";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Play, Volume2, VolumeX, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Volume2, VolumeX, Settings2, X, Info, Folder, Check, History, RotateCcw, CheckCircle, Minus, Plus, ChevronLeft, ChevronRight, Languages } from "lucide-react";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStudySession } from "@/providers/StudySessionProvider";
@@ -766,9 +766,9 @@ export default function StudyPage() {
 
                 {(currentWord?.exampleEn || currentWord?.exampleKo) && (
                   <div 
-                    className="w-full mt-auto bg-surface-container rounded-2xl overflow-hidden hover:bg-surface-variant transition-colors text-left group"
+                    className="w-full mt-auto bg-surface-container rounded-2xl overflow-hidden hover:bg-surface-variant transition-colors text-left group relative"
                   >
-                    <div className="flex items-stretch">
+                    <div className="flex items-stretch relative z-0">
                       {/* Left TTS Area */}
                       <div 
                         onClick={(e) => {
@@ -794,7 +794,7 @@ export default function StudyPage() {
                           e.stopPropagation();
                           setShowKoSentence(!showKoSentence);
                         }}
-                        className="pr-4 md:pr-6 pt-3 md:pt-5 pb-1 select-text cursor-auto flex-1 flex flex-col justify-start"
+                        className="pr-4 md:pr-6 pt-3 md:pt-5 pb-1 select-text cursor-auto flex-1 flex flex-col justify-start pb-8" // pb-8 added to avoid text overlap with bottom right button
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       >
                         <div>
@@ -825,12 +825,33 @@ export default function StudyPage() {
                         e.stopPropagation();
                         setShowKoSentence(!showKoSentence);
                       }}
-                      className="text-center pb-3 md:pb-4 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer"
+                      className="text-center pb-3 md:pb-4 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer relative z-0"
                     >
                       <span className="text-[10px] text-outline font-bold uppercase tracking-widest">
                         터치하여 번역 {showKoSentence ? "숨기기" : "보기"}
                       </span>
                     </div>
+
+                    {/* Translation / Dictionary Folded Corner Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const text = currentWord?.exampleEn || currentWord?.exampleKo || currentWord?.word;
+                        if (!text) return;
+                        
+                        if (isZh) {
+                          window.open(`https://hanja.dict.naver.com/#/search?query=${encodeURIComponent(text)}`, '_blank');
+                        } else if (isJa) {
+                          window.open(`https://papago.naver.com/?sl=ja&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
+                        } else {
+                          window.open(`https://papago.naver.com/?sl=en&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
+                        }
+                      }}
+                      className="absolute bottom-0 right-0 w-12 h-12 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2.5 rounded-tl-[32px] z-10 focus:outline-none"
+                      title={isZh ? "네이버 한자 사전 열기" : "파파고 번역 열기"}
+                    >
+                      <Languages size={18} />
+                    </button>
                   </div>
                 )}
               </motion.div>
