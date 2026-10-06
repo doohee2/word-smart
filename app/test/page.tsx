@@ -693,7 +693,7 @@ export default function TestPage() {
                 </div>
                 
                 {currentWord.exampleEn && (
-                  <div className="mt-6 bg-surface-container p-4 pb-8 rounded-xl text-left border border-surface-variant relative overflow-hidden group">
+                  <div className="mt-6 bg-surface-container p-4 pb-2.5 rounded-xl text-left border border-surface-variant relative overflow-hidden group">
                     <div className="flex items-start gap-3 relative z-0">
                       <button
                         onClick={(e) => { e.stopPropagation(); playExampleAudio(); }}
@@ -732,10 +732,10 @@ export default function TestPage() {
                           window.open(`https://papago.naver.com/?sl=en&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
                         }
                       }}
-                      className="absolute bottom-0 right-0 w-11 h-11 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2.5 rounded-tl-[24px] z-10 focus:outline-none"
+                      className="absolute bottom-0 right-0 w-9 h-9 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2 rounded-tl-[20px] z-10 focus:outline-none"
                       title={isZh ? "네이버 한자 사전 열기" : "파파고 번역 열기"}
                     >
-                      <Languages size={16} />
+                      <Languages size={15} />
                     </button>
                   </div>
                 )}

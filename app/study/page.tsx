@@ -794,7 +794,7 @@ export default function StudyPage() {
                           e.stopPropagation();
                           setShowKoSentence(!showKoSentence);
                         }}
-                        className="pr-4 md:pr-6 pt-3 md:pt-5 pb-1 select-text cursor-auto flex-1 flex flex-col justify-start pb-8" // pb-8 added to avoid text overlap with bottom right button
+                        className="pr-4 md:pr-6 pt-3 md:pt-4 pb-0 select-text cursor-auto flex-1 flex flex-col justify-start"
                         onPointerDownCapture={(e) => e.stopPropagation()}
                       >
                         <div>
@@ -825,7 +825,7 @@ export default function StudyPage() {
                         e.stopPropagation();
                         setShowKoSentence(!showKoSentence);
                       }}
-                      className="text-center pb-3 md:pb-4 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer relative z-0"
+                      className="text-center pb-1.5 md:pb-2 mt-0 opacity-50 group-hover:opacity-100 transition-opacity cursor-pointer relative z-0"
                     >
                       <span className="text-[10px] text-outline font-bold uppercase tracking-widest">
                         터치하여 번역 {showKoSentence ? "숨기기" : "보기"}
@@ -847,10 +847,10 @@ export default function StudyPage() {
                           window.open(`https://papago.naver.com/?sl=en&tl=ko&text=${encodeURIComponent(text)}`, '_blank');
                         }
                       }}
-                      className="absolute bottom-0 right-0 w-12 h-12 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2.5 rounded-tl-[32px] z-10 focus:outline-none"
+                      className="absolute bottom-0 right-0 w-9 h-9 bg-primary/10 hover:bg-primary/20 text-primary transition-colors flex items-end justify-end p-2 rounded-tl-[20px] z-10 focus:outline-none"
                       title={isZh ? "네이버 한자 사전 열기" : "파파고 번역 열기"}
                     >
-                      <Languages size={18} />
+                      <Languages size={15} />
                     </button>
                   </div>
                 )}
