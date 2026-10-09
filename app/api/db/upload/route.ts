@@ -46,19 +46,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "단어장은 최대 50개까지만 업로드할 수 있습니다." }, { status: 403 });
     }
 
-    const { count: totalWordsCount } = await supabase
-      .from('words')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_email', session.user.email);
+    const listIds = userLists ? userLists.map(l => l.id) : [];
     
-    let expectedTotal = (totalWordsCount || 0) + words.length;
+    let totalWordsCount = 0;
+    if (listIds.length > 0) {
+      const { count } = await supabase
+        .from('words')
+        .select('*', { count: 'exact', head: true })
+        .in('list_id', listIds);
+      totalWordsCount = count || 0;
+    }
+    
+    let expectedTotal = totalWordsCount + words.length;
     
     if (existingList) {
       const { count: existingListWordsCount } = await supabase
         .from('words')
         .select('*', { count: 'exact', head: true })
         .eq('list_id', existingList.id);
-      expectedTotal = (totalWordsCount || 0) - (existingListWordsCount || 0) + words.length;
+      expectedTotal = totalWordsCount - (existingListWordsCount || 0) + words.length;
     }
 
     if (expectedTotal > 15000) {
@@ -121,7 +127,6 @@ export async function POST(request: NextRequest) {
     // 2. Insert Words with upsert (ignoring duplicates based on list_id + word)
     const wordsToInsert = words.map(w => ({
       list_id: listId,
-      user_email: session.user.email,
       word: w.word,
       part_of_speech: w.partOfSpeech || null,
       meaning_ko: w.meaningKo,
