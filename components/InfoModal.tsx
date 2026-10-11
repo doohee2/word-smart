@@ -58,19 +58,27 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
         <p className="text-body-md text-on-surface-variant leading-relaxed break-all text-left">
           {APP_INFO_MESSAGE}
         </p>
-        <div className="flex items-center justify-between mt-2">
-          {isOnline ? (
+        {isOnline && (
+          <div className="flex justify-center -mt-1">
             <button
               onClick={handleForceUpdate}
               disabled={isUpdating}
-              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-3 py-1.5 rounded-full disabled:opacity-70 disabled:cursor-wait"
+              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-4 py-1.5 rounded-full disabled:opacity-70 disabled:cursor-wait"
             >
               <RefreshCw size={14} className={isUpdating ? "animate-spin" : ""} />
               <span>{isUpdating ? "업데이트 확인 중..." : "최신 버전 업데이트"}</span>
             </button>
-          ) : (
-            <div /> // empty placeholder for layout
-          )}
+          </div>
+        )}
+        <div className="flex items-center justify-between mt-2">
+          <a
+            href="https://landing-doohee2.vercel.app/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-label-sm text-on-surface-variant font-medium hover:underline text-left"
+          >
+            개인정보처리방침
+          </a>
           <p className="text-label-sm text-on-surface-variant font-medium text-right">
             {APP_VERSION}
           </p>
