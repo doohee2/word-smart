@@ -63,9 +63,9 @@ export function InfoModal({ isOpen, onClose }: InfoModalProps) {
             <button
               onClick={handleForceUpdate}
               disabled={isUpdating}
-              className="flex items-center gap-1.5 text-label-sm text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-4 py-1.5 rounded-full disabled:opacity-70 disabled:cursor-wait"
+              className="flex items-center gap-2 text-body-md font-medium text-primary hover:text-primary/80 transition-colors bg-primary-container/20 px-4 py-2 rounded-full disabled:opacity-70 disabled:cursor-wait"
             >
-              <RefreshCw size={14} className={isUpdating ? "animate-spin" : ""} />
+              <RefreshCw size={16} className={isUpdating ? "animate-spin" : ""} />
               <span>{isUpdating ? "업데이트 확인 중..." : "최신 버전 업데이트"}</span>
             </button>
           </div>
