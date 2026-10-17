@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "워드 스마트",
   },
+  verification: {
+    google: "WdxZQ1sGoma51XTaHhrfapOp64txalt2SBACCB7GOCY",
+  },
 };
 
 export const viewport: Viewport = {
