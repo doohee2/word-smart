@@ -1,17 +1,25 @@
 # Word Smart (워드 스마트) - 개발 문서
 
 ## 1. 프로젝트 개요
-**Word Smart**는 CSV 형태의 단어장 데이터를 불러와 오프라인 환경에서도 동작하는 PWA(Progressive Web App) 기반의 영단어 및 일본어 한자 학습 애플리케이션입니다.
-사용자는 구글 드라이브나 로컬 디바이스에서 단어장 파일을 가져올 수 있으며, 학습(플래시카드), 테스트(객관식/주관식), 관리(단어장 통계), PDF 인쇄(학습지/시험지) 기능을 통해 체계적인 단어 학습을 진행할 수 있습니다.
+**Word Smart**는 CSV 형태의 단어장 데이터를 불러와 오프라인 환경에서도 완전하게 동작하는 PWA(Progressive Web App) 기반의 다국어(영단어, 일본어 한자, 한자 급수) 학습 애플리케이션입니다.
+사용자는 로컬 디바이스나 구글 드라이브(Google Drive)에서 단어장 파일을 불러오거나 클라우드 DB(Supabase)와 동기화할 수 있으며, 플래시카드 학습, 퀴즈 테스트(8지 선다 및 스펠링 힌트 퀴즈), 단어장 관리 및 학습 통계, 인쇄용 PDF 생성(학습지/시험지), 반투명 필기 연습장(Drawing Pad) 등 체계적이고 몰입감 있는 학습 환경을 제공합니다.
 
-## 2. 기술 프레임워크
-* **Core:** Next.js 14+ (App Router), React, TypeScript
-* **Styling:** Tailwind CSS v4, Lucide Icons, clsx, tailwind-merge
-* **Database / Storage:** Dexie.js (IndexedDB wrapper for local offline storage)
-* **Authentication & API:** NextAuth.js (Google OAuth), Google Drive API, Custom Next.js Route Handlers (DB Sync)
-* **PWA:** `@serwist/next`, `@serwist/precaching` (오프라인 캐싱 및 Service Worker)
-* **Animations:** Framer Motion (플래시카드 스와이프 및 뷰 전환 애니메이션)
-* **Utilities:** PapaParse (CSV 양방향 파싱 및 생성), jsPDF & jspdf-autotable (PDF 생성)
+## 2. 기술 프레임워크 및 라이브러리
+* **Core Framework:** Next.js 16+ (App Router, Webpack Mode), React 19, TypeScript 5
+* **Styling & Icons:** Tailwind CSS v4, Lucide Icons, clsx, tailwind-merge
+* **Local Offline Storage:** Dexie.js 4.x & dexie-react-hooks (브라우저 IndexedDB 래퍼)
+* **Server Database & Sync:** Supabase Database (PostgreSQL, Row Level Security), Next.js Route Handlers
+* **Authentication:** NextAuth.js v4 (Google OAuth 2.0, Offline Access Token Persistence, 180-Day Session)
+* **PWA Engine:** `@serwist/next`, `serwist`, `@serwist/precaching` (Service Worker 커스텀 캐싱 전략)
+* **Animation & Motion:** Framer Motion (플래시카드 제스처 스와이프 및 뷰 전환 모션)
+* **Utilities & Audio:** 
+  * PapaParse (CSV 양방향 파싱 및 내보내기)
+  * jsPDF & jspdf-autotable (PDF 시험지/학습지 동적 렌더링)
+  * Web Speech API (다국어 TTS: 영어, 일본어, 한국어)
+  * use-sound & Web Audio API (시스템 효과음)
+  * Zod (API 페이로드 및 쿼리 파라미터 런타임 유효성 검증)
+
+---
 
 ## 3. 폴더 구조 및 소스 파일 설명
 
@@ -19,199 +27,283 @@
 word-smart/
 ├── app/
 │   ├── api/
-│   │   ├── auth/[...nextauth]/route.ts  # NextAuth 로그인 및 세션 관리 라우트 (v4)
-│   │   └── drive/                       # 구글 드라이브 API 연동 라우트
-│   │       ├── download/route.ts        # 구글 드라이브 파일 다운로드
-│   │       └── list/route.ts            # 폴더 내 CSV 파일 목록 조회
-│   ├── pdf/page.tsx                     # (Phase 5) PDF 인쇄 및 미리보기 화면
-│   ├── settings/page.tsx                # (Phase 2) 단어장 목록 조회 및 관리 화면
-│   ├── study/page.tsx                   # (Phase 3) 플래시카드 기반 단어 학습 화면 (사전 설정 모달 포함)
-│   ├── test/page.tsx                    # (Phase 4) 8지 선다 및 스펠링 퀴즈 화면 (사전 설정 모달 포함)
-│   ├── globals.css                      # Tailwind v4 디자인 토큰 및 글로벌 스타일 (라이트/다크 CSS 변수)
-│   ├── layout.tsx                       # 공통 레이아웃 (Navigation, Header 포함)
-│   ├── page.tsx                         # 메인 대시보드 (학습/테스트 진입점)
-│   └── sw.ts                            # PWA Service Worker 등록 스크립트
+│   │   ├── auth/[...nextauth]/route.ts  # NextAuth 로그인/세션 관리 라우트 (Google OAuth, Token Refresh)
+│   │   ├── db/                          # Supabase 클라우드 DB 연동 라우트
+│   │   │   ├── delete/route.ts          # 클라우드 단어장 및 단어 삭제 API (소유권 검증)
+│   │   │   ├── download/route.ts        # 클라우드 단어장 다운로드 API (페이징 최적화)
+│   │   │   ├── list/route.ts            # 등록된 단어장 목록 및 단어 수 조회 API
+│   │   │   └── upload/route.ts          # 단어장 및 단어 일괄 업로드 API (정규화 스키마, 15,000단어 제한 검사)
+│   │   ├── drive/                       # 구글 드라이브 연동 라우트
+│   │   │   ├── download/route.ts        # 구글 드라이브 파일 내용 다운로드
+│   │   │   └── list/route.ts            # 드라이브 폴더 내 CSV 파일 목록 조회
+│   │   └── history/route.ts             # 학습/테스트 기록 동기화 API (ServerId 1:1 매핑, Soft/Hard Delete)
+│   ├── history/page.tsx                 # 학습/테스트 이력 조회 및 통계 화면
+│   ├── pdf/page.tsx                     # (Phase 5) 단어장 PDF 시험지/학습지 생성 및 인쇄 화면
+│   ├── settings/page.tsx                # (Phase 2) 단어장 관리 화면 (클라우드 업로드/다운로드, 활성화 토글, 진행률 초기화)
+│   ├── study/page.tsx                   # (Phase 3) 플래시카드 기반 단어 학습 화면 (사전 설정 모달, TTS, 사전/번역 연동)
+│   ├── test/page.tsx                    # (Phase 4) 8지 선다 및 스펠링 퀴즈 화면 (사전 설정 모달, 50% 힌트)
+│   ├── ~offline/page.tsx                # 완전 오프라인 환경 진입 시의 Fallback 폴백 페이지
+│   ├── globals.css                      # Tailwind v4 디자인 토큰 및 글로벌 테마 스타일 (CSS 변수)
+│   ├── layout.tsx                       # 글로벌 앱 레이아웃 (Standalone PWA 메타데이터, Providers, Header, Navigation)
+│   ├── page.tsx                         # 메인 대시보드 (학습/테스트 바로가기, 진행 요약)
+│   └── sw.ts                            # Serwist 커스텀 Service Worker 스크립트 (캐싱 규칙)
 ├── components/
-│   ├── ConfirmModal.tsx                 # 공통 확인 모달 (학습/테스트 중단 방지 등)
-│   ├── DBDownloadModal.tsx              # 서버 DB 동기화(다운로드) 전용 모달
-│   ├── DrawingPad.tsx                   # (Phase 11) 필기 연습장 캔버스 모달 (반투명/불투명 토글)
-│   ├── DrivePickerModal.tsx             # 구글 드라이브 파일 선택 UI 모달
-│   ├── FileOpenButton.tsx               # 로컬/드라이브 파일 파싱 로직 (중복 체크 포함)
-│   ├── Header.tsx                       # 상단 글로벌 앱 바 (테마 토글, 설정 등)
-│   ├── InfoModal.tsx                    # 앱 정보 안내 모달
-│   ├── LanguageToggle.tsx                 # 설정 창 전용 영어/일본어 모드 전환 라디오 뷰
-│   ├── Logo.tsx                         # 반응형 앱 타이틀 및 다크모드 지원 로고 컴포넌트
-│   ├── Navigation.tsx                   # MD3 스타일 네비게이션 (진행 중 이탈 방지 로직 적용, 음성 설정 모달 진입점 포함)
-│   ├── Providers.tsx                    # NextAuth, Theme, StudySession, TTSSettings 프로바이더 래퍼
-│   └── TTSSettingsModal.tsx             # (Phase 9) 전역 TTS 및 시스템 사운드 설정 모달
+│   ├── ConfirmModal.tsx                 # 범용 액션 확인 모달 (학습 중단, 단어장 삭제, 진행률 초기화 등)
+│   ├── DBDownloadModal.tsx              # 클라우드 DB 단어장 목록 조회 및 로컬 다운로드 모달
+│   ├── DrawingPad.tsx                   # (Phase 11) 플래시카드 더블터치 필기 연습장 캔버스 (반투명/불투명 토글)
+│   ├── DrivePickerModal.tsx             # 구글 드라이브 폴더 브라우저 및 파일 선택 모달 (폴더 핀 고정)
+│   ├── FileOpenButton.tsx               # 로컬 CSV 파일 오픈 및 구글 드라이브 모달 연동 버튼 (언어 자동 판독)
+│   ├── Header.tsx                       # 상단 앱 바 (오프라인 상태 감지 뱃지, 테마 토글, 프로필, 캐시 Purge 로그아웃)
+│   ├── InfoModal.tsx                    # 앱 정보 모달 (최신 버전 강제 업데이트 버튼, 개인정보처리방침 링크, 버전 표기)
+│   ├── LanguageToggle.tsx               # 설정 창 전용 언어 모드 전환 라디오 뷰 (영어 / 일본어 / 한자)
+│   ├── Logo.tsx                         # 반응형 앱 로고 컴포넌트 (라이트/다크 테마 아이콘 지원)
+│   ├── Navigation.tsx                   # Material Design 3 스타일 반응형 네비게이션 (모바일 하단 바 / PC 사이드바)
+│   ├── Providers.tsx                    # NextAuth, ThemeProvider, StudySession, TTSSettings 전역 상태 래퍼
+│   ├── TTSSettingsModal.tsx             # (Phase 9) 다국어 TTS 음성/속도/피치/볼륨 및 효과음 전역 설정 모달
+│   └── ZipfBadge.tsx                    # 난이도 시각화 뱃지 (영어 Zipf 빈도수 / 한자 급수별 별점 표기, 사전 바로가기)
 ├── hooks/
-│   └── useAppSound.ts                   # 시스템 사운드(효과음) 재생 및 음소거/볼륨 상태 연동 훅
+│   ├── useAppSound.ts                   # 시스템 사운드(효과음) 재생 및 음소거/볼륨 연동 훅
+│   ├── useDataSync.ts                   # 네트워크 복구 시 백그라운드 서버 동기화 훅 (지연 업로드, Soft Delete 전송)
+│   └── useNetworkStatus.ts              # 브라우저 온/오프라인 상태 실시간 감지 훅
 ├── lib/
-│   └── db.ts                            # Dexie.js 데이터베이스 스키마 (`isActive`, `testCount` 등)
+│   ├── constants.ts                     # 앱 정보 안내 문구(`APP_INFO_MESSAGE`) 및 버전 상수(`APP_VERSION`)
+│   ├── db.ts                            # Dexie.js 로컬 IndexedDB 스키마 정의 (`wordLists`, `words`, `history`)
+│   ├── fetchAuth.ts                     # (Phase 12) 401 Unauthorized 발생 시 투명하게 토큰을 갱신하고 재시도하는 fetch 래퍼
+│   ├── supabase.ts                      # Supabase 클라이언트 초기화 (서버 사이드 환경변수 기반)
+│   └── textUtils.ts                     # 한자 어간 하이라이팅, 스펠링 마스킹 등 텍스트 처리 유틸리티
 ├── providers/
-│   ├── LanguageModeProvider.tsx         # 전역 언어 모드(영어/일본어) 상태 관리 훅
-│   ├── StudySessionProvider.tsx         # 전역 학습 진행 상태 관리 훅 (앱 이탈 방지용)
-│   └── TTSSettingsProvider.tsx          # (Phase 9) TTS 속도/음높이/볼륨, 효과음 설정 전역 상태 관리 훅
+│   ├── LanguageModeProvider.tsx         # 전역 언어 모드('en' | 'ja' | 'zh') 상태 관리 훅
+│   ├── StudySessionProvider.tsx         # 전역 학습 진행 상태 관리 훅 (비정상 이탈 방지 이벤트 연동)
+│   └── TTSSettingsProvider.tsx          # 다국어 TTS 엔진 및 효과음 설정 전역 상태 관리 훅
 ├── public/
-│   ├── icons/                           # PWA 아이콘 모음 (192x192, 512x512)
-│   └── manifest.json                    # PWA 매니페스트 파일 (앱 이름: 워드 스마트)
-├── tailwind.config.ts                   # Tailwind CSS 환경 설정 파일
-└── next.config.ts                       # Next.js 및 Serwist(PWA) 빌드 설정 (외부 이미지 허용)
+│   ├── icons/                           # PWA 매니페스트 및 디바이스용 아이콘 모음 (192x192, 512x512, 라이트/다크)
+│   ├── sounds/                          # 시스템 효과음 음원 파일 (정답, 오답, 클릭, 전환, 완료음 등)
+│   └── manifest.json                    # PWA 매니페스트 설정 파일
+├── word/                                # 기본 제공 영어 단어장 CSV 데이터셋 (TEPS 분야별 어휘, 필수 숙어 등)
+├── japanese/                            # 기본 제공 일본어 단어장 CSV 데이터셋 (JLPT N4, N5 품사별/통합 어휘)
+├── chinese/                             # 기본 제공 한자 단어장 CSV 데이터셋 (중학교/고등학교 교육용 기초 한자 900자)
+├── auth.ts                              # NextAuth 옵션 설정 (Google OAuth, 리프레시 토큰 순환, 180일 쿠키 유지)
+├── next.config.ts                       # Next.js 빌드 설정 (Serwist 플러그인, 6대 보안 HTTP 헤더, CSP 정책)
+└── tailwind.config.ts                   # Tailwind CSS 환경 설정
 ```
 
-## 4. 주요 기능별 구현 소스 설명
+### 3.1 데이터베이스 스키마 명세 (Local vs. Cloud)
+
+| 구분 | 로컬 IndexedDB (`lib/db.ts` - Dexie.js) | 서버 클라우드 DB (Supabase PostgreSQL) | 비고 및 권한 정책 |
+| :--- | :--- | :--- | :--- |
+| **단어장 목록** | `wordLists`<br>(`id`, `title`, `createdAt`, `isActive`, `lang`) | `word_lists`<br>(`id`, `user_email`, `title`, `lang`, `created_at`) | • **조회/다운로드:** 로그인 사용자 전체 공유<br>• **업로드/삭제:** 생성자(`user_email`) 본인만 가능 (최대 50개) |
+| **단어 데이터** | `words`<br>(`id`, `listId`, `word`, `partOfSpeech`, `meaningKo`, `exampleEn`, `exampleKo`, `isLearned`, `testCount`, `correctCount`, `zipfScore`) | `words`<br>(`id`, `list_id`, `word`, `part_of_speech`, `meaning_ko`, `example_en`, `example_ko`, `zipf_score`) | • 제2 정규화로 `user_email` 중복 제거 (`list_id` 외래키 종속)<br>• `(list_id, word)` 복합 UNIQUE 제약<br>• 계정당 총 15,000단어 업로드 제한 |
+| **학습/테스트 이력** | `history`<br>(`id`, `serverId`, `userEmail`, `createdAt`, `type`, `totalCount`, `completedCount`, `incompleteWords`, `completeWords`, `isSynced`, `isDeleted`, `deletedAt`, `lang`) | `study_history`<br>(`id`, `user_email`, `type`, `total_count`, `completed_count`, `incomplete_words`, `complete_words`, `created_at`, `is_deleted`, `deleted_at`, `lang`) | • 철저한 개인화 (`user_email` 일치 데이터만 접근)<br>• `serverId` 1:1 매핑 및 오프라인 지연 동기화<br>• 논리적 삭제(`is_deleted`) 후 30일 경과 시 자동 영구 삭제 |
+
+### 3.2 언어별 CSV 단어장 컬럼 규격 (`components/FileOpenButton.tsx`)
+
+CSV 파일을 불러올 때 첫 행의 헤더명 또는 문자 유니코드를 분석하여 자동으로 언어 모드(`en` | `ja` | `zh`)를 판별하고 내부 스키마로 매핑합니다.
+
+| 내부 필드 (`Word`) | 🇺🇸 영어 CSV 헤더 (`lang: 'en'`) | 🇯🇵 일본어 CSV 헤더 (`lang: 'ja'`) | 🇨🇳 한자 CSV 헤더 (`lang: 'zh'`) |
+| :--- | :--- | :--- | :--- |
+| **`word`** | `Word` | `일본어한자` | `한자` |
+| **`partOfSpeech`** | `Part of Speech` | `일본어발음` (히라가나) | `부수와 형성원리` |
+| **`meaningKo`** | `Korean Meaning` | `한글 뜻과 한자별 한글독음` | `훈음` |
+| **`exampleEn`** | `Example Sentence` | `일본어예문` | `한자 단어` (활용 단어) |
+| **`exampleKo`** | `Korean Translation` | `예문한글번역문` | `한자 단어 독음` |
+| **`zipfScore`** | `zipf_score` 또는 `Zipf Score` (숫자) | `zipf_score` (선택) | `급수 난이도` (예: `"1급"`, `"4급"`) |
+
+### 3.3 필수 환경 변수 (`.env.local` & Vercel Environment Variables)
+
+모든 환경 변수는 `NEXT_PUBLIC_` 접두사 없이 서버 사이드 전용으로 격리되어 브라우저 번들에 노출되지 않습니다.
+* `NEXTAUTH_SECRET`: NextAuth JWT 암호화 시크릿 키
+* `GOOGLE_CLIENT_ID`: Google Cloud Console OAuth 2.0 클라이언트 ID (Google Drive API `drive.readonly` 스코프 포함)
+* `GOOGLE_CLIENT_SECRET`: Google Cloud Console OAuth 2.0 클라이언트 보안 비밀
+* `SUPABASE_URL`: Supabase 프로젝트 URL
+* `SUPABASE_ANON_KEY`: Supabase 프로젝트 API Key (서버 라우트 핸들러 전용)
+
+---
+
+## 4. 단계별 기능 개발 및 구현 내역 (Phases 1 ~ 14)
 
 ### Phase 1: 레이아웃 및 테마 관리
 * **반응형 네비게이션 (`components/Navigation.tsx`, `components/Header.tsx`):**
-  Tailwind CSS의 `md:` 브레이크포인트를 활용하여 모바일에서는 하단 탭(Material Design 3 스타일 알약 하이라이트)으로, PC에서는 고정 사이드바로 레이아웃이 자연스럽게 변경됩니다.
-* **로고 및 다크 모드 연동 (`components/Logo.tsx`, `components/Providers.tsx`, `app/globals.css`):**
-  `next-themes`를 활용해 기기 테마 설정 및 수동 토글이 가능합니다. Tailwind v4의 `@custom-variant dark` 기능을 통해 순수 CSS 변수(Slate & Emerald 톤)가 다크/라이트 환경에 맞춰 유연하게 스위칭됩니다. 로고 컴포넌트 역시 현재 테마 상태에 맞는 아이콘 렌더링을 지원합니다.
+  * Tailwind CSS의 `md:` 브레이크포인트를 통해 모바일에서는 하단 탭 바(Material Design 3 스타일 알약 하이라이트 인디케이터)로, 태블릿 및 데스크톱에서는 좌측 고정 사이드바로 레이아웃이 자연스럽게 스위칭됩니다.
+* **테마 토글 및 디자인 토큰 (`components/Logo.tsx`, `components/Providers.tsx`, `app/globals.css`):**
+  * `next-themes`를 활용하여 시스템 기본값 감지 및 수동 라이트/다크 전환을 지원합니다. Tailwind v4 CSS 변수 기반 테마 토큰(Slate & Emerald 톤)을 설계하여 테마 전환 시 플리커링 없이 즉각 전환됩니다.
 * **단어장 파싱 및 구글 드라이브 연동 (`components/FileOpenButton.tsx`, `components/DrivePickerModal.tsx`):**
-  비로그인 시 로컬 파일을 열고, 로그인 시 구글 드라이브 드롭다운 모달을 통해 CSV를 파싱해 IndexedDB에 넘깁니다. 핀 고정 기능(LocalStorage)을 통해 자주 사용하는 구글 드라이브 폴더의 경로를 기억할 수 있습니다.
+  * 로컬 기기 파일 탐색기뿐만 아니라 Google Drive Picker 모달을 통해 클라우드에 저장된 CSV 파일을 직접 읽어옵니다.
+  * LocalStorage를 통해 사용자가 자주 찾는 구글 드라이브 폴더의 고유 경로를 기억하는 핀(Pin) 고정 편의 기능을 제공합니다.
 
 ### Phase 2: 로컬 DB 스키마 설계 및 관리
 * **Dexie.js 오프라인 스토리지 (`lib/db.ts`):**
-  브라우저 내장 IndexedDB를 쉽게 사용하기 위해 Dexie를 세팅했습니다. 여러 단어장을 동시에 활성화(`isActive`) 할 수 있으며, 단어별 학습 횟수(`testCount`, `correctCount`) 및 단어 난이도(`zipfScore`)를 스키마에 기록합니다.
+  * 브라우저 내장 IndexedDB에 `wordLists`, `words`, `history` 테이블을 구축하여 완전한 오프라인 독립성을 보장합니다.
+  * 단어장 활성화 여부(`isActive`), 단어별 누적 학습 횟수(`testCount`), 정답 횟수(`correctCount`), 난이도(`zipfScore`), 언어 식별자(`lang`)를 기록합니다.
 * **설정 화면 (`app/settings/page.tsx`):**
-  DB 데이터의 변화를 즉시 UI에 반영하며, 개별 단어장 끄기/켜기, 이름 변경, CSV 내보내기(Export) 기능을 지원합니다.
-  로그인 상태일 경우 서버 DB와 직접 연동하는 **업로드/다운로드 (Cloud Sync)** 버튼이 표시됩니다.
+  * 로컬 DB 데이터의 변경 사항을 실시간 반영하며, 단어장 다중 선택/해제, 이름 수정, 진행률 초기화, CSV 파일 내보내기(Export) 기능을 지원합니다.
+  * 로그인 상태일 경우 서버 DB와 직접 연동하는 **클라우드 업로드/다운로드 (Cloud Sync)** 버튼이 표시됩니다.
 
-### Phase 3: 학습 모드 (Study Mode)
+### Phase 3: 플래시카드 학습 모드 (Study Mode)
 * **단어장 통합 및 이탈 방지:**
-  활성화(체크)된 모든 단어장의 데이터를 합쳐서 하나의 큰 단어장처럼 학습할 수 있습니다. N+1 쿼리 방지를 위해 렌더링 시 `Map` 객체를 활용해 단어장 제목을 매핑합니다. 학습 중 다른 메뉴로 이동하려 하면 `ConfirmModal`을 통해 중단 여부를 재확인합니다.
-* **학습 설정 모달 & TTS 엔진 연동:**
-  선택된 수량이 단어장 크기를 초과하면 중복 없는 1사이클 이후 랜덤으로 부족분을 채워 학습 효율을 극대화합니다. Web Speech API를 호출해 영어 예문 발음(TTS) 듣기가 가능합니다.
-  사전 설정 모달에서 Zipf 스코어 기준 난이도 필터링을 지원하며, 플래시카드 우측 상단에 단어의 Zipf 뱃지가 노출됩니다.
+  * 활성화된 모든 단어장의 데이터를 가상으로 병합하여 하나의 통합 세트로 학습할 수 있습니다. N+1 쿼리 병목을 방지하기 위해 단어장 제목 매핑에 `Map` 인메모리 캐시를 적용했습니다.
+  * 학습 진행 도중 실수로 다른 탭으로 이동하거나 현재 탭을 다시 눌렀을 때 `ConfirmModal`을 호출하여 의도치 않은 학습 중단을 방지합니다.
+* **학습 설정 모달 & TTS 엔진:**
+  * 단어 난이도 필터링(Zipf 점수 기반)을 지원하며, 선택된 학습 수량이 단어장 크기를 초과할 경우 중복 없는 1사이클 학습 후 부족분을 랜덤으로 채우는 셔플링 알고리즘이 동작합니다.
+  * Web Speech API를 통해 단어 및 원어 예문 발음을 즉시 청취할 수 있습니다.
 
 ### Phase 4: 테스트 모드 (Test Mode)
 * **퀴즈 게임 로직 (`app/test/page.tsx`):**
-  * Study Mode와 동일하게 `Map` 최적화 및 Zipf 스코어 기반 난이도 필터링을 지원합니다.
-  * **객관식 (MCQ):** 정답을 제외한 7개의 오답 뜻을 랜덤 추출하여 보기 8개를 셔플링해 제공합니다.
-  * **주관식 (Spelling):** 단어 길이의 절반(50%)까지만 점진적으로 글자를 공개하는 힌트 알고리즘이 적용되어 난이도를 조절합니다.
+  * **객관식 (MCQ):** 전체 단어 풀에서 정답을 제외한 7개의 오답 뜻을 랜덤 추출하여 총 8개의 보기를 무작위 셔플링하여 제공합니다.
+  * **주관식 (Spelling):** 단어 철자의 최대 50%까지만 점진적으로 힌트 글자를 열어주는 지능형 힌트 알고리즘을 적용하여 적절한 난이도와 성취감을 제공합니다.
+  * 언어 모드가 일본어('ja')나 한자('zh')일 때는 스펠링 주관식 입력을 자동으로 제한하고 100% 객관식으로 전환 출제됩니다.
 
 ### Phase 5: PDF 인쇄 (Export Mode)
-* **사전 설정 모달 및 다중 목록 출력:**
-  선택된 여러 개의 단어장 데이터를 혼합해 원하는 단어 개수만큼 PDF로 자동 분량(페이지) 계산하여 출력합니다. 빈칸 유형(영어/한글/무작위)을 직접 고를 수 있습니다.
-* **jsPDF + AutoTable 디자인:**
-  구글 폰트 CDN에서 나눔고딕을 다운받아 주입하며, Zebra striping(교차 배경색)이 적용된 깔끔한 표(Table)를 실시간 렌더링합니다.
+* **사전 설정 모달 및 다중 목록 출력 (`app/pdf/page.tsx`):**
+  * 활성화된 단어장들을 조합하여 원하는 단어 개수만큼 PDF 시험지/학습지를 동적으로 페이지 분할 계산하여 생성합니다.
+  * 빈칸 유형(영어 빈칸, 한글 뜻 빈칸, 무작위 빈칸)을 선택할 수 있습니다.
+* **jsPDF + AutoTable 스타일링:**
+  * 구글 폰트 CDN에서 나눔고딕(NanumGothic) 폰트 데이터를 실시간 인메모리 Fetch하여 주입함으로써 한글 깨짐 현상을 해결했습니다. 교차 배경색(Zebra striping)이 들어간 깔끔한 그리드 표를 출력합니다.
+  * 한자/히라가나 폰트 렌더링 한계를 고려하여, 일본어/한자 모드에서는 친절한 전환 안내 UI를 표시합니다.
 
-### Phase 6: 오프라인 우선(Offline-First) PWA 전환
-* **Serwist 기반 캐싱 전략 커스텀 (`app/sw.ts`):**
-  * HTML 문서 진입(`request.mode === 'navigate'`) 및 Next.js 클라이언트 라우팅 데이터(`_rsc`)를 `StaleWhileRevalidate` 전략으로 캐싱하여 네트워크 단절 시에도 0.1초 만에 캐시된 화면을 즉시 렌더링합니다.
-  * 아이폰(iOS) 등 다양한 환경에서 독립적인 앱으로 동작하도록 `layout.tsx`에 `appleWebApp` 메타데이터(Standalone 모드)를 추가했습니다.
-* **백그라운드 동기화 훅 (`hooks/useDataSync.ts`, `hooks/useNetworkStatus.ts`):**
-  * 앱 마운트 시 무조건 로컬 Dexie.js 데이터를 우선 표시하고, 네트워크가 연결된(online) 상태일 경우 백그라운드에서 `/api/history` 등을 Fetch하여 로컬 DB를 업데이트합니다.
-  * 오프라인 시 `Header.tsx`에 시각적 뱃지(빗금친 구름 아이콘)를 표시하며, `InfoModal`을 통해 사용자가 캐시를 초기화하고 최신 앱 버전을 강제로 불러오는 수동 업데이트 버튼을 지원합니다.
+### Phase 6: 오프라인 우선(Offline-First) PWA 아키텍처
+* **Serwist 커스텀 캐싱 전략 (`app/sw.ts`):**
+  * HTML 문서 진입(`request.mode === 'navigate'`) 및 Next.js 클라이언트 라우팅 데이터(`_rsc`)를 `StaleWhileRevalidate` 전략으로 처리하여 비행기 탑승 모드나 네트워크 단절 상태에서도 0.1초 만에 화면이 뜹니다.
+  * iOS Safari Standalone 모드 지원을 위해 `layout.tsx`에 `appleWebApp` 메타데이터를 추가했습니다.
 * **iOS Safari 오프라인 진입 최적화 (렌더링 블로킹 방지):**
-  * **SessionProvider 의존성 제거**: 앱 초기화 시 NextAuth의 `SessionProvider`가 네트워크에 의존하여 렌더링을 막는 현상을 방지하기 위해 `refetchInterval={0}`, `refetchOnWindowFocus={false}` 속성을 적용했습니다.
-  * **네트워크 Timeout 및 방어 로직**: iOS Safari는 오프라인 상태에서도 간헐적으로 `navigator.onLine`이 `true`를 반환합니다. 이를 막기 위해 `useDataSync` 내 모든 API Fetch 요청에 `AbortSignal.timeout(5000)`을 적용하고, 실패 시 조용히 무시(silent fail)하도록 예외 처리를 강화했습니다.
-  * **Serwist defaultCache 함정 극복**: 기본 제공되는 `...defaultCache` 내부의 캐치올(catch-all) 규칙이 `NetworkOnly`로 설정되어 있어, 오프라인 시 미매칭된 모든 요청(Next.js 내부 청크, 구글 폰트 등)을 강제 실패시키는 치명적 버그가 있었습니다. 이를 제거하고 **`/.*/i`에 대한 `StaleWhileRevalidate` 커스텀 캐치올** 규칙과 **구글 폰트 전용 `CacheFirst`** 규칙을 명시적으로 추가하여 완전한 오프라인 독립성을 확보했습니다.
-  * **오프라인 폴백 페이지 캐싱**: `next.config.ts`의 `additionalPrecacheEntries`에 `url: '/~offline'`을 명시적으로 추가하여, 오프라인 시 대체 페이지가 확실하게 동작하도록 보장했습니다.
-  * **네비게이션 프리로드 해제**: Safari의 Service Worker와 충돌하는 `navigationPreload` 속성을 `false`로 비활성화하여 오프라인 앱 진입 안정성을 극대화했습니다.
-* **학습 이력 동기화 및 관리 (`app/history/page.tsx`, `app/api/history/route.ts`):**
-  * **1:1 완벽 매핑 (Server ID)**: 기존 `createdAt` 시간 기반 매핑의 한계를 극복하기 위해, 서버 통신 시 응답받은 고유 UUID를 로컬 DB에 `serverId`로 저장하여 기기간 완벽한 1:1 매핑 동기화를 구현했습니다.
-  * **오프라인 일괄 업로드(Batch Sync)**: 네트워크가 없는 상태에서 여러 번 학습한 기록(`isSynced=false`, `serverId=undefined`)을 모아 두었다가, 온라인 전환 시 `/api/history`에 일괄 전송하고 각각의 `serverId`를 매핑받아오는 지연 동기화를 지원합니다.
-  * **논리적 삭제(Soft Delete) 양방향 동기화**: 사용자가 화면에서 삭제 버튼을 누르면 로컬 DB에서 즉시 숨겨지고(`isDeleted = true`), 해당 데이터의 `serverId`를 기준으로 서버에 즉각적인 삭제 상태(DELETE API)를 Push합니다. 반대로 다른 기기에서 지운 데이터도 서버 Fetch 시 로컬에 실시간 반영되어 가려집니다.
-  * **영구 삭제(Hard Delete) 자동화**: 서버 용량 최적화를 위해 앱 구동 후 첫 서버 동기화 시점에, 지워진 지 30일이 넘은 휴지통 데이터(`deleted_at < now() - 30 days`)는 `DELETE` 쿼리를 통해 자동으로 완전히 소멸됩니다.
+  * NextAuth의 `SessionProvider`가 네트워크에 매달려 첫 화면 렌더링을 차단하지 않도록 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여했습니다.
+  * Safari의 간헐적 `navigator.onLine` 오작동에 대응해 모든 백그라운드 동기화 Fetch에 `AbortSignal.timeout(5000)` 및 예외 무시(silent fail) 방어를 적용했습니다.
+  * Serwist 기본 `defaultCache` 내의 `NetworkOnly` 캐치올 함정을 제거하고, **`/.*/i`에 대한 `StaleWhileRevalidate` 커스텀 캐치올** 및 구글 폰트 전용 `CacheFirst` 규칙을 명시적으로 구성했습니다.
+  * Safari 충돌 방지를 위해 Service Worker의 `navigationPreload: false`로 설정했습니다.
+* **학습 이력 동기화 (`app/history/page.tsx`, `app/api/history/route.ts`):**
+  * **Server ID 1:1 매핑**: 시간 기반 매핑 대신 서버 응답 UUID를 로컬 DB의 `serverId`로 영구 보관하여 기기간 데이터 정합성을 유지합니다.
+  * **지연 일괄 동기화(Batch Sync)**: 오프라인에서 진행된 학습 기록(`isSynced=false`)을 모아 두었다가 온라인 복구 시 한 번에 전송합니다.
+  * **논리적 삭제(Soft Delete) & 30일 영구 삭제(Hard Delete)**: 사용자가 삭제한 기록은 `isDeleted = true`로 로컬에서 즉시 숨겨지고 서버에 삭제 상태가 Push되며, 삭제 후 30일이 지난 데이터는 서버 동기화 시점에 물리적으로 완전히 제거됩니다.
 
-### Phase 7: 서버리스 & PWA 아키텍처 보안 하드닝 (Security Hardening)
-* **엔드포인트 인가(Authorization) 및 Zod 스키마 검증 (`app/api/**`):**
-  * **철저한 소유권(Ownership) 검증**: 모든 DB 및 구글 드라이브 API 연동 라우트에서 클라이언트의 이메일이나 파라미터를 절대 무조건 신뢰하지 않고, 반드시 서버 사이드 `getServerSession`을 통한 인증된 사용자 식별자를 기준으로 데이터베이스 쿼리 및 CRUD 권한을 통제합니다.
-  * **Zod 입력 검증 도입**: `zod` 패키지를 적용하여 모든 API의 Body, Query Params 파라미터를 스키마로 엄격히 검증(`safeParse`)하며, 비정상 요청 발생 시 즉시 HTTP 400 오류를 리턴하도록 강제했습니다.
-  * **에러 위생화(Error Sanitization)**: DB 쿼리문이나 런타임 스택 트레이스 등의 민감 에러 내역은 오직 서버 콘솔(`console.error`)에만 남기고, 브라우저 클라이언트 응답에는 *"요청을 처리할 수 없습니다."*와 같은 위생화된 일반적인 메시지만 반환되도록 통일했습니다.
-* **환경 변수 및 비밀키 백엔드 격리 (Zero-Leak) (`lib/supabase.ts`, `.env.local`):**
-  * DB 자격 증명(Supabase URL, ANON KEY)이 클라이언트 브라우저 JS 번들에 노출되지 않도록 `NEXT_PUBLIC_` 접두사를 제거하고, 순수 백엔드 서버 핸들러(`app/api/**`)에서만 사용되는 서버 전용 환경 변수(`SUPABASE_URL`, `SUPABASE_ANON_KEY`)로 명칭 및 아키텍처 격리를 마쳤습니다. (Vercel 대시보드 환경변수 수정 필요).
-* **로그아웃 시 PWA 오프라인 캐시 스토리지 즉시 비우기 (Cache Purge) (`components/Header.tsx`):**
-  * 민감 정보인 OAuth Access Token과 NextAuth JWT는 쿠키(`HttpOnly`, `Secure`)를 통해서만 안전하게 보관됩니다.
-  * 공용 기기나 재배포 환경에서 잔여 캐시 접근 차단을 위해, 사용자가 상단 로그아웃 버튼을 클릭하면 `window.caches.delete`를 순회 호출하여 로컬 PWA 오프라인 서비스 워커 캐시 스토리지를 즉시 완벽히 비우고 클리어한 후 `signOut()`하는 래퍼 방어벽을 구축했습니다.
-* **Vercel 배포 전용 6대 강력 HTTP 보안 헤더 장착 (`next.config.ts`):**
-  * **Content-Security-Policy (CSP)**: Serwist 서비스 워커 구동(`worker-src 'self' blob:;`), 구글 프로필 및 OAuth(`img-src`), Supabase DB 통신 및 jsPDF 폰트 로드(`raw.githubusercontent.com`), 실시간 개발 환경이 원활히 동작하도록 최적화된 맞춤 화이트리스트 설정을 추가했습니다.
-  * **HSTS (`Strict-Transport-Security`)**: 무조건적인 HTTPS 접속 강제를 위해 `max-age=63072000; includeSubDomains; preload` 부여.
-  * **X-Frame-Options (`DENY`) & X-Content-Type-Options (`nosniff`) & Referrer-Policy (`strict-origin-when-cross-origin`) & Permissions-Policy (`camera=(), microphone=(), geolocation=()`)**을 통해 클릭재킹, MIME 스푸핑 및 불필요한 스마트폰 장치 권한 호출을 100% 차단합니다.
+### Phase 7: 서버리스 & PWA 보안 하드닝 (Security Hardening)
+* **엔드포인트 인가(Authorization) 및 Zod 검증 (`app/api/**`):**
+  * 클라이언트 요청 데이터를 무조건 신뢰하지 않고 서버 사이드 `getServerSession`을 통한 인증된 사용자 식별자(이메일)를 기준으로 데이터 소유권을 철저히 통제합니다.
+  * 모든 API 라우트에 `zod` 스키마 검증을 적용하여 잘못된 페이로드 유입 시 HTTP 400을 반환합니다.
+  * DB 에러 스택 트레이스는 서버 콘솔에만 기록하고 브라우저에는 정제된 메시지만 반환합니다.
+* **Zero-Leak 환경 변수 격리 (`lib/supabase.ts`, `.env.local`):**
+  * Supabase URL과 Anon Key에서 `NEXT_PUBLIC_` 접두사를 제거하고 순수 서버 측 백엔드 핸들러에서만 사용하는 서버 전용 환경 변수(`SUPABASE_URL`, `SUPABASE_ANON_KEY`)로 격리했습니다.
+* **로그아웃 시 PWA 오프라인 캐시 Purge (`components/Header.tsx`):**
+  * 공용 기기나 재배포 환경에서 잔류 캐시 노출을 방지하기 위해, 로그아웃 클릭 시 `caches.delete()`를 순회 호출하여 서비스 워커 캐시 스토리지를 완전히 비운 후 `signOut()`합니다.
+* **Vercel 배포 전용 6대 강력 HTTP 보안 헤더 (`next.config.ts`):**
+  * 맞춤형 **Content-Security-Policy (CSP)** (Serwist worker-src, Google OAuth, Supabase API, Google CDN 폰트 허용).
+  * **HSTS**, **X-Frame-Options (DENY)**, **X-Content-Type-Options (nosniff)**, **Referrer-Policy**, **Permissions-Policy** 적용.
 
-### Phase 8: 일본어 한자 단어장 확장 (Japanese Kanji Extension)
+### Phase 8: 일본어 한자 확장 (Japanese Kanji Extension)
 * **단일 테이블 기반 언어 식별 및 하위 호환성 (`lib/db.ts`, `providers/LanguageModeProvider.tsx`):**
-  * **Dexie 스키마 및 DB 마이그레이션**: 로컬 IndexedDB 스키마(v5) 및 Supabase 서버 DB의 `word_lists` 테이블에 `lang?: 'en' | 'ja'` 속성을 부여했습니다.
-  * **하위 호환성 100% 보장**: 기존에 저장된 단어장이나 값이 없는 데이터는 `(!l.lang || l.lang === 'en')` 조건문을 통해 무조건 기본 영어 단어장(`'en'`)으로 간주하도록 설계하여, 기존 사용자의 DB 충돌이나 데이터 누락을 차단합니다.
-  * **설정창 중심 모던 라디오 버튼 전환 (`components/LanguageToggle.tsx`, `app/settings/page.tsx`)**: 화면마다 토글이 보이는 헷갈림을 없애기 위해 **오직 단어장 관리(설정) 화면**에서만 심플한 라디오 버튼으로 영어 모드와 일본어 모드를 전환하도록 변경했으며, 학습/테스트/인쇄 진입부는 선택된 언어 세트에 맞춰 반응합니다.
-* **CSV 스마트 파싱 및 Supabase Cloud 동기화 (`components/FileOpenButton.tsx`, `components/DBDownloadModal.tsx`, `app/api/db/**`):**
-  * **자동 감지 로직**: CSV 파일 오픈 시 헤더 컬럼명(`일본어한자`, `일본어발음` 등) 또는 첫 단어의 유니코드 문자 코드(한자/히라가на)를 자동 판독하여 일본어 단어장(`'ja'`)으로 분류하며 추가 즉시 해당 언어 뷰로 토글됩니다.
-  * **서버리스 Fallback 및 언어 뱃지 UI**: Supabase 업로드/조회 API에 `lang` 파라미터 검증을 보증했으며, 아직 서버 DB 컬럼 마이그레이션을 안 한 환경에서도 오류 없이 구버전 쿼리로 Fallback 동작하도록 구축했습니다. 다운로드 모달에서는 목록별 `ENG` 또는 `日/한자` 뱃지로 즉시 파악이 가능합니다.
-* **일본어 특화 학습 및 테스트 UX (`app/study/page.tsx`, `app/test/page.tsx`, `lib/textUtils.ts`):**
-  * **플래시카드 & 문제 화면 가독성 50% 향상**: 일본어 한자 암기의 편의를 위해 학습 카드 및 테스트 문제 카드 상단에 **히라гана 일본어 발음(`partOfSpeech`)**을 명시적인 알약 뱃지로 표시합니다. 또한 카드 중앙의 한글 뜻과 괄호 안 한자별 독음(`(先: 먼저 선, 生: 날 생)`) 글자 크기를 50% 확대하고, 8지선다 보기 버튼의 독음 글자는 시각 정합성을 위해 1~2포인트 작게 축소(`text-[10px] sm:text-[11px]`)하여 완벽한 UI 밸런스를 구현했습니다.
-  * **100% 객관식 출제 & TTS 로케일 연동**: 한자 스펠링 주관식 입력을 원천 방지하여 일본어 테스트 시에는 무조건 8지선다 객관식(MCQ)으로 출제되며, Web Speech API 발음 재생 시 `ja-JP` 로케일을 통해 히라가на 발음과 일본어 예문을 낭독합니다.
-  * **한자 어간 스마트 하이라이팅**: 일본어 예문 내에서 동사/형용사 활용형이 등장해도(`行く` ➡️ `行きます`), 핵심 한자 어간 부분(`行`)을 정확히 분리해 굵은 폰트(Bold)로 강조하는 하이라이팅 알고리즘을 추가했습니다.
-  * **PDF 인쇄 모드 분리 (`app/pdf/page.tsx`)**: 한글/영문 CDN 폰트 기반인 jsPDF 라이브러리의 한자·히라гана 렌더링 미지원 특성을 명쾌히 안내하고, 일본어 모드로 PDF 진입 시 사용을 제한하며 설정 메뉴에서 영어 모드로 전환할 것을 시각적으로 유도합니다.
+  * Dexie 스키마 및 서버 `word_lists` 테이블에 `lang?: 'en' | 'ja' | 'zh'` 속성을 도입했습니다. 기존 데이터는 `(!l.lang || l.lang === 'en')` 폴백을 통해 영어 단어장으로 정상 처리됩니다.
+  * 설정 화면에서 심플한 라디오 버튼으로 언어 모드를 전환하도록 일원화했습니다.
+* **CSV 자동 판독 및 일본어 전용 학습 UX (`lib/textUtils.ts`):**
+  * CSV 헤더나 첫 단어의 유니코드(히라가나/한자)를 자동 분석해 언어 모드를 자동 지정합니다.
+  * 플래시카드 상단에 히라가나 발음(`partOfSpeech`) 알약 뱃지 표시, 한글 뜻 및 한자별 훈독음 글자 크기 50% 확대, 8지선다 보기 버튼 독음 크기 미세 축소(`text-[10px]`) 등 UI 시각 밸런스를 구축했습니다.
+  * 일본어 동사/형용사 활용형(`行く` ➡️ `行きます`)에서도 핵심 한자 어간(`行`)을 정확히 분리해 굵게 강조하는 어간 하이라이팅 알고리즘을 탑재했습니다.
 
-### Phase 9: TTS 및 시스템 사운드 전역 관리 (Audio Control)
-* **전역 설정 모달 및 상태 연동 (`components/TTSSettingsModal.tsx`, `providers/TTSSettingsProvider.tsx`):**
-  * **TTS 상세 제어**: 발화 속도(0.5~2.0), 음높이(0.0~2.0), TTS 볼륨(0~100%) 및 브라우저에서 제공하는 영어 화자 억양(Voice URI)을 선택할 수 있는 슬라이더와 드롭다운을 제공합니다.
-  * **효과음 통합 제어**: 단어 학습 및 테스트 중 재생되는 시스템 효과음(`useAppSound.ts`)의 음소거 여부와 볼륨 크기(0~100%)를 모달에서 한 번에 설정할 수 있습니다.
-  * **로컬 스토리지 동기화**: 모든 설정값은 `word_smart_tts_settings`라는 키로 `localStorage`에 자동 저장되며, `TTSSettingsProvider`를 통해 앱 전역에서 렌더링을 차단하지 않고 상태를 실시간으로 공유합니다.
-* **학습 UX 고도화 (Auto TTS):**
-  * **자동 재생 모드**: '자동 TTS 모드' 체크 시, 학습 모드(`app/study/page.tsx`)에서 플래시카드를 좌우로 스와이프하여 넘길 때마다 화면 터치 없이 즉각적으로 단어 발음이 자동 재생되는 편의 기능을 도입했습니다.
-  * **터치 영역 확장**: 예문 발음 듣기 아이콘(`Volume2`)의 터치 인식 범위(Hit Area)를 좌측 여백 전체로 대폭 확장하여, 모바일 환경에서 오타(번역 토글 오작동)를 방지하고 쾌적한 학습이 가능하도록 Flex 레이아웃을 리팩토링했습니다.
+### Phase 9: 다국어 TTS 및 시스템 사운드 전역 관리 (Audio Control)
+* **전역 설정 모달 (`components/TTSSettingsModal.tsx`, `providers/TTSSettingsProvider.tsx`):**
+  * **다국어 보이스 선택**: 영어(Voice URI), 일본어(`ja-JP`), 한국어(`ko-KR`) 각각의 음성을 라디오/탭을 통해 언어별로 독립 선택하여 설정할 수 있습니다.
+  * **iOS Safari 중복 음성 식별**: iOS Safari의 Web Speech API가 동일한 이름(예: Kyoko 2개, Yuna 2개)을 반환할 때, `voiceURI` 파싱 및 인덱스 번호를 기반으로 `[System]`, `[Bundle]`, `[#1]` 태그를 붙여 사용자가 원하는 목소리를 구분하여 고를 수 있도록 개선했습니다.
+  * 발화 속도(0.5~2.0), 음높이(0.0~2.0), TTS 볼륨, 효과음 음소거 및 볼륨을 한 곳에서 제어하며 설정값은 `localStorage`에 자동 영속화됩니다.
+* **자동 TTS 모드 & 터치 영역 확장 (`app/study/page.tsx`):**
+  * '자동 TTS' 활성화 시 플래시카드를 좌우로 스와이프할 때마다 화면 터치 없이 단어 발음이 즉시 자동 재생됩니다.
+  * 발음 듣기 아이콘(`Volume2`)의 터치 영역을 좌측 여백 전체로 확장하여 모바일 조작 시 오작동을 차단했습니다.
 
-### Phase 10: 한자 공부 모드 확장 (Hanja Study Extension)
-* **다국어(언어 모드) 확장 구조 적용 (`providers/LanguageModeProvider.tsx`, `lib/db.ts`):**
-  * 기존 영어(`'en'`), 일본어(`'ja'`)에 더하여 세 번째 언어 코드인 **한자(`'zh'`)** 모드를 추가했습니다.
-  * `zipfScore` (급수 난이도) 컬럼을 `number`에서 `string | number`로 마이그레이션(`ALTER TABLE words ALTER COLUMN zipf_score TYPE VARCHAR(255) USING zipf_score::VARCHAR;`)하여, "1급", "4급" 등 문자열 형태의 한자 급수 데이터를 원본 그대로 저장하고 관리할 수 있도록 개선했습니다.
-* **Hanja 맞춤형 UI 및 로직 최적화 (`app/study/page.tsx`, `app/test/page.tsx`):**
-  * **CSV 컬럼 스마트 매핑**: 한자 단어장의 특수한 구조를 수용하기 위해, 파일 오픈 시 `row["한자"]`를 통해 한자 모드를 자동 감지하고, **'훈음'**은 `meaningKo`, **'부수와 형성원리'**는 `partOfSpeech`로 내부 매핑하여 관리합니다.
-  * **플래시카드 렌더링 및 TTS**: 플래시카드 상단에는 부수와 형성원리가 표시되고, 카드 중앙에는 한자, 하단에는 크게 훈음이 표시됩니다. TTS(`ko-KR`)는 훈음(예: 하늘 천)과 한자 단어 독음(예: 천지)을 정확하게 한국어로 낭독합니다.
-  * **한자 전용 테스트(MCQ)**: 한자 테스트는 스펠링 주관식 없이 무조건 8지선다형(MCQ)으로만 출제되며, 사용자는 정답으로 '훈음'을 고르게 됩니다.
-  * **ZipfBadge 뱃지 커스텀**: "1급"(★4개), "2급"(★3개), "3급"(★2개), "4급/5급"(★1개) 등 한자 급수 체계에 맞춘 전용 별점 렌더링 로직을 `ZipfBadge` 컴포넌트에 구현했습니다.
-  * **스와이프 언어 전환**: 학습/테스트 사전 진입 모달에서 좌우 스와이프를 통해 `영어 ➡️ 일본어 ➡️ 한자` 3개 모드가 원형으로 자연스럽게 전환되도록 개선했습니다.
-  * **설정 동적 제어**: 한자와 일본어 모드 진입 시, 단어 난이도 필터(zipfFilter)가 자동으로 "모든 단어 (난이도 무관)"로 고정되어 문자열 급수 필터링 간섭을 방지합니다.
+### Phase 10: 한자(漢字) 공부 모드 확장 (Hanja Study Extension)
+* **한자 전용 스키마 및 컬럼 매핑:**
+  * 한자 단어장 구조에 맞춰 CSV 컬럼의 **'한자'**는 `word`, **'훈음'**은 `meaningKo`, **'부수와 형성원리'**는 `partOfSpeech`로 스마트 매핑됩니다.
+  * 한자 급수(예: "1급", "특급", "4급") 저장을 위해 `zipfScore` 타입을 `number | string`으로 확장 마이그레이션했습니다.
+* **한자 학습 및 퀴즈 최적화:**
+  * 플래시카드 상단에 부수와 형성원리, 중앙에 큰 한자, 하단에 훈음이 표시되며 한국어 TTS(`ko-KR`)로 훈음과 한자 단어 독음을 정확히 낭독합니다.
+  * 한자 테스트는 스펠링 주관식 없이 무조건 8지선다 객관식(MCQ)으로만 출제되어 '훈음'을 맞추는 방식으로 진행됩니다.
+  * `ZipfBadge` 컴포넌트에서 "1급"(★4), "2급"(★3), "3급"(★2), "4급/5급"(★1) 등 한자 급수 체계에 맞춘 전용 별점을 렌더링합니다.
 
-### Phase 11: 학습 편의 기능 강화 (Study UX Enhancements)
-* **네이버 사전 바로가기 연동 (`app/study/page.tsx`, `app/test/page.tsx`):**
-  * 학습 모드와 테스트 모드 모두에서 **난이도 별 아이콘(ZipfBadge) 영역을 클릭/터치**하면, 현재 단어를 네이버 사전에서 바로 검색하는 새 창이 열립니다.
-  * 언어 모드에 따라 영어 → `en.dict.naver.com`, 일본어 → `ja.dict.naver.com`, 한자 → `hanja.dict.naver.com`으로 자동 분기됩니다.
-  * 네이버 사전의 X-Frame-Options 정책으로 인해 iframe(바텀업 모달) 대신 `window.open`으로 새 탭/인앱 브라우저를 활용합니다.
-* **필기 연습장 (`components/DrawingPad.tsx`):**
-  * 학습 모드에서 플래시카드를 **더블 클릭(더블 터치)**하면, 화면 80% 크기의 반투명 캔버스 팝업이 열립니다.
-  * **마우스 드래그** 또는 **터치(손가락)**로 자유롭게 단어/한자를 따라 쓸 수 있으며, 뒤에 있는 플래시카드 내용이 반투명하게 비칩니다.
-  * 상단 왼쪽 **지우개 아이콘**으로 캔버스 초기화, 중앙 **눈 아이콘**으로 반투명/불투명 토글, 오른쪽 **X 버튼**으로 닫기가 가능합니다.
-  * 고DPI(레티나) 디스플레이에서 선이 깔끔하게 그려지도록 `devicePixelRatio` 보정이 적용되어 있습니다.
-* **테스트 예문 TTS 버튼 (`app/test/page.tsx`):**
-  * 객관식(MCQ) 모드에서 예문 옆의 전구 아이콘(`Lightbulb`)을 **스피커 아이콘(`Volume2`) 버튼**으로 교체하여, 클릭 시 예문을 TTS로 낭독합니다.
-  * 재생 중에는 아이콘이 primary 색상으로 강조되고 pulse 애니메이션이 적용됩니다.
+### Phase 11: 학습 편의 기능 고도화 (Study UX Enhancements)
+* **네이버 사전 원클릭 연동 (`ZipfBadge.tsx`):**
+  * 플래시카드 및 테스트 문제 카드의 난이도 뱃지(`ZipfBadge`)를 클릭/터치하면 현재 단어가 네이버 사전 새 탭으로 즉시 열립니다 (영어: `en.dict`, 일본어: `ja.dict`, 한자: `hanja.dict`).
+* **반투명 필기 연습장 (`components/DrawingPad.tsx`):**
+  * 학습 모드에서 플래시카드를 **더블 클릭(더블 터치)**하면 화면의 80% 크기의 반투명 캔버스 모달이 활성화됩니다.
+  * 손가락이나 마우스로 카드 위의 글씨를 따라 쓸 수 있으며, 지우개 초기화, 눈 모양 아이콘을 통한 반투명/불투명 토글을 지원합니다. 고DPI 레티나 디스플레이를 위해 `devicePixelRatio` 좌표 보정이 적용되어 있습니다.
+* **학습/테스트 진행률 초기화 (`app/settings/page.tsx`):**
+  * 설정 화면에서 단어장별 완료율 퍼센트나 게이지를 클릭하면 확인 모달을 거쳐 해당 단어장의 학습 상태(`isLearned`, `testCount`, `correctCount`)를 손쉽게 0으로 리셋할 수 있습니다.
 * **네비게이션 동일 탭 이탈 방지 (`components/Navigation.tsx`):**
-  * 기존에는 학습/테스트 중 **다른 탭**으로 이동할 때만 중지 모달이 떴으나, 이제 **현재 진행 중인 동일 탭(학습→학습, 테스트→테스트)**을 다시 클릭해도 동일한 중지 확인 모달이 표시됩니다.
-  * 확인 시 `word-smart-stop-session` 커스텀 이벤트를 `window.dispatchEvent`로 발행하고, 각 페이지에서 이를 수신하여 `setIsStarted(false)`로 초기 화면 복귀합니다. 진행 상황은 `localStorage`에 자동 저장되어 다시 시작 시 이어하기가 가능합니다.
-* **학습 진행률 초기화 (`app/settings/page.tsx`):**
-  * 설정 화면에서 단어장의 **완료율 영역(퍼센트 숫자 또는 프로그레스 바)**을 클릭하면 "학습 진행률을 초기화하시겠습니까?" 확인 모달이 표시됩니다.
-  * 확인 시 해당 단어장의 모든 단어에 대해 `isLearned`, `testCount`, `correctCount`가 0으로 리셋됩니다.
-* **기록 화면 한자 언어 표시 수정 (`app/history/page.tsx`):**
-  * 학습/테스트 기록에서 한자 모드(`lang: 'zh'`)의 기록이 '(영어)'로 잘못 표시되던 버그를 수정하여, **'(한자)'**로 정확하게 표기됩니다.
-* **일본어 모드 아이콘 간결화:**
-  * 학습/테스트 모드 진입 화면의 일본어 아이콘을 '日本'(2글자)에서 **'日'**(1글자)로 변경하여, 한자 모드 '漢', 영어 모드 'Abc'와 시각적 밸런스를 맞췄습니다.
+  * 진행 중인 학습/테스트 상태에서 네비게이션의 동일 탭을 다시 클릭해도 중지 확인 모달이 뜨며, `word-smart-stop-session` 이벤트를 발행해 안전하게 세션을 일시 중지하고 진행 상황을 `localStorage`에 자동 저장합니다.
 
-### Phase 12: 안정성 고도화 및 세션 유지 (Session Persistence)
-* **Google OAuth 세션 유지 및 토큰 갱신 안정화 (`auth.ts`, `lib/fetchAuth.ts`):**
-  * 클라이언트의 Access Token 갱신 로직(`auth.ts`)을 고도화하여, 토큰 갱신 실패를 **치명적 실패(`invalid_grant`, 권한 철회 등)**와 **일시적 실패(네트워크 오류 등)**로 구분했습니다. 치명적 실패 시에만 강제 로그아웃 처리되며, 일시적 실패는 묵인하고 다음 요청 시 재시도하도록 완화했습니다.
-  * API 통신 시 401 에러를 만났을 때 즉시 로그아웃 하던 낡은 동작을 폐기하고, **`fetchWithSessionRetry`** 공용 헬퍼를 도입했습니다. 401 응답 시 내부적으로 세션을 리프레시(`getSession()`)하여 토큰을 갱신한 뒤, 투명하게 1회 자동 재시도하여 사용자 경험이 단절되지 않도록 방어 로직을 짰습니다.
-  * 갱신이 원활하게 진행될 수 있도록 토큰 만료 60초 전부터 사전 갱신(Early Refresh)을 시도하며, 브라우저 세션 쿠키 수명(`maxAge`)을 **180일**로 대폭 늘려 다시 로그인해야 하는 빈도를 획기적으로 줄였습니다.
+### Phase 12: 세션 영속화 및 401 투명 복구 (Session Persistence)
+* **토큰 갱신 안정화 (`auth.ts`):**
+  * Access Token 갱신 실패를 **치명적 실패(`invalid_grant`, 권한 취소 등)**와 **일시적 실패(네트워크 단절, 서버 일시 응답 지연 등)**로 구분했습니다. 일시적 실패 시에는 강제 로그아웃을 유보하고 기존 토큰을 유지해 재시도할 수 있도록 완화했습니다.
+  * 토큰 만료 60초 전부터 사전 갱신(Early Refresh)을 시도하며, 브라우저 세션 쿠키 수명(`maxAge`)을 **180일**로 확장했습니다.
+* **`fetchWithSessionRetry` 공용 헬퍼 (`lib/fetchAuth.ts`):**
+  * 클라이언트 통신 도중 HTTP 401 에러를 만나면 화면이 튕기거나 로그아웃되지 않고, 내부적으로 `getSession()`을 호출하여 백그라운드에서 토큰을 갱신한 뒤 요청을 1회 투명하게 자동 재시도합니다.
 
-## 5. 개선 필요사항 및 퓨처 워크 (Future Work)
+### Phase 13: 예문 번역 및 사전 책갈피 버튼 (Folded Corner Translation)
+* **접힌 책갈피 디자인 (Folded Corner UI):**
+  * 학습 모드(`app/study/page.tsx`)와 테스트 모드(`app/test/page.tsx`)의 예문 박스 우측 하단 귀퉁이에 자연스럽게 접힌 형태의 책갈피 버튼(`rounded-tl-[20px]`, `Languages` 아이콘)을 탑재했습니다.
+  * 슬림하고 컴팩트한 모바일 레이아웃(`w-9 h-9`)을 적용하여, 예문과 번역 텍스트 간의 가독성 간격은 유지하면서도 전체 예문 박스의 불필요한 세로 높이를 최소화했습니다.
+* **언어별 스마트 사전/번역 분기:**
+  * 🇺🇸 **영어 예문:** 파파고 영-한 번역 창 (`https://papago.naver.com/?sl=en&tl=ko&text=...`)
+  * 🇯🇵 **일본어 예문:** 파파고 일-한 번역 창 (`https://papago.naver.com/?sl=ja&tl=ko&text=...`)
+  * 🇨🇳 **한자 예문/단어:** 네이버 한자 사전 검색 창 (`https://hanja.dict.naver.com/#/search?query=...`)
 
-1. **상태 동기화 자동화 (Auto Cloud Sync):**
-   현재 수동 버튼 클릭을 통한 클라우드 DB 업로드/다운로드 기능은 완성되었으나, 추후 Google Drive API 등을 활용해 백그라운드 자동 양방향 동기화(Sync) 로직을 도입할 수 있습니다.
-2. **학습 알고리즘 고도화 (Spaced Repetition):**
-   에빙하우스 망각 곡선이나 라이트너 시스템(Leitner System)에 기반한 복습 주기 알고리즘을 도입하면, `words.correctCount` 등의 DB 데이터를 활용해 개인화된 맞춤 학습 큐레이션이 가능해집니다.
-3. **오디오 (TTS) 오프라인 성능 보완:**
-   현재 브라우저 내장 Web Speech API를 활용하므로 OS 및 기기별 발음 품질 편차가 존재합니다. 고품질 발음 파일을 사전에 생성해 캐싱하거나 Google Cloud TTS의 연동을 고려해 볼 수 있습니다.
+### Phase 14: 서버 DB 정규화, RLS 보안 및 리포지토리 Public 전환
+* **단어(`words`) 테이블 `user_email` 컬럼 제거 (제2 정규화 달성):**
+  * 단어는 이미 `list_id`를 통해 부모 단어장(`word_lists`)에 종속되어 있으므로, 불필요하게 단어마다 이메일을 중복 저장하던 안티패턴을 제거했습니다.
+  * DB DDL 마이그레이션: `ALTER TABLE words DROP COLUMN user_email;`
+  * 고유 제약 조건 재설정: `ALTER TABLE words ADD CONSTRAINT words_list_id_word_key UNIQUE (list_id, word);`
+* **서버리스 카운트 쿼리 리팩토링 (`app/api/db/upload/route.ts`):**
+  * "계정당 단어 15,000개 제한" 검사 시, `words` 테이블을 이메일로 직접 검색하지 않고 `word_lists`에서 내 단어장 ID 목록(`listIds`)을 먼저 구한 뒤 `in('list_id', listIds)`로 집계하도록 쿼리를 정규화했습니다.
+* **NextAuth 서버 세션 기반 인가 및 DB 무결성 정책:**
+  * 본 프로젝트는 Supabase Auth 대신 **NextAuth.js (Google OAuth)**로 세션을 관리하며, Supabase 키(`SUPABASE_ANON_KEY`)를 브라우저에 일절 노출하지 않고 오직 Next.js 백엔드 라우트 핸들러(`app/api/**`) 내부에서만 호출합니다.
+  * 단어장 조회(`list`) 및 다운로드(`download`)는 로그인한 모든 사용자에게 공유(Public Read)되지만, 단어장 업로드/갱신(`upload`) 및 삭제(`delete`)는 반드시 `getServerSession(authOptions)`의 이메일과 `word_lists.user_email`이 일치하는 소유자만 수행할 수 있도록 서버 코드 레벨에서 엄격히 통제합니다.
+* **앱 정보 모달 UI 개편 및 개인정보처리방침 연동 (`components/InfoModal.tsx`):**
+  * 최신 버전 업데이트 버튼을 모달 맨 아래에서 설명 텍스트(`APP_INFO_MESSAGE`) 바로 아래 줄 **중앙**으로 재배치하고, 폰트 크기를 본문과 동일한 `text-body-md font-medium`으로 조정하여 시각적 안정감을 높였습니다.
+  * 모달 최하단 행 좌측에 `@APP_VERSION`과 같은 스타일로 **"개인정보처리방침"** 링크(`https://landing-doohee2.vercel.app/privacy`)를 추가하여 스토어 배포 및 공공 서비스 신뢰성을 확보했습니다.
+* **GitHub Public 전환 대비 Zero-Leak 보안 무결성 검증:**
+  * Git 커밋 히스토리 전체에 `.env*` 환경 변수 유출 흔적이 없음을 전수 확인했습니다.
+  * Supabase URL/Key 및 Google OAuth Client ID/Secret을 백엔드 런타임 환경변수로 완벽 격리하여 소스 코드가 공개되어도 비밀키가 노출되지 않도록 조치했습니다.
+  * NextAuth의 Vercel URL 감지 방식을 점검하여 코드 내 `NEXTAUTH_URL` 하드코딩 의존성을 배제했습니다.
 
-## 6. 개발 프롬프트 레퍼런스 (Development Prompt Reference)
-향후 다른 앱 개발 시 "오프라인 최우선(Offline-First) PWA" 환경을 구축할 때 아래 프롬프트를 참고할 수 있습니다:
+---
 
-> "Next.js App Router와 Serwist(Workbox)를 활용해 0.1초 컷으로 화면이 뜨는 오프라인 우선(Offline-First) PWA를 구축해 줘.
-> 1. `sw.ts`에 정적 자산(JS/CSS)은 `CacheFirst`를 적용하되, HTML 문서(`request.mode === 'navigate'`)와 Next.js 데이터(`_rsc`)는 `StaleWhileRevalidate` 전략을 적용해 네트워크 없이도 멈춤 현상 없이 화면 전환이 가능하게 해줘.
-> 2. `layout.tsx`에 `appleWebApp` 메타데이터를 추가해 아이폰(iOS) Safari에서도 Standalone 앱처럼 동작하게 만들어줘.
-> 3. IndexedDB(Dexie.js)를 Local Source of Truth로 사용하여, 앱이 켜질 땐 로컬 DB로 화면을 즉시 그리고, 백그라운드에서 `useDataSync` 훅을 통해 서버 DB를 Fetch한 뒤 로컬 DB를 갱신하는 SWR(Stale-While-Revalidate) 방식의 데이터 동기화를 구현해 줘.
-> 4. `window.addEventListener`를 활용해 online/offline 상태를 감지하는 `useNetworkStatus` 커스텀 훅을 만들고, 오프라인 시 UI 상단에 시각적 뱃지를 표시해 줘.
-> 5. 앱 정보 모달에 `navigator.serviceWorker.getRegistrations`와 `caches.keys()`를 활용하여 서비스 워커 캐시를 지우고 강제로 최신 버전을 리로드(새로고침)하는 수동 업데이트 버튼을 만들어 줘.
-> 6. iOS Safari PWA 오프라인 렌더링 블로킹 방지를 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하고, 동기화 Fetch 요청에는 `AbortSignal.timeout(5000)` 및 `!navigator.onLine` 이중 체크 방어 로직을 적용해 줘. `sw.ts` 에서는 `navigationPreload: false`로 설정해 줘.
-> 7. 가장 중요하게, Serwist의 `...defaultCache`는 내부에 모든 요청(`/.*/i`)을 `NetworkOnly`로 강제하는 치명적 규칙을 포함하고 있으므로 **절대 사용하지 말고**, 그 대신 `/.*/i`에 대해 `StaleWhileRevalidate`를 적용하는 커스텀 캐치올(catch-all) 규칙과 `https://fonts.googleapis.com` 등을 위한 캐시 규칙을 직접 작성해서 오프라인 시 Next.js 에셋과 폰트 로딩이 실패하지 않도록 보장해 줘.
-> 8. **Next.js 16+ Turbopack 호환성 문제**: `@serwist/next` 플러그인은 Webpack 기반이므로 Next.js의 기본 설정인 Turbopack 환경에서는 `public/sw.js` 파일을 아예 생성하지 못하는 버그가 있어 오프라인 캐싱이 원천 차단됩니다. 반드시 `package.json`의 build 스크립트를 `"build": "next build --webpack"`으로 수정하여 프로덕션 빌드 시 Webpack을 강제 사용하도록 설정해 줘."
+## 5. 아키텍처 및 구현 상의 주요 특징 & 주의사항
+
+1. **Next.js 16+ Turbopack 환경과 Serwist 빌드 호환성:**
+   * `@serwist/next` 플러그인은 Webpack 번들러 기반으로 동작합니다. Next.js 16의 기본 번들러인 Turbopack 환경에서는 `public/sw.js` 파일이 생성되지 않는 문제가 발생합니다.
+   * 따라서 `package.json`의 빌드 스크립트를 `"build": "next build --webpack"`으로 고정하여 프로덕션 빌드 시 Webpack 모드를 강제하도록 구성되어 있습니다.
+2. **Serwist의 `...defaultCache` 사용 금지 원칙:**
+   * 기본 제공되는 `defaultCache` 내부에는 모든 미매칭 요청(`/.*/i`)을 `NetworkOnly`로 강제하는 규칙이 포함되어 있어, 오프라인 시 Next.js 내부 스크립트 청크나 폰트 로드가 차단되는 치명적 문제가 발생합니다.
+   * 이를 해결하기 위해 `sw.ts`에서 `defaultCache`를 제거하고, 정적 자산 `CacheFirst`, HTML/데이터 `StaleWhileRevalidate`, 구글 폰트 `CacheFirst`를 명시한 커스텀 규칙만을 적용했습니다.
+3. **iOS Safari PWA 오프라인 렌더링 블로킹 방어:**
+   * iOS Safari는 완전 오프라인 상태에서도 `navigator.onLine`이 `true`를 반환하는 버그가 있습니다.
+   * `AbortSignal.timeout(5000)` 방어 코드와 NextAuth `SessionProvider`의 자동 갱신 비활성화(`refetchInterval={0}`, `refetchOnWindowFocus={false}`), 서비스 워커 `navigationPreload: false` 세팅을 통해 렌더링 블로킹을 원천 차단했습니다.
+4. **다국어 음성(Web Speech API)의 브라우저별 차이 대응:**
+   * 브라우저 및 OS에 따라 제공되는 목소리 목록이 다르고, 특히 Safari 환경에서는 동일한 이름의 음성이 복수로 잡히는 현상이 있습니다.
+   * `voiceURI` 접미사 및 배열 인덱스를 파싱하여 레이블에 고유 식별자(`[System]`, `[Bundle]`, `[#1]`)를 부여함으로써 사용자 혼선을 해결했습니다.
+5. **학습/테스트 중단 시 자동 저장 및 이어하기 (Session Resume):**
+   * 학습(`study`) 및 테스트(`test`) 진행 중 앱을 종료하거나 네비게이션을 통해 중단하더라도, 현재 셔플링된 단어 큐와 진행 인덱스, 정오답 상태가 `localStorage`(`word_smart_study_session`, `word_smart_test_session`)에 실시간 저장됩니다.
+   * 재진입 시 진행 중이던 세션을 감지하여 **"이어하기"** 또는 **"새로 시작"**을 선택할 수 있어 학습 연속성을 보장합니다.
+6. **클라우드 단어장 공유 모델 및 중복 방지 스마트 병합 (Smart Merge):**
+   * 로컬 CSV 오픈이나 클라우드 단어장 다운로드 시 동일한 이름의 단어장이 이미 로컬에 존재하면, 기존 단어들의 학습 이력(`isLearned`, `testCount`, `correctCount`)을 보존한 채 `Set` 자료구조로 중복 단어를 걸러내고 새로운 단어만 `bulkAdd`로 안전하게 병합합니다.
+
+---
+
+## 6. 향후 개선 과제 (Future Work)
+
+1. **클라우드 자동 양방향 동기화 (Background Auto-Sync):**
+   * 현재는 수동 버튼 클릭을 통한 클라우드 DB 업로드/다운로드 방식이 적용되어 있으며, 추후 웹소켓(Supabase Realtime) 또는 주기적 백그라운드 Sync를 통한 단어장 자동 동기화를 도입할 수 있습니다.
+2. **간격 반복 학습 알고리즘 (Spaced Repetition Algorithm):**
+   * 에빙하우스 망각 곡선이나 라이트너 시스템(Leitner Box)에 기반하여, 각 단어의 누적 정답률(`correctCount / testCount`)을 토대로 복습 주기를 계산해 취약한 단어를 우선 출제하는 큐레이션 알고리즘을 도입할 수 있습니다.
+3. **오프라인 고품질 오디오 캐싱 (Pre-rendered TTS Audio):**
+   * 브라우저 내장 Web Speech API는 기기 환경에 따라 음질 차이가 발생할 수 있으므로, 단어별 고음질 mp3 발음 파일을 사전 생성하여 캐싱하는 하이브리드 오디오 파이프라인을 구축할 수 있습니다.
+
+---
+
+## 7. 개발 프롬프트 레퍼런스 (Development Prompt Reference)
+
+향후 유사한 "오프라인 최우선(Offline-First) PWA 다국어 학습 애플리케이션"을 제작할 때 아래 프롬프트를 청사진으로 활용할 수 있습니다:
+
+> "Next.js App Router와 Serwist(Workbox), Dexie.js(IndexedDB), Supabase를 활용해 0.1초 만에 화면이 뜨는 완전 오프라인 우선(Offline-First) 다국어 학습 PWA를 구축해 줘.
+> 1. `sw.ts`에서 Serwist 기본 `defaultCache`는 내부에 모든 요청을 `NetworkOnly`로 강제하는 규칙이 있으므로 절대 사용하지 말고, 정적 에셋 `CacheFirst`, HTML 문서와 Next.js RSC 데이터는 `StaleWhileRevalidate`, 구글 폰트는 `CacheFirst`로 처리하는 커스텀 캐시 규칙을 직접 작성해 줘.
+> 2. `layout.tsx`에 `appleWebApp` 메타데이터를 구성하고, iOS Safari의 PWA 렌더링 블로킹을 방지하기 위해 `SessionProvider`에 `refetchInterval={0}`, `refetchOnWindowFocus={false}`를 부여하며 `sw.ts`에서는 `navigationPreload: false`로 설정해 줘.
+> 3. `@serwist/next`는 Webpack 기반이므로 Next.js 16+ 환경에서 빌드 시 `package.json`의 build 스크립트에 `next build --webpack`을 적용해 줘.
+> 4. 로컬 IndexedDB(Dexie.js)를 Local Source of Truth로 삼아 앱 기동 시 즉시 로컬 데이터로 화면을 렌더링하고, 온라인 상태일 때만 백그라운드 훅(`useDataSync`)을 통해 서버 DB와 지연 동기화(Batch Sync & Soft Delete)를 수행해 줘.
+> 5. DB 스키마는 정규화 원칙에 따라 자식 테이블(단어)에서 이메일 중복을 배제하고 부모 테이블(단어장)의 외래키(`list_id`)와 연계된 Supabase RLS 정책을 수립해 줘.
+> 6. Google OAuth 연동 시 토큰 만료 60초 전 사전 갱신, 세션 쿠키 maxAge 180일 연장, 401 발생 시 `fetchWithSessionRetry`를 통한 1회 투명 자동 재시도 헬퍼를 구축해 줘.
+> 7. Web Speech API 다국어 TTS(영어, 일본어, 한국어) 및 사운드 볼륨 제어를 전역 프로바이더로 관리하고, Safari의 중복 음성 이름을 구별할 수 있도록 voiceURI 태그 파싱 로직을 추가해 줘.
+> 8. 모든 API 라우트는 Zod 스키마 검증과 서버 사이드 세션 기반 소유권 검증을 강제하고, 민감 키값은 서버 사이드 환경 변수로 완벽히 격리(Zero-Leak)해 줘."
