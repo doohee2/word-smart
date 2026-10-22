@@ -17,22 +17,22 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
     if (!isOpen) return;
     const loadVoices = () => {
       const allVoices = window.speechSynthesis.getVoices();
-      
+
       // 애플 기기의 특수 효과음(Novelty) 음성 블랙리스트
       const APPLE_NOVELTY_VOICES = [
-        'Albert', 'Bad News', 'Bahh', 'Bells', 'Boing', 'Bubbles', 'Cellos', 
-        'Deranged', 'Good News', 'Hysterical', 'Pipe Organ', 'Trinoids', 
+        'Albert', 'Bad News', 'Bahh', 'Bells', 'Boing', 'Bubbles', 'Cellos',
+        'Deranged', 'Good News', 'Hysterical', 'Pipe Organ', 'Trinoids',
         'Whisper', 'Wobble', 'Zarvox', 'Jester', 'Organ', 'Superstar'
       ];
 
       setVoices(allVoices.filter(v => {
         // 블랙리스트에 포함된 이름이 있는지 확인
         if (APPLE_NOVELTY_VOICES.some(novelty => v.name.includes(novelty))) return false;
-        
+
         if (activeVoiceLang === 'en' && !v.lang.startsWith('en')) return false;
         if (activeVoiceLang === 'ja' && !v.lang.startsWith('ja')) return false;
         if (activeVoiceLang === 'ko' && !v.lang.startsWith('ko')) return false;
-        
+
         return true;
       }));
     };
@@ -54,7 +54,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
             </div>
             <h2 className="text-title-lg font-bold text-on-surface">음성 및 사운드 설정</h2>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors"
           >
@@ -68,7 +68,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
             <h3 className="text-label-lg font-bold flex items-center gap-2 text-primary">
               <Mic2 size={18} /> 발음 억양 (Voice)
             </h3>
-            
+
             <div className="flex bg-surface-container rounded-xl p-1 gap-1">
               {[
                 { id: 'en', label: '영어' },
@@ -109,7 +109,7 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
                   const parts = v.voiceURI.split(/[.-]/);
                   extra = parts.length > 1 ? parts[parts.length - 1] : v.voiceURI;
                 }
-                
+
                 if (!v.localService) {
                   extra = extra ? `${extra}, 온라인` : "온라인";
                 }
@@ -134,9 +134,9 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
                 <span>발화 속도 (Rate)</span>
                 <span className="font-mono">{settings.ttsRate.toFixed(1)}x</span>
               </div>
-              <input 
-                type="range" min="0.5" max="1.5" step="0.1" 
-                value={settings.ttsRate} 
+              <input
+                type="range" min="0.5" max="1.5" step="0.1"
+                value={settings.ttsRate}
                 onChange={(e) => updateSettings({ ttsRate: parseFloat(e.target.value) })}
                 className="w-full accent-primary"
               />
@@ -147,9 +147,9 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
                 <span>음높이 (Pitch)</span>
                 <span className="font-mono">{settings.ttsPitch.toFixed(1)}</span>
               </div>
-              <input 
-                type="range" min="0.0" max="2.0" step="0.1" 
-                value={settings.ttsPitch} 
+              <input
+                type="range" min="0.0" max="2.0" step="0.1"
+                value={settings.ttsPitch}
                 onChange={(e) => updateSettings({ ttsPitch: parseFloat(e.target.value) })}
                 className="w-full accent-primary"
               />
@@ -160,9 +160,9 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
                 <span>TTS 볼륨</span>
                 <span className="font-mono">{Math.round(settings.ttsVolume * 100)}%</span>
               </div>
-              <input 
-                type="range" min="0.0" max="1.0" step="0.1" 
-                value={settings.ttsVolume} 
+              <input
+                type="range" min="0.0" max="1.0" step="0.1"
+                value={settings.ttsVolume}
                 onChange={(e) => updateSettings({ ttsVolume: parseFloat(e.target.value) })}
                 className="w-full accent-primary"
               />
@@ -171,8 +171,8 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
 
           {/* Section: 자동 재생 모드 */}
           <label className="flex items-center gap-3 p-3 bg-surface-container rounded-2xl border border-outline-variant/30 cursor-pointer hover:bg-surface-variant/50 transition-colors">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               checked={settings.autoTTS}
               onChange={(e) => updateSettings({ autoTTS: e.target.checked })}
               className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
@@ -185,8 +185,8 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
           {/* Section: 사운드 효과음 설정 */}
           <div className="flex flex-col gap-2 p-3 bg-surface-container rounded-2xl border border-outline-variant/30">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={!settings.isSfxMuted}
                 onChange={(e) => updateSettings({ isSfxMuted: !e.target.checked })}
                 className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
@@ -200,9 +200,9 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
             </label>
 
             <div className={clsx("flex flex-col transition-opacity duration-300 pl-8", settings.isSfxMuted ? "opacity-50 pointer-events-none" : "opacity-100")}>
-              <input 
-                type="range" min="0.0" max="1.0" step="0.1" 
-                value={settings.sfxVolume} 
+              <input
+                type="range" min="0.0" max="1.0" step="0.1"
+                value={settings.sfxVolume}
                 onChange={(e) => updateSettings({ sfxVolume: parseFloat(e.target.value) })}
                 className="w-full accent-primary"
               />
@@ -218,13 +218,13 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
               className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
             />
             <span className="text-body-md font-bold text-on-surface">
-              일본어단어 사전 검색시 네이버 한자사전 모드 사용
+              일본어단어 사전 검색 시 한자사전 사용
             </span>
           </label>
 
         </div>
 
-        <button 
+        <button
           onClick={onClose}
           className="mt-1 w-full py-2.5 bg-primary text-on-primary rounded-xl text-label-lg font-bold hover:bg-primary/90 transition-colors"
         >
