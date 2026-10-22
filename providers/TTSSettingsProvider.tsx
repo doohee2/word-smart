@@ -13,6 +13,7 @@ export interface TTSSettings {
   autoTTS: boolean;
   sfxVolume: number;
   isSfxMuted: boolean;
+  jaUseHanjaDict: boolean; // 일본어 모드 사전 검색 시 네이버 한자사전 사용
 }
 
 interface TTSSettingsContextProps {
@@ -32,6 +33,7 @@ const defaultSettings: TTSSettings = {
   autoTTS: false,
   sfxVolume: 0.5,
   isSfxMuted: false,
+  jaUseHanjaDict: false,
 };
 
 const TTSSettingsContext = createContext<TTSSettingsContextProps | undefined>(undefined);

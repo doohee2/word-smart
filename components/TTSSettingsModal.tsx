@@ -209,6 +209,19 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
             </div>
           </div>
 
+          {/* Section: 일본어 사전 검색 모드 */}
+          <label className="flex items-center gap-3 p-3 bg-surface-container rounded-2xl border border-outline-variant/30 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={settings.jaUseHanjaDict}
+              onChange={(e) => updateSettings({ jaUseHanjaDict: e.target.checked })}
+              className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
+            />
+            <span className="text-body-md font-bold text-on-surface">
+              일본어단어 사전 검색시 네이버 한자사전 모드 사용
+            </span>
+          </label>
+
         </div>
 
         <button 

@@ -15,6 +15,7 @@ import { ZipfBadge } from "@/components/ZipfBadge";
 import { useLanguageMode } from "@/providers/LanguageModeProvider";
 import { useAppSound } from "@/hooks/useAppSound";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
+import { buildUniqueQueue } from "@/lib/shuffle";
 import { DrawingPad } from "@/components/DrawingPad";
 
 export default function StudyPage() {
@@ -233,23 +234,10 @@ export default function StudyPage() {
       return;
     }
     
-    // Shuffle pool
-    pool.sort(() => 0.5 - Math.random());
-    
     const count = typeof studyCount === 'number' ? studyCount : parseInt(studyCount) || 30;
     
-    let queue: Word[] = [];
-    if (count <= pool.length) {
-      queue = pool.slice(0, count);
-    } else {
-      // Need more than pool size
-      queue = [...pool]; // Ensure all appear once
-      let remaining = count - pool.length;
-      while (remaining > 0) {
-        queue.push(pool[Math.floor(Math.random() * pool.length)]);
-        remaining--;
-      }
-    }
+    // 단어 텍스트 기준 중복 제거 + Fisher-Yates 셔플로 큐 생성
+    const queue: Word[] = buildUniqueQueue(pool, count);
     
     setStudyQueue(queue);
     setCurrentIndex(0);
@@ -692,7 +680,9 @@ export default function StudyPage() {
                     e.stopPropagation();
                     if (!currentWord) return;
                     let url = `https://en.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
-                    if (isJa) {
+                    if (isJa && settings.jaUseHanjaDict) {
+                      url = `https://hanja.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
+                    } else if (isJa) {
                       url = `https://ja.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
                     } else if (isZh) {
                       url = `https://hanja.dict.naver.com/#/search?query=${encodeURIComponent(currentWord.word)}`;
