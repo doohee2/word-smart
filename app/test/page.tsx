@@ -387,6 +387,17 @@ export default function TestPage() {
     return () => window.removeEventListener('word-smart-stop-session', handleStopSession);
   }, []);
 
+  const setAudioSessionType = (type: 'transient' | 'auto') => {
+    if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (navigator as any).audioSession.type = type;
+      } catch {
+        // ignore unsupported environments
+      }
+    }
+  };
+
   const applyTTSSettings = (utterance: SpeechSynthesisUtterance) => {
     utterance.rate = settings.ttsRate;
     utterance.pitch = settings.ttsPitch;
@@ -407,8 +418,10 @@ export default function TestPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
-      window.speechSynthesis.cancel();
+      const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
+      if (wasActive) {
+        window.speechSynthesis.cancel();
+      }
       setIsSpeakingWord(false);
 
       const textToSpeak = isZh ? (currentWord.meaningKo || currentWord.word) : isJa ? (currentWord.partOfSpeech || currentWord.word) : currentWord.word;
@@ -417,19 +430,34 @@ export default function TestPage() {
       applyTTSSettings(utterance);
       
       utterance.onstart = () => setIsSpeakingWord(true);
-      utterance.onend = () => setIsSpeakingWord(false);
-      utterance.onerror = () => setIsSpeakingWord(false);
+      utterance.onend = () => {
+        setIsSpeakingWord(false);
+        setAudioSessionType('auto');
+      };
+      utterance.onerror = () => {
+        setIsSpeakingWord(false);
+        setAudioSessionType('auto');
+      };
 
-      // cancel() 직후 speak()를 호출하면 무시되는 브라우저 버그 방지
-      setTimeout(() => {
+      const speakNow = () => {
+        setAudioSessionType('transient');
         window.speechSynthesis.speak(utterance);
-      }, 50);
+      };
+
+      if (wasActive) {
+        setTimeout(speakNow, 50);
+      } else {
+        speakNow();
+      }
     }
   };
 
   const playExampleAudio = () => {
     if (!currentWord?.exampleEn || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
+    const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
+    if (wasActive) {
+      window.speechSynthesis.cancel();
+    }
     setIsSpeakingWord(false);
     setIsSpeakingExample(false);
 
@@ -438,12 +466,25 @@ export default function TestPage() {
     applyTTSSettings(utterance);
 
     utterance.onstart = () => setIsSpeakingExample(true);
-    utterance.onend = () => setIsSpeakingExample(false);
-    utterance.onerror = () => setIsSpeakingExample(false);
+    utterance.onend = () => {
+      setIsSpeakingExample(false);
+      setAudioSessionType('auto');
+    };
+    utterance.onerror = () => {
+      setIsSpeakingExample(false);
+      setAudioSessionType('auto');
+    };
 
-    setTimeout(() => {
+    const speakNow = () => {
+      setAudioSessionType('transient');
       window.speechSynthesis.speak(utterance);
-    }, 50);
+    };
+
+    if (wasActive) {
+      setTimeout(speakNow, 50);
+    } else {
+      speakNow();
+    }
   };
 
   const handleSpellingSubmit = (e: React.FormEvent) => {

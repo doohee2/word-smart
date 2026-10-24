@@ -420,10 +420,22 @@ export default function StudyPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // 카드가 바뀔 때 진행 중인 TTS를 즉시 취소하여 상태 충돌 방지
+  const setAudioSessionType = (type: 'transient' | 'auto') => {
+    if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (navigator as any).audioSession.type = type;
+      } catch {
+        // ignore unsupported environments
+      }
+    }
+  };
+
+  // 카드가 바뀔 때 진행 중인 TTS가 있을 때만 취소하여 불필요한 오디오 세션 리셋 방지
   useEffect(() => {
-    if ('speechSynthesis' in window) {
+    if ('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
       window.speechSynthesis.cancel();
+      setAudioSessionType('auto');
     }
     setIsSpeakingWord(false);
     setIsSpeakingExample(false);
@@ -439,8 +451,10 @@ export default function StudyPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      // 기존 재생을 취소하고 새로 시작 (stuck 상태 자동 복구)
-      window.speechSynthesis.cancel();
+      const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
+      if (wasActive) {
+        window.speechSynthesis.cancel();
+      }
       setIsSpeakingWord(false);
       setIsSpeakingExample(false);
 
@@ -450,13 +464,26 @@ export default function StudyPage() {
       applyTTSSettings(utterance);
       
       utterance.onstart = () => setIsSpeakingWord(true);
-      utterance.onend = () => setIsSpeakingWord(false);
-      utterance.onerror = () => setIsSpeakingWord(false);
+      utterance.onend = () => {
+        setIsSpeakingWord(false);
+        setAudioSessionType('auto');
+      };
+      utterance.onerror = () => {
+        setIsSpeakingWord(false);
+        setAudioSessionType('auto');
+      };
 
-      // cancel() 직후 speak()를 호출하면 무시되는 브라우저 버그 방지
-      setTimeout(() => {
+      const speakNow = () => {
+        setAudioSessionType('transient');
         window.speechSynthesis.speak(utterance);
-      }, 50);
+      };
+
+      // 이전 음성을 cancel() 한 직후에만 50ms 대기하고, 평소에는 동기적으로 즉시 호출
+      if (wasActive) {
+        setTimeout(speakNow, 50);
+      } else {
+        speakNow();
+      }
     }
   };
 
@@ -464,8 +491,10 @@ export default function StudyPage() {
     e.stopPropagation();
     const textToSpeak = isZh ? currentWord?.exampleKo : currentWord?.exampleEn;
     if (textToSpeak && 'speechSynthesis' in window) {
-      // 기존 재생을 취소하고 새로 시작
-      window.speechSynthesis.cancel();
+      const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
+      if (wasActive) {
+        window.speechSynthesis.cancel();
+      }
       setIsSpeakingWord(false);
       setIsSpeakingExample(false);
 
@@ -474,12 +503,25 @@ export default function StudyPage() {
       applyTTSSettings(utterance); // 일본어 모드에서는 일본어 예문이므로 영어 음성 강제를 해제
       
       utterance.onstart = () => setIsSpeakingExample(true);
-      utterance.onend = () => setIsSpeakingExample(false);
-      utterance.onerror = () => setIsSpeakingExample(false);
+      utterance.onend = () => {
+        setIsSpeakingExample(false);
+        setAudioSessionType('auto');
+      };
+      utterance.onerror = () => {
+        setIsSpeakingExample(false);
+        setAudioSessionType('auto');
+      };
 
-      setTimeout(() => {
+      const speakNow = () => {
+        setAudioSessionType('transient');
         window.speechSynthesis.speak(utterance);
-      }, 50);
+      };
+
+      if (wasActive) {
+        setTimeout(speakNow, 50);
+      } else {
+        speakNow();
+      }
     }
   };
 
