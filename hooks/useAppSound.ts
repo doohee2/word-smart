@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import useSound from "use-sound";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
@@ -9,11 +9,32 @@ export function useAppSound() {
   const isMuted = settings.isSfxMuted;
   const volume = settings.sfxVolume;
 
+  // iOS Safari / WebKit 환경에서 상시 transient(덕킹) 오디오 세션 모드 유지
+  useEffect(() => {
+    const applyTransient = () => {
+      if (typeof navigator !== "undefined" && "audioSession" in navigator) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (navigator as any).audioSession.type = "transient";
+        } catch (e) {
+          console.warn("Failed to set audioSession type to transient", e);
+        }
+      }
+    };
+    applyTransient();
+    window.addEventListener("touchstart", applyTransient, { once: true, passive: true });
+    window.addEventListener("click", applyTransient, { once: true, passive: true });
+    return () => {
+      window.removeEventListener("touchstart", applyTransient);
+      window.removeEventListener("click", applyTransient);
+    };
+  }, []);
+
   const toggleMute = useCallback(() => {
     updateSettings({ isSfxMuted: !isMuted });
   }, [isMuted, updateSettings]);
 
-  // Web Audio API를 사용하여 효과음 지연을 줄이고 음악 중단을 완화 (ambient 설정은 제거하여 기본 iOS 오디오 세션 유지)
+  // Web Audio API를 사용하여 효과음 지연을 줄이고 백그라운드 음악 중단을 방지
   const soundOptions = { volume };
 
   // Pre-load all sound effects

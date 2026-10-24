@@ -387,11 +387,11 @@ export default function TestPage() {
     return () => window.removeEventListener('word-smart-stop-session', handleStopSession);
   }, []);
 
-  const setAudioSessionType = (type: 'transient' | 'auto') => {
+  const ensureTransientSession = () => {
     if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (navigator as any).audioSession.type = type;
+        (navigator as any).audioSession.type = 'transient';
       } catch {
         // ignore unsupported environments
       }
@@ -418,6 +418,7 @@ export default function TestPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
+      ensureTransientSession();
       const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
       if (wasActive) {
         window.speechSynthesis.cancel();
@@ -430,17 +431,11 @@ export default function TestPage() {
       applyTTSSettings(utterance);
       
       utterance.onstart = () => setIsSpeakingWord(true);
-      utterance.onend = () => {
-        setIsSpeakingWord(false);
-        setAudioSessionType('auto');
-      };
-      utterance.onerror = () => {
-        setIsSpeakingWord(false);
-        setAudioSessionType('auto');
-      };
+      utterance.onend = () => setIsSpeakingWord(false);
+      utterance.onerror = () => setIsSpeakingWord(false);
 
       const speakNow = () => {
-        setAudioSessionType('transient');
+        ensureTransientSession();
         window.speechSynthesis.speak(utterance);
       };
 
@@ -454,6 +449,7 @@ export default function TestPage() {
 
   const playExampleAudio = () => {
     if (!currentWord?.exampleEn || !('speechSynthesis' in window)) return;
+    ensureTransientSession();
     const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
     if (wasActive) {
       window.speechSynthesis.cancel();
@@ -466,17 +462,11 @@ export default function TestPage() {
     applyTTSSettings(utterance);
 
     utterance.onstart = () => setIsSpeakingExample(true);
-    utterance.onend = () => {
-      setIsSpeakingExample(false);
-      setAudioSessionType('auto');
-    };
-    utterance.onerror = () => {
-      setIsSpeakingExample(false);
-      setAudioSessionType('auto');
-    };
+    utterance.onend = () => setIsSpeakingExample(false);
+    utterance.onerror = () => setIsSpeakingExample(false);
 
     const speakNow = () => {
-      setAudioSessionType('transient');
+      ensureTransientSession();
       window.speechSynthesis.speak(utterance);
     };
 
