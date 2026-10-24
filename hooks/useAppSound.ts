@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import useSound from "use-sound";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
@@ -9,11 +9,24 @@ export function useAppSound() {
   const isMuted = settings.isSfxMuted;
   const volume = settings.sfxVolume;
 
+  // iOS Safari / WebKit 환경에서 백그라운드 음악과의 믹싱(ambient 모드) 설정
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && "audioSession" in navigator) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (navigator as any).audioSession.type = "ambient";
+      } catch (e) {
+        console.warn("Failed to set audioSession type to ambient", e);
+      }
+    }
+  }, []);
+
   const toggleMute = useCallback(() => {
     updateSettings({ isSfxMuted: !isMuted });
   }, [isMuted, updateSettings]);
 
-  const soundOptions = { volume, html5: true };
+  // html5: true 를 제거하여 Web Audio API를 사용 (백그라운드 음악 중단 방지 및 빠른 반응성)
+  const soundOptions = { volume };
 
   // Pre-load all sound effects
   const [playStartSound] = useSound("/sounds/soundshelfstudio-ui-digital-tech-notification-549595.mp3", soundOptions);
