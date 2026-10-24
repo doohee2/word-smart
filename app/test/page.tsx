@@ -405,6 +405,16 @@ export default function TestPage() {
     }
   };
 
+  const setTTSAudioSession = (active: boolean) => {
+    try {
+      if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+        (navigator as unknown as { audioSession: { type: string } }).audioSession.type = active ? 'playback' : 'ambient';
+      }
+    } catch {
+      // 미지원 브라우저 무시
+    }
+  };
+
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
       const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
@@ -418,15 +428,28 @@ export default function TestPage() {
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance);
       
-      utterance.onstart = () => setIsSpeakingWord(true);
-      utterance.onend = () => setIsSpeakingWord(false);
-      utterance.onerror = () => setIsSpeakingWord(false);
+      utterance.onstart = () => {
+        setTTSAudioSession(true);
+        setIsSpeakingWord(true);
+      };
+      const handleFinish = () => {
+        setIsSpeakingWord(false);
+        setTimeout(() => {
+          if ('speechSynthesis' in window && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            setTTSAudioSession(false);
+          }
+        }, 100);
+      };
+      utterance.onend = handleFinish;
+      utterance.onerror = handleFinish;
 
       if (wasActive) {
         setTimeout(() => {
+          setTTSAudioSession(true);
           window.speechSynthesis.speak(utterance);
         }, 50);
       } else {
+        setTTSAudioSession(true);
         window.speechSynthesis.speak(utterance);
       }
     }
@@ -445,15 +468,28 @@ export default function TestPage() {
     utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
     applyTTSSettings(utterance);
 
-    utterance.onstart = () => setIsSpeakingExample(true);
-    utterance.onend = () => setIsSpeakingExample(false);
-    utterance.onerror = () => setIsSpeakingExample(false);
+    utterance.onstart = () => {
+      setTTSAudioSession(true);
+      setIsSpeakingExample(true);
+    };
+    const handleFinish = () => {
+      setIsSpeakingExample(false);
+      setTimeout(() => {
+        if ('speechSynthesis' in window && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+          setTTSAudioSession(false);
+        }
+      }, 100);
+    };
+    utterance.onend = handleFinish;
+    utterance.onerror = handleFinish;
 
     if (wasActive) {
       setTimeout(() => {
+        setTTSAudioSession(true);
         window.speechSynthesis.speak(utterance);
       }, 50);
     } else {
+      setTTSAudioSession(true);
       window.speechSynthesis.speak(utterance);
     }
   };

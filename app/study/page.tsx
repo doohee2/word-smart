@@ -407,23 +407,23 @@ export default function StudyPage() {
     }
   };
 
-  // Chrome/Edge speechSynthesis 큐 멈춤 방지 keepAlive
-  // Chrome은 긴 문장 재생 시 ~15초 후 내부적으로 음성 큐를 멈추는 버그가 있음
-  // pause()/resume()을 주기적으로 호출하여 큐를 살려두는 공식 workaround
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.pause();
-        window.speechSynthesis.resume();
+  // TTS 발음 시에만 playback 세션을 활성화하여 무음 모드에서도 발음이 들리게 하고,
+  // 평상시(효과음만 재생 시)에는 ambient로 복귀하여 배경음악 중단을 방지
+  const setTTSAudioSession = (active: boolean) => {
+    try {
+      if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+        (navigator as unknown as { audioSession: { type: string } }).audioSession.type = active ? 'playback' : 'ambient';
       }
-    }, 10000); // 10초마다 keepAlive
-    return () => clearInterval(interval);
-  }, []);
+    } catch {
+      // 미지원 브라우저 무시
+    }
+  };
 
   // 카드가 바뀔 때 진행 중인 TTS가 있을 때만 취소하여 불필요한 오디오 세션 리셋 방지
   useEffect(() => {
     if ('speechSynthesis' in window && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
       window.speechSynthesis.cancel();
+      setTTSAudioSession(false);
     }
     setIsSpeakingWord(false);
     setIsSpeakingExample(false);
@@ -451,16 +451,29 @@ export default function StudyPage() {
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance);
       
-      utterance.onstart = () => setIsSpeakingWord(true);
-      utterance.onend = () => setIsSpeakingWord(false);
-      utterance.onerror = () => setIsSpeakingWord(false);
+      utterance.onstart = () => {
+        setTTSAudioSession(true);
+        setIsSpeakingWord(true);
+      };
+      const handleFinish = () => {
+        setIsSpeakingWord(false);
+        setTimeout(() => {
+          if ('speechSynthesis' in window && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            setTTSAudioSession(false);
+          }
+        }, 100);
+      };
+      utterance.onend = handleFinish;
+      utterance.onerror = handleFinish;
 
       // 이전 음성을 cancel() 한 직후에만 50ms 대기하고, 평소에는 동기적으로 즉시 호출
       if (wasActive) {
         setTimeout(() => {
+          setTTSAudioSession(true);
           window.speechSynthesis.speak(utterance);
         }, 50);
       } else {
+        setTTSAudioSession(true);
         window.speechSynthesis.speak(utterance);
       }
     }
@@ -481,15 +494,28 @@ export default function StudyPage() {
       utterance.lang = isZh ? 'ko-KR' : isJa ? 'ja-JP' : 'en-US';
       applyTTSSettings(utterance); // 일본어 모드에서는 일본어 예문이므로 영어 음성 강제를 해제
       
-      utterance.onstart = () => setIsSpeakingExample(true);
-      utterance.onend = () => setIsSpeakingExample(false);
-      utterance.onerror = () => setIsSpeakingExample(false);
+      utterance.onstart = () => {
+        setTTSAudioSession(true);
+        setIsSpeakingExample(true);
+      };
+      const handleFinish = () => {
+        setIsSpeakingExample(false);
+        setTimeout(() => {
+          if ('speechSynthesis' in window && !window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+            setTTSAudioSession(false);
+          }
+        }, 100);
+      };
+      utterance.onend = handleFinish;
+      utterance.onerror = handleFinish;
 
       if (wasActive) {
         setTimeout(() => {
+          setTTSAudioSession(true);
           window.speechSynthesis.speak(utterance);
         }, 50);
       } else {
+        setTTSAudioSession(true);
         window.speechSynthesis.speak(utterance);
       }
     }
