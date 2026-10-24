@@ -387,17 +387,6 @@ export default function TestPage() {
     return () => window.removeEventListener('word-smart-stop-session', handleStopSession);
   }, []);
 
-  const ensureTransientSession = () => {
-    if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (navigator as any).audioSession.type = 'transient';
-      } catch {
-        // ignore unsupported environments
-      }
-    }
-  };
-
   const applyTTSSettings = (utterance: SpeechSynthesisUtterance) => {
     utterance.rate = settings.ttsRate;
     utterance.pitch = settings.ttsPitch;
@@ -418,7 +407,6 @@ export default function TestPage() {
 
   const playAudio = () => {
     if (currentWord && 'speechSynthesis' in window) {
-      ensureTransientSession();
       const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
       if (wasActive) {
         window.speechSynthesis.cancel();
@@ -434,22 +422,18 @@ export default function TestPage() {
       utterance.onend = () => setIsSpeakingWord(false);
       utterance.onerror = () => setIsSpeakingWord(false);
 
-      const speakNow = () => {
-        ensureTransientSession();
-        window.speechSynthesis.speak(utterance);
-      };
-
       if (wasActive) {
-        setTimeout(speakNow, 50);
+        setTimeout(() => {
+          window.speechSynthesis.speak(utterance);
+        }, 50);
       } else {
-        speakNow();
+        window.speechSynthesis.speak(utterance);
       }
     }
   };
 
   const playExampleAudio = () => {
     if (!currentWord?.exampleEn || !('speechSynthesis' in window)) return;
-    ensureTransientSession();
     const wasActive = window.speechSynthesis.speaking || window.speechSynthesis.pending;
     if (wasActive) {
       window.speechSynthesis.cancel();
@@ -465,15 +449,12 @@ export default function TestPage() {
     utterance.onend = () => setIsSpeakingExample(false);
     utterance.onerror = () => setIsSpeakingExample(false);
 
-    const speakNow = () => {
-      ensureTransientSession();
-      window.speechSynthesis.speak(utterance);
-    };
-
     if (wasActive) {
-      setTimeout(speakNow, 50);
+      setTimeout(() => {
+        window.speechSynthesis.speak(utterance);
+      }, 50);
     } else {
-      speakNow();
+      window.speechSynthesis.speak(utterance);
     }
   };
 
