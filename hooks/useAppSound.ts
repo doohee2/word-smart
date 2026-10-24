@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import useSound from "use-sound";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
 
@@ -9,23 +9,11 @@ export function useAppSound() {
   const isMuted = settings.isSfxMuted;
   const volume = settings.sfxVolume;
 
-  // iOS Safari / WebKit 환경에서 백그라운드 음악과의 믹싱(ambient 모드) 설정
-  useEffect(() => {
-    if (typeof navigator !== "undefined" && "audioSession" in navigator) {
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (navigator as any).audioSession.type = "ambient";
-      } catch (e) {
-        console.warn("Failed to set audioSession type to ambient", e);
-      }
-    }
-  }, []);
-
   const toggleMute = useCallback(() => {
     updateSettings({ isSfxMuted: !isMuted });
   }, [isMuted, updateSettings]);
 
-  // html5: true 를 제거하여 Web Audio API를 사용 (백그라운드 음악 중단 방지 및 빠른 반응성)
+  // Web Audio API를 사용하여 효과음 지연을 줄이고 음악 중단을 완화 (ambient 설정은 제거하여 기본 iOS 오디오 세션 유지)
   const soundOptions = { volume };
 
   // Pre-load all sound effects
