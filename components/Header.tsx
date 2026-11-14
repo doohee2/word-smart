@@ -7,13 +7,14 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useStudySession } from "@/providers/StudySessionProvider";
 import { ConfirmModal } from "./ConfirmModal";
 import { Logo } from "./Logo";
 import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 import { useDataSync } from "@/hooks/useDataSync";
+import { resetFatalSessionError } from "@/lib/fetchAuth";
 
 export function Header() {
   const { data: session } = useSession();
@@ -23,12 +24,40 @@ export function Header() {
   const router = useRouter();
   const { isActiveSession, setIsActiveSession } = useStudySession();
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, targetHref: string}>({isOpen: false, targetHref: ''});
+  const [isSessionExpiredOpen, setIsSessionExpiredOpen] = useState(false);
+  const isHandlingExpiryRef = useRef(false);
   const isOnline = useNetworkStatus();
   useDataSync();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // 세션 만료 감지 (온라인 상태일 때만 처리, 오프라인 시 PWA 캐시 보호를 위해 유보)
+  useEffect(() => {
+    if (!isOnline) return;
+
+    if (session?.error === "RefreshAccessTokenError") {
+      if (!isHandlingExpiryRef.current) {
+        isHandlingExpiryRef.current = true;
+        setIsSessionExpiredOpen(true);
+      }
+    } else if (session?.user && !session?.error) {
+      isHandlingExpiryRef.current = false;
+      resetFatalSessionError();
+    }
+  }, [session, isOnline]);
+
+  const handleReSignIn = () => {
+    setIsSessionExpiredOpen(false);
+    resetFatalSessionError();
+    signIn("google");
+  };
+
+  const handleCloseExpiryModal = () => {
+    setIsSessionExpiredOpen(false);
+    // isHandlingExpiryRef.current = true 상태를 유지하여 반복 팝업 없이 로컬 데이터 조회를 유지
+  };
 
   const handleLinkClick = (e: React.MouseEvent, href: string) => {
     if (isActiveSession && pathname !== href) {
@@ -134,6 +163,17 @@ export function Header() {
         cancelText="취소"
         onConfirm={confirmNavigation}
         onClose={() => setModalConfig(prev => ({...prev, isOpen: false}))}
+      />
+
+      <ConfirmModal 
+        isOpen={isSessionExpiredOpen}
+        title="Google 계정 연결 만료"
+        message={"Google 계정 연결이 만료되었습니다.\n최신 데이터를 동기화하려면 다시 로그인해 주세요."}
+        type="warning"
+        confirmText="다시 로그인"
+        cancelText="나중에 (조회 유지)"
+        onConfirm={handleReSignIn}
+        onClose={handleCloseExpiryModal}
       />
     </header>
   );

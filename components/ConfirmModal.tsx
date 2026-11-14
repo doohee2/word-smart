@@ -1,4 +1,4 @@
-import { Check, Info, X } from "lucide-react";
+import { Check, Info, X, AlertTriangle } from "lucide-react";
 import clsx from "clsx";
 
 interface ConfirmModalProps {
@@ -31,6 +31,7 @@ export function ConfirmModal({
           {type === 'success' && <div className="p-2 bg-primary-container text-on-primary-container rounded-full"><Check size={24} /></div>}
           {type === 'error' && <div className="p-2 bg-error-container text-error rounded-full"><X size={24} /></div>}
           {type === 'info' && <div className="p-2 bg-secondary-container text-on-secondary-container rounded-full"><Info size={24} /></div>}
+          {type === 'warning' && <div className="p-2 bg-amber-500/10 text-amber-500 rounded-full"><AlertTriangle size={24} /></div>}
           <h2 className="text-title-lg font-bold text-on-surface">{title}</h2>
         </div>
         <p className="text-body-lg text-on-surface-variant mb-4 break-words whitespace-pre-wrap">
@@ -52,7 +53,9 @@ export function ConfirmModal({
             }}
             className={clsx(
               "px-5 py-2.5 rounded-full text-label-lg font-medium transition-colors shadow-sm",
-              type === 'error' ? "bg-error text-on-error hover:bg-error/90" : "bg-primary text-on-primary hover:bg-primary/90"
+              type === 'error' ? "bg-error text-on-error hover:bg-error/90" : 
+              type === 'warning' ? "bg-amber-600 text-white hover:bg-amber-700" :
+              "bg-primary text-on-primary hover:bg-primary/90"
             )}
           >
             {confirmText}
