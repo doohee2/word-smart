@@ -14,6 +14,7 @@ export interface TTSSettings {
   sfxVolume: number;
   isSfxMuted: boolean;
   jaUseHanjaDict: boolean; // 일본어 모드 사전 검색 시 네이버 한자사전 사용
+  audioSessionMode: 'auto' | 'ambient' | 'transient';
 }
 
 interface TTSSettingsContextProps {
@@ -34,6 +35,15 @@ const defaultSettings: TTSSettings = {
   sfxVolume: 0.5,
   isSfxMuted: false,
   jaUseHanjaDict: false,
+  audioSessionMode: 'auto',
+};
+
+const applyAudioSessionMode = (mode: 'auto' | 'ambient' | 'transient') => {
+  try {
+    if (typeof navigator !== 'undefined' && 'audioSession' in navigator) {
+      (navigator as any).audioSession.type = mode;
+    }
+  } catch {}
 };
 
 const TTSSettingsContext = createContext<TTSSettingsContextProps | undefined>(undefined);
@@ -64,6 +74,7 @@ export function TTSSettingsProvider({ children }: { children: ReactNode }) {
 
     setSettings(initialSettings);
     setIsLoaded(true);
+    applyAudioSessionMode(initialSettings.audioSessionMode || 'auto');
 
     const handleLegacyMuteChange = () => {
       const current = localStorage.getItem("word_smart_muted");
@@ -83,6 +94,11 @@ export function TTSSettingsProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("word_smart_muted", String(newSettings.isSfxMuted));
         window.dispatchEvent(new Event("word_smart_mute_change"));
       }
+
+      if (newSettings.audioSessionMode) {
+        applyAudioSessionMode(newSettings.audioSessionMode);
+      }
+
       return updated;
     });
   }, []);

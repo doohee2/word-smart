@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { X, AudioLines, PlayCircle, Volume2, Mic2 } from "lucide-react";
+import { X, AudioLines, PlayCircle, Volume2, Mic2, RotateCcw } from "lucide-react";
 import clsx from "clsx";
 import { useTTSSettings } from "@/providers/TTSSettingsProvider";
+import { useAppSound } from "@/hooks/useAppSound";
 
 interface TTSSettingsModalProps {
   isOpen: boolean;
@@ -12,6 +13,14 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
   const { settings, updateSettings } = useTTSSettings();
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [activeVoiceLang, setActiveVoiceLang] = useState<'en' | 'ja' | 'ko'>('en');
+  const [isResetting, setIsResetting] = useState(false);
+  const { resetAudioEngine } = useAppSound();
+
+  const handleResetAudio = async () => {
+    setIsResetting(true);
+    await resetAudioEngine();
+    setTimeout(() => setIsResetting(false), 500);
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -184,28 +193,53 @@ export function TTSSettingsModal({ isOpen, onClose }: TTSSettingsModalProps) {
 
           {/* Section: 사운드 효과음 설정 */}
           <div className="flex flex-col gap-2 p-3 bg-surface-container rounded-2xl border border-outline-variant/30">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={!settings.isSfxMuted}
-                onChange={(e) => updateSettings({ isSfxMuted: !e.target.checked })}
-                className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
-              />
-              <span className="text-body-lg font-bold text-on-surface flex items-center gap-2">
-                <Volume2 size={18} /> 효과음 켜기
-                <span className="text-label-sm font-mono text-primary bg-primary-container px-2 py-0.5 rounded-md ml-1">
-                  {Math.round(settings.sfxVolume * 100)}%
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={!settings.isSfxMuted}
+                  onChange={(e) => updateSettings({ isSfxMuted: !e.target.checked })}
+                  className="w-5 h-5 accent-primary rounded cursor-pointer shrink-0"
+                />
+                <span className="text-body-lg font-bold text-on-surface flex items-center gap-2">
+                  <Volume2 size={18} /> 효과음 켜기
+                  <span className="text-label-sm font-mono text-primary bg-primary-container px-2 py-0.5 rounded-md ml-1">
+                    {Math.round(settings.sfxVolume * 100)}%
+                  </span>
                 </span>
-              </span>
-            </label>
+              </label>
 
-            <div className={clsx("flex flex-col transition-opacity duration-300 pl-8", settings.isSfxMuted ? "opacity-50 pointer-events-none" : "opacity-100")}>
+              <button
+                type="button"
+                onClick={handleResetAudio}
+                className="flex items-center gap-1 px-2.5 py-1 text-label-sm font-medium bg-surface hover:bg-surface-variant text-on-surface-variant rounded-lg border border-outline-variant/50 transition-colors shadow-2xs"
+                title="효과음 엔진 강제 리셋"
+              >
+                <RotateCcw size={13} className={clsx(isResetting && "animate-spin text-primary")} />
+                <span>오디오 리셋</span>
+              </button>
+            </div>
+
+            <div className={clsx("flex flex-col transition-opacity duration-300 pl-8 gap-2", settings.isSfxMuted ? "opacity-50 pointer-events-none" : "opacity-100")}>
               <input
                 type="range" min="0.0" max="1.0" step="0.1"
                 value={settings.sfxVolume}
                 onChange={(e) => updateSettings({ sfxVolume: parseFloat(e.target.value) })}
                 className="w-full accent-primary"
               />
+
+              <div className="flex items-center justify-between gap-2 pt-1 text-label-sm">
+                <span className="text-on-surface-variant shrink-0">오디오 세션 모드</span>
+                <select
+                  value={settings.audioSessionMode || 'auto'}
+                  onChange={(e) => updateSettings({ audioSessionMode: e.target.value as 'auto' | 'ambient' | 'transient' })}
+                  className="p-1 px-2 rounded-lg bg-surface border border-outline-variant/50 text-body-sm text-on-surface focus:border-primary outline-none"
+                >
+                  <option value="auto">auto (기본)</option>
+                  <option value="ambient">ambient (음악 유지)</option>
+                  <option value="transient">transient (단기 알림)</option>
+                </select>
+              </div>
             </div>
           </div>
 

@@ -33,6 +33,38 @@ export function useAppSound() {
   const [playErrorSound] = useSound("/sounds/soundshelfstudio-ui-warning-beep-515666.mp3", soundOptions);
   const [playMissionCompleteSound] = useSound("/sounds/soundshelfstudio-mission-complete-chime-534595.mp3", soundOptions);
 
+  // 효과음 엔진 강제 리셋: 기존 AudioContext를 닫고 새 AudioContext를 생성 및 재연결
+  const resetAudioEngine = useCallback(async () => {
+    if (typeof window === "undefined") return;
+    try {
+      if (Howler.ctx) {
+        try {
+          await Howler.ctx.close();
+        } catch {}
+      }
+
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (AudioCtx) {
+        const newCtx = new AudioCtx();
+        Howler.ctx = newCtx;
+        Howler.masterGain = typeof newCtx.createGain === "undefined" ? (newCtx as unknown as { createGainNode: () => GainNode }).createGainNode() : newCtx.createGain();
+        Howler.masterGain.gain.setValueAtTime(isMuted ? 0 : volume, newCtx.currentTime);
+        Howler.masterGain.connect(newCtx.destination);
+        (Howler as unknown as { _audioUnlocked: boolean })._audioUnlocked = true;
+        await newCtx.resume();
+      }
+
+      if (typeof navigator !== "undefined" && "audioSession" in navigator && settings.audioSessionMode) {
+        (navigator as unknown as { audioSession: { type: string } }).audioSession.type = settings.audioSessionMode;
+      }
+
+      // 복구 확인용 테스트 사운드 재생
+      playSuccessSound();
+    } catch (e) {
+      console.error("Failed to reset audio engine:", e);
+    }
+  }, [isMuted, volume, settings.audioSessionMode, playSuccessSound]);
+
   const playStart = useCallback(() => {
     if (!isMuted) {
       ensureAudioContext();
@@ -92,5 +124,6 @@ export function useAppSound() {
     playSuccess,
     playError,
     playMissionComplete,
+    resetAudioEngine,
   };
 }
